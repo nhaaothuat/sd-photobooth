@@ -1,12 +1,14 @@
 import NextAuth from "next-auth";
-import { getToken } from "next-auth/jwt";
+
 import Google from "next-auth/providers/google";
+
+
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: process.env.GOOGLE_CLIENT_ID ,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ,
     }),
   ],
   callbacks: {
@@ -23,7 +25,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       
 
-      console.log("JWT Token:", token); // Hiển thị toàn bộ JWT token trong console
+      console.log("JWT Token:", token); 
       return token;
     },
      session({ session, token }) {
@@ -31,5 +33,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
        return session
      },
   },
-  secret:process.env.NEXTAUTH_SECRET,
+  secret:process.env.NEXTAUTH_SECRET ,
 });
