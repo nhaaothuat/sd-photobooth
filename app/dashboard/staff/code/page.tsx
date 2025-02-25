@@ -9,7 +9,7 @@ const Code = () => {
           <div>
                <BackButton text='Go back' link='/dashboard/staff' />
                <CustomerTable />
-               <Pagination1 />
+               
           </div>
      )
 }

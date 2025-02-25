@@ -8,7 +8,7 @@ import {
      CardTitle,
 } from "@/components/ui/card"
 import { BarChart } from '@mantine/charts';
-// import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+
 import { data } from '@/providers/data'
 
 const ChartCard = () => {

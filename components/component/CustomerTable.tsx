@@ -1,90 +1,38 @@
+"use client"
 
-import {
-     Table,
-     TableBody,
-     TableCaption,
-     TableCell,
-     TableFooter,
-     TableHead,
-     TableHeader,
-     TableRow,
-} from "@/components/ui/table"
-const invoices = [
-     {
-          invoice: "INV001",
-          paymentStatus: "Paid",
-          totalAmount: "$250.00",
-          paymentMethod: "Credit Card",
-     },
-     {
-          invoice: "INV002",
-          paymentStatus: "Pending",
-          totalAmount: "$150.00",
-          paymentMethod: "PayPal",
-     },
-     {
-          invoice: "INV003",
-          paymentStatus: "Unpaid",
-          totalAmount: "$350.00",
-          paymentMethod: "Bank Transfer",
-     },
-     {
-          invoice: "INV004",
-          paymentStatus: "Paid",
-          totalAmount: "$450.00",
-          paymentMethod: "Credit Card",
-     },
-     {
-          invoice: "INV005",
-          paymentStatus: "Paid",
-          totalAmount: "$550.00",
-          paymentMethod: "PayPal",
-     },
-     {
-          invoice: "INV006",
-          paymentStatus: "Pending",
-          totalAmount: "$200.00",
-          paymentMethod: "Bank Transfer",
-     },
-     {
-          invoice: "INV007",
-          paymentStatus: "Unpaid",
-          totalAmount: "$300.00",
-          paymentMethod: "Credit Card",
-     },
-]
+import Title from "./Title"
+import { useState } from 'react';
+import cx from 'clsx';
+import { ScrollArea, Table } from '@mantine/core';
+import { data } from "@/providers/data_table"
 const CustomerTable = () => {
+     const [scrolled, setScrolled] = useState(false);
+
+     const rows = data.map((row) => (
+          <Table.Tr key={row.name}>
+               <Table.Td>{row.name}</Table.Td>
+               <Table.Td>{row.email}</Table.Td>
+               <Table.Td>{row.company}</Table.Td>
+          </Table.Tr>
+     ));
      return (
-          <div className="mt-10">
-               <h3 className="text-2xl mb-4 font-semibold">Test</h3>
-               <Table>
-                    {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
-                    <TableHeader>
-                         <TableRow>
-                              <TableHead className="w-[100px]">Invoice</TableHead>
-                              <TableHead>Status</TableHead>
-                              <TableHead>Method</TableHead>
-                              <TableHead className="text-right">Amount</TableHead>
-                         </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                         {invoices.map((invoice) => (
-                              <TableRow key={invoice.invoice}>
-                                   <TableCell className="font-medium">{invoice.invoice}</TableCell>
-                                   <TableCell>{invoice.paymentStatus}</TableCell>
-                                   <TableCell>{invoice.paymentMethod}</TableCell>
-                                   <TableCell className="text-right">{invoice.totalAmount}</TableCell>
-                              </TableRow>
-                         ))}
-                    </TableBody>
-                    {/* <TableFooter>
-                         <TableRow>
-                              <TableCell colSpan={3}>Total</TableCell>
-                              <TableCell className="text-right">$2,500.00</TableCell>
-                         </TableRow>
-                    </TableFooter> */}
+          <ScrollArea h={450} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
+               <Table miw={700}>
+                    <Table.Thead
+                         className={cx(
+                              "sticky top-0 bg-white dark:bg-gray-900 transition-shadow",
+                              { "shadow-md": scrolled }
+                         )}
+                    >
+                         <Table.Tr>
+                              <Table.Th>Name</Table.Th>
+                              <Table.Th>Email</Table.Th>
+                              <Table.Th>Company</Table.Th>
+                         </Table.Tr>
+                    </Table.Thead>
+                    <Table.Tbody>{rows}</Table.Tbody>
                </Table>
-          </div>
+          </ScrollArea>
      )
 }
 
