@@ -191,8 +191,9 @@ const Home = () => {
           </CardContent>
         </Card>
 
-        <footer className="mt-4 text-center text-sm text-gray-600">
-          <Link href="/privacy" className=" hover:underline text-gray-800 ">Privacy Policy</Link>
+        <footer className="mt-4 text-center text-sm text-gray-600 ">
+          <Link href="/privacy" className=" hover:underline text-gray-800 mx-2">Privacy Policy</Link>
+          <Link href="/about" className=" hover:underline text-gray-800 ">About Us</Link>
         </footer>
       </div>
     </div>
