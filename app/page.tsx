@@ -63,7 +63,7 @@ const Home = () => {
               Welcome Back
             </CardTitle>
             <CardDescription className="text-gray-600">
-              Login with your Google account
+            This dashboard provides users with real-time insights and management tools for admin, user, staff. Please log in to access 
             </CardDescription>
           </CardHeader>
 
