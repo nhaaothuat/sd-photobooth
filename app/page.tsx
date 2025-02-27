@@ -22,11 +22,11 @@ import {
 } from "@/components/ui/form";
 
 import { signIn } from "next-auth/react";
-import fpt from "@/assets/fpt.png";
+import fpt from "@/assets/tech-x.png";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { Session } from "./types/session";
+// import { useState } from "react";
+// import { Session } from "./types/session";
 import AxiosAPI from "@/configs/axios";
 
 const formSchema = z.object({
@@ -35,29 +35,29 @@ const formSchema = z.object({
 });
 
 const Home = () => {
-  const [sessions, setSessions] = useState<Session[]>([]);
+  // const [sessions, setSessions] = useState<Session[]>([]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { email: "", password: "" },
   });
 
-  const handleSubmit = (data: z.infer<typeof formSchema>) => {};
+  const handleSubmit = (data: z.infer<typeof formSchema>) => { };
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-muted p-6 md:p-10">
-      <div className="w-full max-w-sm flex flex-col gap-6">
+      <div className="w-full max-w-sm flex flex-col gap-2">
         <div className="flex justify-center">
           <Image
             src={fpt}
             alt="FPT Logo"
-            width={100}
-            height={50}
+            width={200}
+            height={200}
             className="rounded-md"
           />
         </div>
 
-        <Card className="shadow-lg">
+        <Card className="shadow-xl">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl font-semibold">
               Welcome Back
@@ -151,7 +151,7 @@ const Home = () => {
                 Login with Google
               </Button>
 
-              <Button
+              {/* <Button
                 variant="outline"
                 className="w-full flex items-center gap-2"
                 onClick={async () => {
@@ -171,8 +171,8 @@ const Home = () => {
                   />
                 </svg>
                 Get Type Session
-              </Button>
-              <ul className="mt-4">
+              </Button> */}
+              {/* <ul className="mt-4">
                 {sessions && sessions.length > 0 ? (
                   sessions.map((session, index) => (
                     <li key={index} className="p-2 border rounded mb-2">
@@ -185,10 +185,15 @@ const Home = () => {
                 ) : (
                   <p className="text-gray-500">Không có dữ liệu</p>
                 )}
-              </ul>
+              </ul> */}
+
             </Form>
           </CardContent>
         </Card>
+
+        <footer className="mt-4 text-center text-sm text-gray-600">
+          <Link href="/privacy" className=" hover:underline text-gray-800 ">Privacy Policy</Link>
+        </footer>
       </div>
     </div>
   );
