@@ -10,8 +10,8 @@ const Staff = () => {
   const t = useTranslations('HomePage');
   return (
     <>
-    {/* <h1>{t('Dashboard')}</h1>; */}
-      <Title  title={t("Dashboard")} />
+    <h1>{t('Dashboard')}</h1>
+      <Title  title={"Dashboard"} />
 
       <DashboardCard />
 

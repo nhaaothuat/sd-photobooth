@@ -1,18 +1,26 @@
+import React from 'react'
+import LocaleSelect from './LocaleSelect';
+import { useLocale, useTranslations } from 'next-intl';
 
-'use client';
-
-import {ComponentProps} from 'react';
-import {useFormStatus} from 'react-dom';
-const ButtonTest = (props: ComponentProps<'button'>) => {
-     const {pending} = useFormStatus();
+export default function ButtonTest  ()  {
+  const t = useTranslations('ButtonTest');
+  const locale = useLocale();
   return (
-     <button
-     className="block w-full rounded-sm border border-slate-900 bg-slate-900 px-3 py-2 font-semibold text-white shadow-sm transition-all hover:enabled:bg-slate-800 disabled:opacity-60"
-     disabled={pending}
-     type="button"
-     {...props}
-   />
+    <LocaleSelect
+      defaultValue={locale}
+      items={[
+        {
+          value: 'en',
+          label: t('en')
+        },
+        {
+          value: 'vi',
+          label: t('vi')
+        }
+      ]}
+      label={t('label')}
+    />
   )
 }
 
-export default ButtonTest
+

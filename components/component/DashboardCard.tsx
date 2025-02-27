@@ -23,7 +23,7 @@ const data = [
 
 const DashboardCard = () => {
      return (
-          <div className="pb-4">
+          <div className="pb-2">
                <SimpleGrid cols={{ base: 1, xs: 2, md: 4 }} className="gap-6">
                     {data.map((stat) => {
                          const Icon = icons[stat.icon];

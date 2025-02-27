@@ -1,7 +1,11 @@
 {
-     "HomePage": {
-       "title": "Hello world!",
-       "Dashboard": "Tiêu đề"
-        
-     }
-   }
+  "HomePage": {
+    "title": "Hello world!",
+    "Dashboard": "Dashboard"
+  },
+  "ButtonTest": {
+    "vi": "VietNam",
+    "en": "English",
+    "label": "Language"
+  }
+}
