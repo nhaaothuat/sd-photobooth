@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import Google from "next-auth/providers/google";
 import AxiosAPI from "./configs/axios";
-import { TokenResponse } from "./app/types/tokenResponse";
+import { TokenResponse } from "./app/types/token";
 import { encrypt } from "./app/helpers/dataEncryption";
 import { cookies } from "next/headers";
 

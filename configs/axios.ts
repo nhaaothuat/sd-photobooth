@@ -1,5 +1,5 @@
 import axios from "axios";
-import { cookies } from "next/headers";
+import Cookies from "js-cookie";
 
 interface AxiosResponse<T> {
   data: T | null;
@@ -8,15 +8,14 @@ interface AxiosResponse<T> {
 }
 
 const instance = axios.create({
-  baseURL: process.env.SERVER_APP_API_URL,
+  baseURL: process.env.NEXT_PUBLIC_SERVER_APP_API_URL,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
 instance.interceptors.request.use(async (config) => {
-  const token = (await cookies()).get("AccessToken")?.value;
-  console.log("Token:", token);
+  const token = Cookies.get("AccessToken");
   if (token !== undefined) {
     config.headers.Authorization = `Bearer ${token}`;
   }

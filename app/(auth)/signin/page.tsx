@@ -15,7 +15,13 @@ export default function SignIn() {
       ) : (
         <>
           <p>Welcome, {session.user?.name}</p>
-          <Button onClick={() => signOut()}>Sign out</Button>
+          <Button
+            onClick={() => {
+              signOut();
+            }}
+          >
+            Sign out
+          </Button>
         </>
       )}
     </>
