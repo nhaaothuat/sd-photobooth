@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 const AboutUs = () => {
@@ -14,11 +15,10 @@ const AboutUs = () => {
             With advancements in AI and imaging technologies, the AI Photo Booth
             with Stable Diffusion aims to revolutionize the way people capture
             and share memories. By combining high-quality photo capture with
-            AI-powered editing and customization, the system provides users
-            with unique and creative experiences. Deployed in public spaces
-            like malls and event venues, it serves as a tool for entertainment
-            and marketing, engaging diverse audiences with its innovative
-            features.
+            AI-powered editing and customization, the system provides users with
+            unique and creative experiences. Deployed in public spaces like
+            malls and event venues, it serves as a tool for entertainment and
+            marketing, engaging diverse audiences with its innovative features.
           </p>
         </section>
 
@@ -37,16 +37,21 @@ const AboutUs = () => {
         <section className="mb-6">
           <h2 className="text-2xl font-semibold mb-2">User Benefits</h2>
           <ul className="list-disc ml-6 text-gray-700">
-            <li>High-quality photos with customizable AI-generated backgrounds.</li>
+            <li>
+              High-quality photos with customizable AI-generated backgrounds.
+            </li>
             <li>Instant sharing via social media or email.</li>
-            <li>Community-building through interactive events and experiences.</li>
+            <li>
+              Community-building through interactive events and experiences.
+            </li>
           </ul>
         </section>
 
         <section className="mb-6">
-          <h2 className="text-2xl font-semibold mb-2">Functional Requirements</h2>
-         
-          
+          <h2 className="text-2xl font-semibold mb-2">
+            Functional Requirements
+          </h2>
+
           <h3 className="text-xl font-semibold mt-4">Admin </h3>
           <ul className="list-disc ml-6 text-gray-700">
             <li>Manage employees, customize themes, and handle payments.</li>
@@ -70,6 +75,12 @@ const AboutUs = () => {
             <li>Assist customers and improve service quality.</li>
           </ul>
         </section>
+
+        <footer className="mt-4 text-center text-sm text-gray-600 ">
+          <Link href="/privacy" className=" hover:underline text-gray-800 mx-2">
+            Privacy Policy
+          </Link>
+        </footer>
       </div>
     </div>
   );
