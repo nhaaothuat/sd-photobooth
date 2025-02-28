@@ -46,6 +46,7 @@ export default async function RootLayout({
           content="ATFxmJ6wYB1LAqpKVsBMRhaRjexyKu3JSlXFTMem2H4"
         />
         <ColorSchemeScript />
+        <meta name="google-site-verification" content="ATFxmJ6wYB1LAqpKVsBMRhaRjexyKu3JSlXFTMem2H4" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}

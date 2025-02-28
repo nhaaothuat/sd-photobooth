@@ -1,19 +1,10 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import AxiosAPI from "./configs/axios";
-import { TokenResponse } from "./types/token";
+import { DecodedJWT, TokenResponse } from "./types/token";
 import { encrypt } from "./app/helpers/dataEncryption";
 import { cookies } from "next/headers";
 import { jwtDecode } from "jwt-decode";
-
-interface DecodedJWT {
-  "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier": string;
-  "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name": string;
-  "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/email": string;
-  "http://schemas.microsoft.com/ws/2008/06/identity/claims/role": string;
-  email_verified: boolean;
-  exp: number;
-}
 
 async function sendTokenToBackend(accessToken: string) {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -54,7 +45,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         try {
           const access_token = await sendTokenToBackend(account.access_token);
-
           (await cookies()).set("AccessToken", access_token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
