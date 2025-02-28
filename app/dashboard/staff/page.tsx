@@ -5,19 +5,26 @@ import Title from '@/components/component/Title'
 import { FcScatterPlot } from "react-icons/fc";
 import { Folder, MessageCircle, Newspaper, User } from 'lucide-react'
 import React from 'react'
-import {useTranslations} from 'next-intl';
+import { useTranslations } from 'next-intl';
+import { useSession } from 'next-auth/react';
 const Staff = () => {
   const t = useTranslations('HomePage');
-  return (
-    <>
-    <h1>{t('Dashboard')}</h1>
-      <Title  title={"Dashboard"} />
 
-      <DashboardCard />
+  const session = useSession();
+  if (session?.user?.role === "staff") {
+    return (
+      <>
+        <h1>{t('Dashboard')}</h1>
+        <Title title={"Dashboard"} />
 
-      <ChartCard />
-    </>
-  )
+        <DashboardCard />
+
+        <ChartCard />
+      </>
+    )
+  }
+  return <p>You are not authorized to view this page!</p>;
+
 }
 
 export default Staff

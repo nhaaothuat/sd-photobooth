@@ -7,6 +7,7 @@ import AxiosAPI from "./configs/axios";
 import { TokenResponse } from "./app/types/token";
 import { encrypt } from "./app/helpers/dataEncryption";
 import { cookies } from "next/headers";
+import { jwtDecode } from "jwt-decode";
 
 async function sendTokenToBackend(accessToken: string) {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -53,26 +54,38 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         try {
           const access_token = await sendTokenToBackend(account.access_token);
 
-          (await cookies()).set("AccessToken", access_token);
+          (await cookies()).set("AccessToken", access_token,{
+            httpOnly: true,
+            sameSite: "lax",
+            priority:"medium",
+
+          });
+
+          token.userInfo = jwtDecode(access_token);
+          
         } catch (error) {
           console.error("Không thể gửi token đến backend:", error);
         }
       }
 
       return token;
-    },
+    }
   },
   secret: process.env.NEXTAUTH_SECRET,
 });
 
-export async function middleware(req: NextRequest) {
-  const token = req.cookies.get("AccessToken")?.value;
+// export async function middleware(req: NextRequest) {
+//   const token = req.cookies.get("AccessToken")?.value;
+//   console.log(token);
+//   if (token) {
+//     return NextResponse.next();
+//   }
 
-  if (token) {
-    return NextResponse.next();
-  }
+//   const url = req.nextUrl.clone();
+//   url.pathname = "/signin";
+//   return NextResponse.redirect(url);
+// }
 
-  const url = req.nextUrl.clone();
-  url.pathname = "/signin";
-  return NextResponse.redirect(url);
-}
+// export const config = {
+//   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+// };

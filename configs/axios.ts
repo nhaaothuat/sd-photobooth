@@ -1,5 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useSession } from "next-auth/react";
 
 interface AxiosResponse<T> {
   data: T | null;
@@ -14,13 +15,18 @@ const instance = axios.create({
   },
 });
 
-instance.interceptors.request.use(async (config) => {
-  const token = Cookies.get("AccessToken");
-  if (token !== undefined) {
-    config.headers.Authorization = `Bearer ${token}`;
+instance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response?.status === 401) {
+      Cookies.remove("AccessToken");
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
   }
-  return config;
-});
+);
 
 const AxiosAPI = {
   get: async <T>(url: string): Promise<AxiosResponse<T>> => {

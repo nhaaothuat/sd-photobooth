@@ -18,7 +18,7 @@ import { AppSidebar } from "@/components/component/AppSidebar";
 
 
 const DashBoardLayout = ({ children }: { children: React.ReactNode }) => {
-
+     
      return (
           <ThemeProvider
                attribute="class"
