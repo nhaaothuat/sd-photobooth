@@ -1,12 +1,19 @@
 import NextAuth from "next-auth";
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { getToken } from "next-auth/jwt";
 import Google from "next-auth/providers/google";
 import AxiosAPI from "./configs/axios";
-import { TokenResponse } from "./app/types/token";
+import { TokenResponse } from "./types/token";
 import { encrypt } from "./app/helpers/dataEncryption";
 import { cookies } from "next/headers";
+import { jwtDecode } from "jwt-decode";
+
+interface DecodedJWT {
+  "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier": string;
+  "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name": string;
+  "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/email": string;
+  "http://schemas.microsoft.com/ws/2008/06/identity/claims/role": string;
+  email_verified: boolean;
+  exp: number;
+}
 
 async function sendTokenToBackend(accessToken: string) {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -33,7 +40,6 @@ async function sendTokenToBackend(accessToken: string) {
     throw error;
   }
 }
-
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Google({
@@ -43,36 +49,57 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   callbacks: {
     async jwt({ token, account, user }) {
-      if (user) {
-        token.id = user.id;
-        token.email = user.email;
-      }
-
       if (account?.access_token) {
         token.accessToken = account.access_token;
+
         try {
           const access_token = await sendTokenToBackend(account.access_token);
 
-          (await cookies()).set("AccessToken", access_token);
+          (await cookies()).set("AccessToken", access_token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+          });
+
+          const decodedJWT = jwtDecode<DecodedJWT>(access_token);
+
+          if (decodedJWT) {
+            token.id =
+              decodedJWT[
+                "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+              ] || "";
+            token.name =
+              decodedJWT[
+                "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
+              ] || "";
+            token.email =
+              decodedJWT[
+                "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/email"
+              ] || "";
+            token.role =
+              decodedJWT[
+                "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+              ] || "guest";
+            token.emailVerified = decodedJWT["email_verified"] ?? null;
+          }
         } catch (error) {
-          console.error("Không thể gửi token đến backend:", error);
+          console.error("Cannot send token to backend:", error);
         }
       }
 
       return token;
     },
+
+    async session({ session, token, user }) {
+      session.user = {
+        id: (token.id as string) ?? null,
+        name: token.name,
+        email: (token.email as string) ?? null,
+        role: (token.role as string) ?? null,
+        emailVerified: (token.emailVerified as Date) ?? null,
+      };
+      return session;
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
 });
-
-export async function middleware(req: NextRequest) {
-  const token = req.cookies.get("AccessToken")?.value;
-
-  if (token) {
-    return NextResponse.next();
-  }
-
-  const url = req.nextUrl.clone();
-  url.pathname = "/signin";
-  return NextResponse.redirect(url);
-}

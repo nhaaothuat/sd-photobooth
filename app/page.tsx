@@ -21,13 +21,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import fpt from "@/assets/tech-x.png";
 import Image from "next/image";
 import Link from "next/link";
-// import { useState } from "react";
-// import { Session } from "./types/session";
-import AxiosAPI from "@/configs/axios";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Hãy nhập đúng email" }),
@@ -35,14 +32,12 @@ const formSchema = z.object({
 });
 
 const Home = () => {
-  // const [sessions, setSessions] = useState<Session[]>([]);
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { email: "", password: "" },
   });
 
-  const handleSubmit = (data: z.infer<typeof formSchema>) => { };
+  const handleSubmit = (data: z.infer<typeof formSchema>) => {};
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-muted p-6 md:p-10">
@@ -63,7 +58,8 @@ const Home = () => {
               Welcome Back
             </CardTitle>
             <CardDescription className="text-gray-600">
-            This dashboard provides users with real-time insights and management tools for admin, user, staff. Please log in to access 
+              This dashboard provides users with real-time insights and
+              management tools for admin, user, staff. Please log in to access
             </CardDescription>
           </CardHeader>
 
@@ -186,14 +182,17 @@ const Home = () => {
                   <p className="text-gray-500">Không có dữ liệu</p>
                 )}
               </ul> */}
-
             </Form>
           </CardContent>
         </Card>
 
         <footer className="mt-4 text-center text-sm text-gray-600 ">
-          <Link href="/privacy" className=" hover:underline text-gray-800 mx-2">Privacy Policy</Link>
-          <Link href="/about" className=" hover:underline text-gray-800 ">About Us</Link>
+          <Link href="/privacy" className=" hover:underline text-gray-800 mx-2">
+            Privacy Policy
+          </Link>
+          <Link href="/about" className=" hover:underline text-gray-800 ">
+            About Us
+          </Link>
         </footer>
       </div>
     </div>

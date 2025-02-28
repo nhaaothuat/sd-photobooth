@@ -20,9 +20,10 @@ import { useDisclosure } from '@mantine/hooks';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ChevronsUpDown } from 'lucide-react';
 import { SidebarMenuButton } from '../ui/sidebar';
-
+import { useSession } from "next-auth/react"
 const AvatarChildSideBar = () => {
      const [opened, { open, close }] = useDisclosure(false);
+     const { data: session } = useSession()
      return (
           <>
                <Menu shadow="md" width={"200px"} >
