@@ -1,30 +1,22 @@
-import ChartCard from '@/components/component/ChartCard'
-import DashboardCard from '@/components/component/DashboardCard'
-import Title from '@/components/component/Title'
+import ChartCard from "@/components/component/ChartCard";
+import DashboardCard from "@/components/component/DashboardCard";
+import Title from "@/components/component/Title";
+import React from "react";
+import { useTranslations } from "next-intl";
 
-import { FcScatterPlot } from "react-icons/fc";
-import { Folder, MessageCircle, Newspaper, User } from 'lucide-react'
-import React from 'react'
-import { useTranslations } from 'next-intl';
-import { useSession } from 'next-auth/react';
 const Staff = () => {
-  const t = useTranslations('HomePage');
+  const t = useTranslations("HomePage");
 
-  const session = useSession();
-  if (session?.user?.role === "staff") {
-    return (
-      <>
-        <h1>{t('Dashboard')}</h1>
-        <Title title={"Dashboard"} />
+  return (
+    <>
+      <h1>{t("Dashboard")}</h1>
+      <Title title={"Dashboard"} />
 
-        <DashboardCard />
+      <DashboardCard />
 
-        <ChartCard />
-      </>
-    )
-  }
-  return <p>You are not authorized to view this page!</p>;
+      <ChartCard />
+    </>
+  );
+};
 
-}
-
-export default Staff
+export default Staff;

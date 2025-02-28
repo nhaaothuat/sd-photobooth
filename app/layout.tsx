@@ -11,6 +11,7 @@ import {
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { SessionProvider } from "next-auth/react";
+import AuthWrapper from "@/hocs/auth-wrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,14 +47,19 @@ export default async function RootLayout({
           content="ATFxmJ6wYB1LAqpKVsBMRhaRjexyKu3JSlXFTMem2H4"
         />
         <ColorSchemeScript />
-        <meta name="google-site-verification" content="ATFxmJ6wYB1LAqpKVsBMRhaRjexyKu3JSlXFTMem2H4" />
+        <meta
+          name="google-site-verification"
+          content="ATFxmJ6wYB1LAqpKVsBMRhaRjexyKu3JSlXFTMem2H4"
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NextIntlClientProvider messages={messages}>
           <MantineProvider withCssVariables={false}>
-            <SessionProvider>{children}</SessionProvider>
+            <SessionProvider>
+              <AuthWrapper>{children}</AuthWrapper>
+            </SessionProvider>
           </MantineProvider>
         </NextIntlClientProvider>
       </body>
