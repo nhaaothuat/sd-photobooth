@@ -1,8 +1,9 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
+import Cookies from "js-cookie";
 
 const protectedRoutes: Record<string, string[]> = {
   "/dashboard/admin": ["Admin"],
@@ -17,6 +18,11 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (status === "loading") return;
+    if (pathname === "/") return;
+    if (Cookies.get("AccessToken") === undefined) {
+      signOut({ callbackUrl: "/" });
+      return;
+    }
 
     const matchedRoute = Object.keys(protectedRoutes).find((route) =>
       pathname.startsWith(route)

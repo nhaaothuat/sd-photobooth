@@ -3,6 +3,10 @@ interface TokenResponse {
   token: string;
 }
 
+interface ErrorResponse {
+  message: string;
+}
+
 interface DecodedJWT {
   "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier": string;
   "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name": string;
@@ -12,4 +16,4 @@ interface DecodedJWT {
   exp: number;
 }
 
-export type { TokenResponse, DecodedJWT };
+export type { TokenResponse, ErrorResponse, DecodedJWT };
