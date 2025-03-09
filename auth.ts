@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import AxiosAPI from "./configs/axios";
-import { DecodedJWT, TokenResponse } from "./types/token";
+import { DecodedJWT, ErrorResponse, TokenResponse } from "./types/token";
 import { encrypt } from "./app/helpers/dataEncryption";
 import { cookies } from "next/headers";
 import { jwtDecode } from "jwt-decode";
@@ -20,17 +20,14 @@ async function sendTokenToBackend(accessToken: string) {
       }
     );
 
-    if (response.status !== 200) {
-      throw new Error(
-        "Failed to exchange token with backend: ${response.statusText}"
-      );
+    if (response.status >= 200 && response.status < 300 && response.data) {
+      const dataReceive = response.data as unknown as TokenResponse;
+      return dataReceive.token;
     }
 
-    const dataReceive = response.data as unknown as TokenResponse;
-
-    return dataReceive.token;
+    throw new Error("Failed to retrieve token");
   } catch (error) {
-    console.error("Error sending token to backend:", error);
+    console.error("An error occurred:", error);
     throw error;
   }
 }
@@ -74,7 +71,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             token.emailVerified = decodedJWT["email_verified"] ?? null;
           }
         } catch (error) {
-          console.error("Cannot send token to backend:", error);
+          console.error("An error occurred: ", error);
         }
       }
 
