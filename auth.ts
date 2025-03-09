@@ -6,6 +6,9 @@ import { encrypt } from "./app/helpers/dataEncryption";
 import { cookies } from "next/headers";
 import { jwtDecode } from "jwt-decode";
 
+
+
+
 async function sendTokenToBackend(accessToken: string) {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   try {
@@ -40,16 +43,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   callbacks: {
     async jwt({ token, account, user }) {
+      // console.log("Access Token from Google:", account?.access_token);
       if (account?.access_token) {
         token.accessToken = account.access_token;
 
         try {
           const access_token = await sendTokenToBackend(account.access_token);
-          (await cookies()).set("AccessToken", access_token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-          });
+         
+          (await cookies()).set("AccessToken", access_token);
 
           const decodedJWT = jwtDecode<DecodedJWT>(access_token);
 

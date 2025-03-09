@@ -1,5 +1,5 @@
 import React from 'react'
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { IconChevronRight } from "@tabler/icons-react";
 import { Group, UnstyledButton } from "@mantine/core";
 
@@ -20,10 +20,12 @@ import { useDisclosure } from '@mantine/hooks';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ChevronsUpDown } from 'lucide-react';
 import { SidebarMenuButton } from '../ui/sidebar';
-import { useSession } from "next-auth/react"
+
 const AvatarChildSideBar = () => {
      const [opened, { open, close }] = useDisclosure(false);
-     const { data: session } = useSession()
+     const { data: session } = useSession();
+
+     // console.log(session)
      return (
           <>
                <Menu shadow="md" width={"200px"} >
@@ -31,13 +33,13 @@ const AvatarChildSideBar = () => {
                          <SidebarMenuButton size="lg" className='flex items-center mx-2 cursor-pointer '>
                               <Avatar >
                                    <AvatarImage src="https://github.com/shadcn.png" />
-                                   <AvatarFallback>CN</AvatarFallback>
+                                   <AvatarFallback>{session?.user.name}</AvatarFallback>
                               </Avatar>
 
 
                               <div className="grid flex-1 text-left text-sm leading-tight mr-2">
-                                   <span className="truncate font-semibold">Test</span>
-                                   <span className="truncate text-xs">test@gmail.com</span>
+                                   <span className="truncate font-semibold">{session?.user.name}</span>
+                                   <span className="truncate text-xs">{session?.user.role}</span>
                               </div>
                               <ChevronsUpDown className="ml-auto size-4" />
                          </SidebarMenuButton>
@@ -66,7 +68,7 @@ const AvatarChildSideBar = () => {
                               Settings
                          </Menu.Item>
                          <Menu.Divider />
-                         <Menu.Item onClick={open} leftSection={<IconSettings size={14} />}>
+                         <Menu.Item onClick={() => signOut()} leftSection={<IconSettings size={14} />}>
                               Log out
                          </Menu.Item>
 

@@ -12,6 +12,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { SessionProvider } from "next-auth/react";
 import AuthWrapper from "@/hocs/auth-wrapper";
+import { ToastContainer } from "react-toastify";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -58,7 +59,12 @@ export default async function RootLayout({
         <NextIntlClientProvider messages={messages}>
           <MantineProvider withCssVariables={false}>
             <SessionProvider>
-              <AuthWrapper>{children}</AuthWrapper>
+              <AuthWrapper>
+                {children}
+                <ToastContainer />
+              </AuthWrapper>
+
+
             </SessionProvider>
           </MantineProvider>
         </NextIntlClientProvider>

@@ -6,15 +6,19 @@ import { useTranslations } from "next-intl";
 
 import { useSession } from "next-auth/react";
 const ManagerPage = () => {
-  return (
-    <>
-      <Title title={"Dashboard"} />
-
-      <DashboardCard />
-
-      <ChartCard />
-    </>
-  );
+     // const {data: session} = useSession();
+     // if (session?.user?.role === "Manager") {
+       return (
+         <>
+           <Title title="Dashboard" />
+     
+           <DashboardCard />
+     
+           <ChartCard />
+         </>
+       );
+     // }
+     // return <p>You are not authorized to view this page!</p>
 };
 
 export default ManagerPage;

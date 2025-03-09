@@ -20,19 +20,22 @@ import { Bot, Users, Settings, FileText, CreditCard } from "lucide-react";
 const menuItems: Record<string, { label: string; link: string; icon: React.ElementType }[]> = {
   "/dashboard/admin": [
     { label: "Admin Dashboard", link: "/dashboard/admin", icon: Bot },
-    { label: "Manage Users", link: "/dashboard/admin/manage-users", icon: Users },
-    { label: "Settings", link: "/dashboard/admin/settings", icon: Settings },
+    { label: "Payment Method", link: "/dashboard/admin/payment", icon: Users },
+    { label: "Type Session", link: "/dashboard/admin/type", icon: Settings },
+    { label: "User", link: "/dashboard/admin/user", icon: Settings },
+    
   ],
   "/dashboard/manager": [
     { label: "Manager Dashboard", link: "/dashboard/manager", icon: Bot },
-    { label: "Team", link: "/dashboard/manager/team", icon: Users },
-    { label: "Reports", link: "/dashboard/manager/reports", icon: FileText },
+    { label: "Location", link: "/dashboard/manager/location", icon: Users },
+    { label: "Coupon", link: "/dashboard/manager/coupon", icon: FileText },
   ],
   "/dashboard/staff": [
     { label: "Staff Dashboard", link: "/dashboard/staff", icon: Bot },
     { label: "Customer", link: "/dashboard/staff/customer", icon: Users },
-    { label: "Code", link: "/dashboard/staff/code", icon: FileText },
+    { label: "Session Code", link: "/dashboard/staff/code", icon: FileText },
     { label: "Payment", link: "/dashboard/staff/payment", icon: CreditCard },
+    { label: "Order", link: "/dashboard/staff/order", icon: CreditCard },
   ],
 };
 

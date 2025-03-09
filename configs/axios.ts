@@ -1,6 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useSession } from "next-auth/react";
+
 
 interface AxiosResponse<T> {
   data: T | null;
@@ -15,6 +15,15 @@ const instance = axios.create({
   },
 });
 
+instance.interceptors.request.use((config) => {
+  const token = Cookies.get("AccessToken");
+  // console.log(token)
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 instance.interceptors.response.use(
   (response) => {
     return response;
@@ -22,7 +31,7 @@ instance.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       Cookies.remove("AccessToken");
-      window.location.href = "/login";
+      window.location.href = "/";
     }
     return Promise.reject(error);
   }
@@ -38,6 +47,7 @@ const AxiosAPI = {
         statusText: response.statusText,
       };
     } catch (error) {
+      console.log(error)
       return {
         data: null,
         status: 500,
