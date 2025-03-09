@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "react-toastify";
 import AxiosAPI from "@/configs/axios";
+import { LocationResponseDTO } from "@/types/user";
 
 const AddUser = () => {
   const [formData, setFormData] = useState({
@@ -27,15 +28,15 @@ const AddUser = () => {
   });
 
   const [loading, setLoading] = useState(false);
-  const [locations, setLocations] = useState<{ id: number; name: string }[]>([]);
+  const [locations, setLocations] = useState<LocationResponseDTO[]>([]);
 
   useEffect(() => {
     // Fetch danh sách locations
     const fetchLocations = async () => {
       try {
-        const response = await AxiosAPI.get("https://sdphotobooth.azurewebsites.net/api/Location");
+        const response = await AxiosAPI.get("api/Location");
         if (response.status === 200) {
-          setLocations(response.data);
+          setLocations(response.data as unknown as LocationResponseDTO[] );
         }
       } catch (error) {
         toast.error("Failed to fetch locations");
@@ -73,6 +74,7 @@ const AddUser = () => {
           birthDate: "",
           locationId: 0,
         });
+
       } else {
         throw new Error("Failed to create user");
       }
@@ -147,7 +149,7 @@ const AddUser = () => {
               <SelectContent>
                 {locations.map((location) => (
                   <SelectItem key={location.id} value={location.id.toString()}>
-                    {location.name}
+                    {location.locationName}
                   </SelectItem>
                 ))}
               </SelectContent>
