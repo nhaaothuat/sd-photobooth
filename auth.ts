@@ -6,13 +6,12 @@ import { encrypt } from "./app/helpers/dataEncryption";
 import { cookies } from "next/headers";
 import { jwtDecode } from "jwt-decode";
 
-
-
-
-async function sendTokenToBackend(accessToken: string) {
+async function sendTokenToBackend(idToken: string) {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   try {
-    const encryptedAccessToken = await encrypt(accessToken);
+    console.log("Token: ", idToken);
+    const encryptedAccessToken = await encrypt(idToken);
+    console.log("Encrypted token: ", encryptedAccessToken);
     const response = await AxiosAPI.post<{ Token: string }>(
       "api/Auth/google/callback",
       {
@@ -40,13 +39,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   callbacks: {
     async jwt({ token, account, user }) {
-      // console.log("Access Token from Google:", account?.access_token);
-      if (account?.access_token) {
+      if (account?.id_token) {
         token.accessToken = account.access_token;
 
         try {
-          const access_token = await sendTokenToBackend(account.access_token);
-         
+          const access_token = await sendTokenToBackend(account.id_token);
+
           (await cookies()).set("AccessToken", access_token);
 
           const decodedJWT = jwtDecode<DecodedJWT>(access_token);
