@@ -25,7 +25,7 @@ const AvatarChildSideBar = () => {
      const [opened, { open, close }] = useDisclosure(false);
      const { data: session } = useSession();
 
-     // console.log(session)
+     
      return (
           <>
                <Menu shadow="md" width={"200px"} >
@@ -38,7 +38,7 @@ const AvatarChildSideBar = () => {
 
 
                               <div className="grid flex-1 text-left text-sm leading-tight mr-2">
-                                   <span className="truncate font-semibold">{session?.user.name}</span>
+                                   <span className="truncate font-semibold">{session?.user.name ?? session?.user.email}</span>
                                    <span className="truncate text-xs">{session?.user.role}</span>
                               </div>
                               <ChevronsUpDown className="ml-auto size-4" />

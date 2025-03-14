@@ -39,9 +39,7 @@ const AxiosAPI = {
       const response = await instance.get<T>(url);
       return response;
     } catch (error) {
-
       return handleAxiosError<T>(error);
-
     }
   },
   post: async <T>(url: string, data: T): Promise<CustomAxiosResponse<T>> => {

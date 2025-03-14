@@ -9,6 +9,7 @@ import AddLocation from '@/components/component/AddLocation';
 import DeletePayment from '@/components/component/DeletePayment';
 import { toast } from 'react-toastify';
 import IDLocation from '@/components/component/IDLocation';
+import GPLocation from '@/components/component/GPLocation';
 
 interface Location {
   id: number;
@@ -127,6 +128,7 @@ const LocationComponent = () => {
                     <Group gap="sm">
                       <DeletePayment id={location.id} onDelete={handleDelete} />
                       <IDLocation id={location.id}/>
+                      <GPLocation id={location.id} onUpdateSuccess={fetchLocations} locationData={location}/>
                     </Group>
 
 

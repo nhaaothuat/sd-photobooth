@@ -63,8 +63,6 @@ export default async function RootLayout({
                 {children}
                 <ToastContainer />
               </AuthWrapper>
-
-
             </SessionProvider>
           </MantineProvider>
         </NextIntlClientProvider>

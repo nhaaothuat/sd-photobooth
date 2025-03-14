@@ -4,6 +4,7 @@ import { signOut, useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
 import Cookies from "js-cookie";
+import Loading from "@/components/component/Loading";
 
 const protectedRoutes: Record<string, string[]> = {
   "/dashboard/admin": ["Admin"],
@@ -15,10 +16,15 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
+  const publicRoutes = [ "/","/forget-password"];
 
   useEffect(() => {
+    console.log(session);
     if (status === "loading") return;
     if (pathname === "/") return;
+
+    if (publicRoutes.includes(pathname)) return;
+
     if (Cookies.get("AccessToken") === undefined) {
       signOut({ callbackUrl: "/" });
       return;
@@ -38,7 +44,7 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
     }
   }, [session, pathname]);
 
-  if (status === "loading") return <p>Loading...</p>;
+  if (status === "loading") return <Loading />;
 
   return <>{children}</>;
 }

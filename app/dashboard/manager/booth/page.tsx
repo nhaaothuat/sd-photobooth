@@ -23,16 +23,21 @@ import GPCoupon from '@/components/component/GPCoupon';
 import SearchCoupon from '@/components/component/SearchCoupon';
 import DeleteCoupon from '@/components/component/DeleteCoupon';
 import UpdateCoupon from '@/components/component/UpdateCoupon';
+import AddBooth from '@/components/component/AddBooth';
+import FilterBooth from '@/components/component/FilterBooth';
+import DeleteBooth from '@/components/component/DeleteBooth';
+import GPBooth from '@/components/component/GPBooth';
+import UpdateBooth from '@/components/component/UpdateBooth';
 
 const mockdata = [
-    { title: 'Create', icon: IconCreditCard, color: 'violet', component: <AddCoupon /> },
-    { title: 'Filter', icon: IconBuildingBank, color: 'indigo', component: <SearchCoupon />  },
-    { title: 'Update Status', icon: IconRepeat, color: 'blue', component: <UpdateCoupon /> },
-    { title: 'Get Detail', icon: IconReceiptRefund, color: 'green', component: <GPCoupon  /> },
-    { title: 'Change Role', icon: IconReceipt, color: 'teal', component: <DeleteCoupon /> },
+    { title: 'Create', icon: IconCreditCard, color: 'violet', component: <AddBooth /> },
+    { title: 'Filter', icon: IconBuildingBank, color: 'indigo', component: <FilterBooth />  },
+    { title: 'Update Status', icon: IconRepeat, color: 'blue', component: <UpdateBooth /> },
+    { title: 'Get Detail', icon: IconReceiptRefund, color: 'green', component: <GPBooth  /> },
+    { title: 'Change Role', icon: IconReceipt, color: 'teal', component: <DeleteBooth /> },
 ];
 
-const Coupon = () => {
+const Booth = () => {
     const theme = useMantineTheme();
     const [opened, { toggle, close }] = useDisclosure(false);
     const [currentComponent, setCurrentComponent] = useState<React.ReactNode>(null);
@@ -55,7 +60,7 @@ const Coupon = () => {
 
     return (
         <>
-            <Title>Coupon</Title>
+            <Title>Booth</Title>
             <Card withBorder radius="md" className="bg-gray-50 dark:bg-dark-600 p-4">
                 <SimpleGrid cols={3} mt="md">
                     {items}
@@ -75,4 +80,4 @@ const Coupon = () => {
     );
 };
 
-export default Coupon;
+export default Booth;

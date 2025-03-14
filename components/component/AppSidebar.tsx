@@ -17,18 +17,35 @@ import Image from "next/image";
 import Link from "next/link";
 import { Bot, Users, Settings, FileText, CreditCard } from "lucide-react";
 
-const menuItems: Record<string, { label: string; link: string; icon: React.ElementType }[]> = {
+// Định nghĩa kiểu dữ liệu cho menu
+type MenuItem = {
+  label: string;
+  link: string;
+  icon?: React.ElementType;
+  subMenu?: { label: string; link: string }[];
+};
+
+const menuItems: Record<string, MenuItem[]> = {
   "/dashboard/admin": [
     { label: "Admin Dashboard", link: "/dashboard/admin", icon: Bot },
     { label: "Payment Method", link: "/dashboard/admin/payment", icon: Users },
     { label: "Type Session", link: "/dashboard/admin/type", icon: Settings },
     { label: "User", link: "/dashboard/admin/user", icon: Settings },
-    
   ],
   "/dashboard/manager": [
     { label: "Manager Dashboard", link: "/dashboard/manager", icon: Bot },
     { label: "Location", link: "/dashboard/manager/location", icon: Users },
     { label: "Coupon", link: "/dashboard/manager/coupon", icon: FileText },
+    {
+      label: "Order",
+      link: "/dashboard/manager/order",
+      icon: FileText,
+      subMenu: [
+       
+        { label: "List Order", link: "/dashboard/manager/order/get" },
+      ],
+    },
+    { label: "Booth", link: "/dashboard/manager/booth", icon: FileText },
   ],
   "/dashboard/staff": [
     { label: "Staff Dashboard", link: "/dashboard/staff", icon: Bot },
@@ -43,7 +60,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
   const currentPath = Object.keys(menuItems).find((key) => pathname.startsWith(key));
   const items = menuItems[currentPath || "/dashboard/staff"] || [];
-  
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -59,35 +76,33 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarGroup>
           <SidebarMenu>
             {items.map((item) => (
-              
-              <SidebarMenuItem key={item.label}>
-                <SidebarMenuButton asChild>
-                  <Link href={item.link} className="flex items-center gap-2 font-medium">
-                    <item.icon size={20} />
-                    {item.label}
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-             {/* {items.map((item) => {
-              const isActive = pathname === item.link; // Check active state
-
-              return (
-                <SidebarMenuItem key={item.label}>
+              <div key={item.label}>
+                {/* Menu chính */}
+                <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <Link
-                      href={item.link} 
-                      className={`flex items-center gap-2 font-medium p-2 rounded-md
-                        ${isActive ? "bg-blue-200 " : " "}
-                      `}
-                    >
-                      <item.icon size={20} />
+                    <Link href={item.link} className="flex items-center gap-2 font-medium">
+                      {item.icon && <item.icon size={20} />}
                       {item.label}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              );
-            })} */}
+
+                {/* Kiểm tra và hiển thị subMenu nếu có */}
+                {item.subMenu && (
+                  <div className="ml-6">
+                    {item.subMenu.map((sub) => (
+                      <SidebarMenuItem key={sub.label}>
+                        <SidebarMenuButton asChild>
+                          <Link href={sub.link} className="flex items-center gap-2 text-sm font-normal text-gray-600">
+                            - {sub.label}
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>

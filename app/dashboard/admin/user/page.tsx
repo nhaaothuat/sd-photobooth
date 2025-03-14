@@ -18,13 +18,20 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import GPUserLocation from '@/components/component/GPUserLocation';
+import GPRoleUser from '@/components/component/GPRoleUser';
+import GPUser from '@/components/component/GPUser';
+import GPUserBan from '@/components/component/GPUserBan';
+import GpFilter from '@/components/component/GpFilter';
 
 const mockdata = [
     { title: 'Create', icon: IconCreditCard, color: 'violet', component: <AddUser /> },
-    { title: 'Filter', icon: IconBuildingBank, color: 'indigo', component: <AddUser /> },
-    { title: 'Update Status', icon: IconRepeat, color: 'blue', component: <AddUser /> },
-    { title: 'Get Detail', icon: IconReceiptRefund, color: 'green', component: <AddUser /> },
-    { title: 'Change Role', icon: IconReceipt, color: 'teal', component: <AddUser /> },
+    { title: 'Filter', icon: IconBuildingBank, color: 'indigo', component: <GpFilter /> },
+    { title: 'Update Status', icon: IconRepeat, color: 'blue', component: <GPUserBan /> },
+    { title: 'Get Detail', icon: IconReceiptRefund, color: 'green', component: <GPUser /> },
+    { title: 'Change Role', icon: IconReceipt, color: 'teal', component: <GPRoleUser /> },
+
+    { title: 'Move Location', icon: IconReceipt, color: 'teal', component: <GPUserLocation /> },
 ];
 
 const UserPage = () => {

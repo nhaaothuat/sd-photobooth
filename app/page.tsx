@@ -20,23 +20,29 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
+import { useAuthStore } from "@/hocs/authStore"; // Import store
 import { signIn, useSession } from "next-auth/react";
 import fpt from "@/assets/tech-x.png";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import AxiosAPI from "@/configs/axios";
+import Cookies from "js-cookie";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Hãy nhập đúng email" }),
   password: z.string().min(1, { message: "Bạn chưa nhập mật khẩu" }),
+
 });
 
 const Home = () => {
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
+  
   const router = useRouter();
-
+  // const setToken = useAuthStore((state) => state.setToken);
   useEffect(() => {
     if (session?.user?.role) {
       switch (session.user.role) {
@@ -55,12 +61,82 @@ const Home = () => {
     }
   }, [session, router]);
 
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { email: "", password: "" },
   });
 
-  const handleSubmit = (data: z.infer<typeof formSchema>) => {};
+
+  const handleSubmit = async (data: z.infer<typeof formSchema>) => {
+
+    try {
+      const response = await AxiosAPI.post(
+        "api/Identity/login", data
+      );
+
+      const result = response.data as any;
+
+      if (result.token) {
+
+
+        // Lưu token vào Cookies
+        Cookies.set("AccessToken", result.token, { expires: 1 });
+
+        // setToken(result.token);
+
+        toast.success("Đăng nhập thành công!");
+
+        // Xử lý điều hướng
+        const decodedToken = JSON.parse(atob(result.token.split(".")[1]));
+        const role = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+        const id =
+          decodedToken[
+          "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+          ] || "";
+        const name =
+          decodedToken[
+          "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
+          ] || "";
+        const email =
+          decodedToken[
+          "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/email"
+          ] || "";
+        const emailVerified = decodedToken["email_verified"] ?? null;
+
+        var user = {
+          id,
+          name,
+          email,
+          emailVerified,
+          role,
+        };
+
+        var x = await update({
+          user
+        });
+
+
+        switch (role) {
+          case "Admin":
+            router.replace("/dashboard/admin");
+            break;
+          case "Manager":
+            router.replace("/dashboard/manager");
+            break;
+          case "Staff":
+            router.replace("/dashboard/staff");
+            break;
+          default:
+            router.replace("/dashboard");
+        }
+      } else {
+        toast.error("Đăng nhập thất bại! Vui lòng thử lại.");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+    }
+  };
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-muted p-6 md:p-10">

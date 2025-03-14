@@ -9,13 +9,10 @@ import { jwtDecode } from "jwt-decode";
 async function sendTokenToBackend(idToken: string) {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   try {
-    console.log("Token: ", idToken);
-    const encryptedAccessToken = await encrypt(idToken);
-    console.log("Encrypted token: ", encryptedAccessToken);
     const response = await AxiosAPI.post<{ Token: string }>(
       "api/Auth/google/callback",
       {
-        Token: encryptedAccessToken,
+        Token: idToken,
       }
     );
 
@@ -31,6 +28,7 @@ async function sendTokenToBackend(idToken: string) {
   }
 }
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  debug: true,
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
@@ -38,7 +36,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, account, user }) {
+    async jwt({ token, trigger, account, session, user }) {
+      console.log("JWT callback called", { token, trigger, account, session, user });
+
+      console.log("xxx");
+      if(trigger === 'update') {
+        console.log(session);
+        if(session){
+          return session;
+        }
+      }
       if (account?.id_token) {
         token.accessToken = account.access_token;
 
@@ -76,7 +83,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token;
     },
 
-    async session({ session, token, user }) {
+    async session({ session, trigger, token, user }) {
+      console.log("SESSION callback called", { session, trigger, token, user });
+
       session.user = {
         id: (token.id as string) ?? null,
         name: token.name,
@@ -84,6 +93,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         role: (token.role as string) ?? null,
         emailVerified: (token.emailVerified as Date) ?? null,
       };
+
+      console.log("xxx");
+
+      if(trigger === 'update') {
+        console.log("xxx");
+        if(session){
+          return session;
+        }
+      }
       return session;
     },
   },
