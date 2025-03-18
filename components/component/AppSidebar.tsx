@@ -31,6 +31,7 @@ const menuItems: Record<string, MenuItem[]> = {
     { label: "Payment Method", link: "/dashboard/admin/payment", icon: Users },
     { label: "Type Session", link: "/dashboard/admin/type", icon: Settings },
     { label: "User", link: "/dashboard/admin/user", icon: Settings },
+    { label: "Photo Style", link: "/dashboard/admin/style", icon: Settings },
   ],
   "/dashboard/manager": [
     { label: "Manager Dashboard", link: "/dashboard/manager", icon: Bot },

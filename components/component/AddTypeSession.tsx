@@ -1,4 +1,8 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { NumericFormat } from "react-number-format";
 import { Button } from "@/components/ui/button";
 import {
      Dialog,
@@ -16,154 +20,126 @@ import { Switch } from "@/components/ui/switch";
 import AxiosAPI from "@/configs/axios";
 import { toast } from "react-toastify";
 
+// Schema validation với zod
+const formSchema = z.object({
+     name: z.string().min(1, "Name is required").max(100, "Max length is 100 characters"),
+     description: z.string().max(500, "Max length is 500 characters").optional(),
+     duration: z.coerce.number().min(0, "Duration must be a non-negative value"),
+     price: z.coerce.number().min(0, "Price must be a positive value"),
+     ableTakenNumber: z.coerce.number().min(0, "Max participants must be a non-negative value"),
+     isPrinting: z.boolean(),
+});
+
 interface AddTypeSessionProps {
      onAddSuccess: () => void;
 }
 
 const AddTypeSession: React.FC<AddTypeSessionProps> = ({ onAddSuccess }) => {
-     const [formData, setFormData] = useState({
-          name: "",
-          description: "",
-          duration: 0,
-          price: 0,
-          isPrinting: true,
-          ableTakenNumber: 0,
-     });
-
      const [isOpen, setIsOpen] = useState(false);
      const [loading, setLoading] = useState(false);
 
-     // Handle input changes
-     const handleChange = useCallback(
-          (e: React.ChangeEvent<HTMLInputElement>) => {
-               const { id, value } = e.target;
-               setFormData((prev) => ({
-                    ...prev,
-                    [id]: id === "duration" || id === "price" || id === "ableTakenNumber" ? Number(value) : value,
-               }));
+     const {
+          control,
+          handleSubmit,
+          reset,
+          watch,
+          formState: { errors },
+     } = useForm({
+          resolver: zodResolver(formSchema),
+          mode:"onChange",
+          defaultValues: {
+               name: "",
+               description: "",
+               duration: 0,
+               price: 0,
+               isPrinting: true,
+               ableTakenNumber: 0,
           },
-          []
-     );
+     });
 
-     // Handle Switch toggle
-     const handleToggle = useCallback((checked: boolean) => {
-          setFormData((prev) => ({ ...prev, isPrinting: checked }));
-     }, []);
+     // Xử lý gửi form
+     const onSubmit = async (values: any) => {
+          if (loading) return;
+          setLoading(true);
 
-     // Submit form
-     const handleSubmit = useCallback(
-          async (e: React.FormEvent) => {
-               e.preventDefault();
-               if (loading) return;
-               setLoading(true);
-
-               try {
-                    await AxiosAPI.post("api/TypeSession", formData);
-                    toast.success("Type session added successfully!");
-
-                    // Reset form & close modal
-                    setFormData({
-                         name: "",
-                         description: "",
-                         duration: 0,
-                         price: 0,
-                         isPrinting: true,
-                         ableTakenNumber: 0,
-                    });
-                    setIsOpen(false);
-                    onAddSuccess();
-               } catch (err: any) {
-                    console.error("Save Error:", err);
-                    toast.error(err.response?.data?.message || "Something went wrong");
-               } finally {
-                    setLoading(false);
-               }
-          },
-          [formData, loading, onAddSuccess]
-     );
+          try {
+               await AxiosAPI.post("api/TypeSession", values);
+               toast.success("Type session added successfully!");
+               reset();
+               setIsOpen(false);
+               onAddSuccess();
+          } catch (err: any) {
+               console.error("Save Error:", err);
+               toast.error(err.response?.data?.message || "Something went wrong");
+          } finally {
+               setLoading(false);
+          }
+     };
 
      return (
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
                <DialogTrigger asChild>
                     <Button variant="outline">Add Type Session</Button>
                </DialogTrigger>
-               <DialogContent className="sm:max-w-[425px]">
+               <DialogContent className="sm:max-w-[425px] max-h-[80vh] overflow-y-auto">
                     <DialogHeader>
                          <DialogTitle>Add Type Session</DialogTitle>
                          <DialogDescription>
                               Fill in the details and click save when you're done.
                          </DialogDescription>
                     </DialogHeader>
-                    <form onSubmit={handleSubmit}>
-                         <div className="grid w-full items-center gap-4">
-                              <div className="flex flex-col space-y-1.5">
-                                   <Label htmlFor="name">Session Name</Label>
-                                   <Input
-                                        id="name"
-                                        placeholder="Enter session name"
-                                        value={formData.name}
-                                        onChange={handleChange}
-                                        required
-                                   />
+                    <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
+                         <div>
+                              <Label htmlFor="name">Session Name</Label>
+                              <Input id="name" placeholder="Enter session name" {...control.register("name")} />
+                              {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+                         </div>
+                         <div>
+                              <Label htmlFor="description">Description</Label>
+                              <Input id="description" placeholder="Enter description" {...control.register("description")} />
+                              {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
+                         </div>
+                         <div>
+                              <Label htmlFor="duration">Duration (minutes)</Label>
+                              <Input id="duration" type="number" min="0" placeholder="Enter duration" {...control.register("duration", { valueAsNumber: true })} />
+                              {errors.duration && <p className="text-red-500 text-sm">{errors.duration.message}</p>}
+                         </div>
+                         <div>
+                              <Label htmlFor="price">Price</Label>
+                              <Controller
+                                   control={control}
+                                   name="price"
+                                   render={({ field }) => (
+                                        <NumericFormat
+                                             id="price"
+                                             thousandSeparator="," 
+                                             decimalSeparator="."
+                                             allowNegative={false}
+                                             decimalScale={0}
+                                             fixedDecimalScale
+                                             customInput={Input}
+                                             {...field}
+                                             onValueChange={(values) => field.onChange(values.floatValue)}
+                                        />
+                                   )}
+                              />
+                              {errors.price && <p className="text-red-500 text-sm">{errors.price.message}</p>}
+                         </div>
+                         <div>
+                              <Label htmlFor="ableTakenNumber">Max Participants</Label>
+                              <Input id="ableTakenNumber" type="number" min="0" placeholder="Enter max participants" {...control.register("ableTakenNumber", { valueAsNumber: true })} />
+                              {errors.ableTakenNumber && <p className="text-red-500 text-sm">{errors.ableTakenNumber.message}</p>}
+                         </div>
+                         <div className="flex items-center space-x-4 rounded-md border p-4">
+                              <FileText />
+                              <div className="flex-1 space-y-1">
+                                   <p className="text-sm font-medium leading-none">Print Ticket</p>
+                                   <p className="text-sm text-muted-foreground">Enable or disable printing for this session.</p>
                               </div>
-                              <div className="flex flex-col space-y-1.5">
-                                   <Label htmlFor="description">Description</Label>
-                                   <Input
-                                        id="description"
-                                        placeholder="Enter description"
-                                        value={formData.description}
-                                        onChange={handleChange}
-                                        required
-                                   />
-                              </div>
-                              <div className="flex flex-col space-y-1.5">
-                                   <Label htmlFor="duration">Duration (minutes)</Label>
-                                   <Input
-                                        type="number"
-                                        id="duration"
-                                        placeholder="Enter duration"
-                                        value={formData.duration}
-                                        onChange={handleChange}
-                                        required
-                                   />
-                              </div>
-                              <div className="flex flex-col space-y-1.5">
-                                   <Label htmlFor="price">Price</Label>
-                                   <Input
-                                        type="number"
-                                        id="price"
-                                        placeholder="Enter price"
-                                        value={formData.price}
-                                        onChange={handleChange}
-                                        required
-                                   />
-                              </div>
-                              <div className="flex flex-col space-y-1.5">
-                                   <Label htmlFor="ableTakenNumber">Max Participants</Label>
-                                   <Input
-                                        type="number"
-                                        id="ableTakenNumber"
-                                        placeholder="Enter max participants"
-                                        value={formData.ableTakenNumber}
-                                        onChange={handleChange}
-                                        required
-                                   />
-                              </div>
-                              <div className="flex items-center space-x-4 rounded-md border p-4">
-                                   <FileText />
-                                   <div className="flex-1 space-y-1">
-                                        <p className="text-sm font-medium leading-none">Print Ticket</p>
-                                        <p className="text-sm text-muted-foreground">
-                                             Enable or disable printing for this session.
-                                        </p>
-                                   </div>
-                                   <Switch id="isPrinting" checked={formData.isPrinting} onCheckedChange={handleToggle} />
-                              </div>
+                              <Switch {...control.register("isPrinting")} checked={watch("isPrinting")} />
                          </div>
                          <DialogFooter>
-                              <Button type="submit" disabled={loading}>
-                                   {loading ? "Saving..." : "Save Changes"}
-                              </Button>
+                              <Button type="submit" disabled={loading}>{loading ? "Saving..." : "Save Changes"}</Button>
                          </DialogFooter>
                     </form>
                </DialogContent>

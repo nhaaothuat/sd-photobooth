@@ -12,9 +12,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import AxiosAPI from "@/configs/axios";
 
-// 🔹 Define Request & Response Types
+interface TypeSession {
+  id: number;
+  name: string;
+}
+
+interface PaymentMethod {
+  id: number;
+  methodName: string;
+}
+
 interface OrderRequest {
   email: string;
   phone: string;
@@ -33,30 +43,53 @@ const Order = () => {
     typeSessionId: 0,
     paymentMethodId: 0,
   });
+  const [typeSessions, setTypeSessions] = React.useState<TypeSession[]>([]);
+  const [paymentMethods, setPaymentMethods] = React.useState<PaymentMethod[]>([]);
   const [paymentLink, setPaymentLink] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
 
-  // Handle input change
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [typeSessionRes, paymentMethodRes] = await Promise.all([
+          AxiosAPI.get("api/TypeSession"),
+          AxiosAPI.get("api/PaymentMethod"),
+        ]);
+        setTypeSessions(typeSessionRes.data as TypeSession[]);
+        setPaymentMethods(paymentMethodRes.data as PaymentMethod[]);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "typeSessionId" || name === "paymentMethodId" ? Number(value) : value,
+      [name]: value,
     }));
   };
 
-  // Submit order
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleTypeSessionChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, typeSessionId: Number(value) }));
+  };
 
+  const handlePaymentMethodChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, paymentMethodId: Number(value) }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
       const response = await AxiosAPI.post("api/Order", formData);
-      var data = response.data as unknown as OrderResponse;
+      const data = response.data as unknown as OrderResponse;
       if (data.paymentLink) {
         setPaymentLink(data.paymentLink);
-        setIsDialogOpen(true); // 🔹 Mở Dialog khi có paymentLink
+        setIsDialogOpen(true);
       } else {
         console.error("No payment link received.");
       }
@@ -85,12 +118,34 @@ const Order = () => {
               <Input name="phone" value={formData.phone} onChange={handleChange} placeholder="Enter your phone number" required />
             </div>
             <div className="flex flex-col space-y-1.5">
-              <Label>Type Session ID</Label>
-              <Input type="number" name="typeSessionId" value={formData.typeSessionId} onChange={handleChange} placeholder="Enter type session ID" required />
+              <Label>Type Session</Label>
+              <Select onValueChange={handleTypeSessionChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a session" />
+                </SelectTrigger>
+                <SelectContent>
+                  {typeSessions.map((session) => (
+                    <SelectItem key={session.id} value={session.id.toString()}>
+                      {session.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="flex flex-col space-y-1.5">
-              <Label>Payment Method ID</Label>
-              <Input type="number" name="paymentMethodId" value={formData.paymentMethodId} onChange={handleChange} placeholder="Enter payment method ID" required />
+              <Label>Payment Method</Label>
+              <Select onValueChange={handlePaymentMethodChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a payment method" />
+                </SelectTrigger>
+                <SelectContent>
+                  {paymentMethods.map((method) => (
+                    <SelectItem key={method.id} value={method.id.toString()}>
+                      {method.methodName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <CardFooter className="flex justify-between">
               <Button variant="outline" type="button">Cancel</Button>
@@ -102,7 +157,6 @@ const Order = () => {
         </CardContent>
       </Card>
 
-      {/* 🔹 Payment Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>

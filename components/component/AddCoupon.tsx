@@ -6,67 +6,60 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "react-toastify";
 import AxiosAPI from "@/configs/axios";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-interface CouponForm {
-  name: string;
-  description: string;
-  code: string;
-  discount: number;
-  discountPercent: number;
-  startDate: string;
-  endDate: string;
-  maxUse: number;
-  usedAmount: number;
-  maxDiscount: number;
-  minOrder: number;
-  isActive: boolean;
-}
+const couponSchema = z.object({
+  name: z.string().min(1, "Name is required").max(100, "Max length is 100 characters"),
+  description: z.string().min(1, "Des is required").max(500, "Max length is 500 characters").optional(),
+  code: z.string().min(1, "Code is required").max(50, "Max length is 50 characters"),
+  discount: z.coerce.number().min(1, "Discount must be at least 1"),
+  discountPercent: z.coerce.number().min(0, "Minimum is 0").max(1, "Maximum is 1"),
+  startDate: z.string().min(1, "Start date is required"),
+  endDate: z.string().min(1, "End date is required"),
+  maxUse: z.coerce.number().min(1, "Must be at least 1").optional(),
+  usedAmount: z.coerce.number().default(0),
+  maxDiscount: z.coerce.number().min(0, "Minimum is 0").optional(),
+  minOrder: z.coerce.number().min(0, "Minimum is 0").optional(),
+  isActive: z.boolean(),
+});
 
 const AddCoupon: React.FC = () => {
-  const [formData, setFormData] = useState<CouponForm>({
-    name: "",
-    description: "",
-    code: "",
-    discount: 0,
-    discountPercent: 0,
-    startDate: "",
-    endDate: "",
-    maxUse: 0,
-    usedAmount: 0,
-    maxDiscount: 0,
-    minOrder: 0,
-    isActive: true,
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(couponSchema),
+    mode:"onChange",
+    defaultValues: {
+      name: "",
+      description: "",
+      code: "",
+      discount: 0,
+      discountPercent: 0,
+      startDate: "",
+      endDate: "",
+      maxUse: 0,
+      usedAmount: 0,
+      maxDiscount: 0,
+      minOrder: 0,
+      isActive: true,
+    },
   });
   const [loading, setLoading] = useState(false);
 
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value, type } = e.target;
-    let newValue: any = value;
-
-    if (type === "number") {
-      newValue = Number(value) || 0;
-      if (id === "discountPercent") {
-        newValue = Math.max(0, Math.min(1, newValue)); // Ensure discountPercent is between 0 and 1
-      }
-    } else if (id.includes("Date") && value) {
-      newValue = new Date(value).toISOString().split("T")[0]; // Format date for input field
-    }
-
-    setFormData((prev) => ({ ...prev, [id]: newValue }));
-  }, []);
-
-  const handleToggle = useCallback((checked: boolean) => {
-    setFormData((prev) => ({ ...prev, isActive: checked }));
-  }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: any) => {
     if (loading) return;
     setLoading(true);
 
     try {
-      await AxiosAPI.post("api/Coupon", formData);
+      await AxiosAPI.post("api/Coupon", data);
       toast.success("Thêm mã giảm giá thành công!");
+      reset();
     } catch (error) {
       console.error("Create Error:", error);
       toast.error("Thêm mã giảm giá thất bại.");
@@ -81,21 +74,30 @@ const AddCoupon: React.FC = () => {
         <CardTitle>Thêm mã giảm giá</CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {["name", "description", "code", "discount", "discountPercent", "startDate", "endDate", "maxUse", "usedAmount", "maxDiscount", "minOrder"].map((field) => (
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {Object.keys(couponSchema.shape).map((field) => (
             <div key={field} className="flex flex-col space-y-1.5">
               <Label htmlFor={field}>{field}</Label>
               <Input
                 id={field}
                 placeholder={`Nhập ${field}`}
-                value={formData[field as keyof CouponForm] as string | number}
-                onChange={handleChange}
-                required
-                type={field.includes("discount") || field.includes("max") || field.includes("min") || field.includes("used") ? "number" : field.includes("Date") ? "date" : "text"}
-                min={field === "discountPercent" ? 0 : undefined}
-                max={field === "discountPercent" ? 1 : undefined}
-                step={field === "discountPercent" ? 0.01 : undefined}
+                {...register(field as keyof typeof couponSchema.shape, {
+                  valueAsNumber: field.includes("discount") || field.includes("max") || field.includes("min") || field.includes("used"),
+                  onChange: (e) => {
+                    if (e.target.type === "number" && Number(e.target.value) < 0) {
+                      e.target.value = "0";
+                    }
+                  },
+                })}
+                type={
+                  field.includes("discount") || field.includes("max") || field.includes("min") || field.includes("used")
+                    ? "number"
+                    : field.includes("Date")
+                    ? "date"
+                    : "text"
+                }
               />
+              {errors[field as keyof typeof errors ] && <p className="text-red-500 text-sm">{errors[field as keyof typeof errors]?.message as string}</p>}
             </div>
           ))}
           <div className="flex items-center space-x-4 rounded-md border p-4">
@@ -103,7 +105,7 @@ const AddCoupon: React.FC = () => {
               <p className="text-sm font-medium leading-none">Trạng thái</p>
               <p className="text-sm text-muted-foreground">Bật hoặc tắt mã giảm giá.</p>
             </div>
-            <Switch id="isActive" checked={formData.isActive} onCheckedChange={handleToggle} />
+            <Switch {...register("isActive")} checked={watch("isActive")} />
           </div>
           <Button type="submit" disabled={loading} className="w-full">
             {loading ? "Đang lưu..." : "Lưu mã giảm giá"}

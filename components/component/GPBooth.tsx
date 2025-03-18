@@ -30,7 +30,7 @@ const GPBooth: React.FC = () => {
     }
     setLoading(true);
     try {
-      const response = await AxiosAPI.get<Booth>(`https://sdphotobooth.azurewebsites.net/api/Booth/${boothId}`);
+      const response = await AxiosAPI.get<Booth>(`api/Booth/${boothId}`);
       setBooth(response.data);
     } catch (err) {
       setBooth(null);

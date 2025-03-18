@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
+// import Credentials from "next-auth/providers/credentials"
 import AxiosAPI from "./configs/axios";
 import { DecodedJWT, ErrorResponse, TokenResponse } from "./types/token";
 import { encrypt } from "./app/helpers/dataEncryption";
@@ -28,18 +29,19 @@ async function sendTokenToBackend(idToken: string) {
   }
 }
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  debug: true,
+  
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
+   
   ],
   callbacks: {
     async jwt({ token, trigger, account, session, user }) {
-      console.log("JWT callback called", { token, trigger, account, session, user });
+      // console.log("JWT callback called", { token, trigger, account, session, user });
 
-      console.log("xxx");
+      // console.log("xxx");
       if(trigger === 'update') {
         console.log(session);
         if(session){
@@ -84,7 +86,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
 
     async session({ session, trigger, token, user }) {
-      console.log("SESSION callback called", { session, trigger, token, user });
+      // console.log("SESSION callback called", { session, trigger, token, user });
 
       session.user = {
         id: (token.id as string) ?? null,
@@ -94,10 +96,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         emailVerified: (token.emailVerified as Date) ?? null,
       };
 
-      console.log("xxx");
+      // console.log("xxx");
 
       if(trigger === 'update') {
-        console.log("xxx");
+        // console.log("xxx");
         if(session){
           return session;
         }

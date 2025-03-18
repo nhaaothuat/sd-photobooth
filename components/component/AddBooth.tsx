@@ -7,23 +7,40 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "react-toastify";
 import AxiosAPI from "@/configs/axios";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const boothSchema = z.object({
+  boothName: z.string().min(1, "Tên gian hàng là bắt buộc").max(100, "Tên gian hàng tối đa 100 ký tự"),
+  description: z.string().max(500, "Mô tả tối đa 500 ký tự").optional(),
+  status: z.boolean(),
+});
 
 interface BoothForm {
   locationId: number;
-  boothName: string;
-  description: string;
-  status: boolean;
 }
 
 const AddBooth: React.FC = () => {
-  const [formData, setFormData] = useState<BoothForm>({
-    locationId: 0,
-    boothName: "",
-    description: "",
-    status: true,
-  });
   const [loading, setLoading] = useState(false);
   const [locations, setLocations] = useState<{ id: number; locationName: string }[]>([]);
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<BoothForm & z.infer<typeof boothSchema>>({
+    resolver: zodResolver(boothSchema),
+    mode:"onChange",
+    defaultValues: {
+      locationId: 0,
+      boothName: "",
+      description: "",
+      status: true,
+    },
+  });
 
   // Fetch danh sách location từ API
   useEffect(() => {
@@ -32,32 +49,20 @@ const AddBooth: React.FC = () => {
       .catch((err) => console.error("Error fetching locations:", err));
   }, []);
 
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [id]: value as string | number, // Ép kiểu
-    }));
-  }, []);
-
   const handleSelectLocation = useCallback((value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      locationId: Number(value), // Chuyển đổi thành số
-    }));
-  }, []);
+    setValue("locationId", Number(value));
+  }, [setValue]);
 
   const handleToggle = useCallback((checked: boolean) => {
-    setFormData((prev) => ({ ...prev, status: checked }));
-  }, []);
+    setValue("status", checked);
+  }, [setValue]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: BoothForm & z.infer<typeof boothSchema>) => {
     if (loading) return;
     setLoading(true);
 
     try {
-      await AxiosAPI.post("api/Booth", formData);
+      await AxiosAPI.post("api/Booth", data);
       toast.success("Thêm gian hàng thành công!");
     } catch (error) {
       console.error("Create Error:", error);
@@ -73,11 +78,11 @@ const AddBooth: React.FC = () => {
         <CardTitle>Thêm gian hàng</CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Select Location */}
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="locationId">Chọn địa điểm</Label>
-            <Select onValueChange={handleSelectLocation} value={String(formData.locationId)}>
+            <Select onValueChange={handleSelectLocation} value={String(watch("locationId"))}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Chọn địa điểm" />
               </SelectTrigger>
@@ -92,19 +97,16 @@ const AddBooth: React.FC = () => {
           </div>
 
           {/* Booth Name & Description */}
-          {["boothName", "description"].map((field) => (
-            <div key={field} className="flex flex-col space-y-1.5">
-              <Label htmlFor={field}>{field === "boothName" ? "Tên gian hàng" : "Mô tả"}</Label>
-              <Input
-                id={field}
-                placeholder={`Nhập ${field === "boothName" ? "tên gian hàng" : "mô tả"}`}
-                value={formData[field as keyof BoothForm] as string} // Ép kiểu string
-                onChange={handleChange}
-                required
-                type="text"
-              />
-            </div>
-          ))}
+          <div className="flex flex-col space-y-1.5">
+            <Label htmlFor="boothName">Tên gian hàng</Label>
+            <Input id="boothName" placeholder="Nhập tên gian hàng" {...register("boothName")} />
+            {errors.boothName && <p className="text-red-500 text-sm">{errors.boothName.message}</p>}
+          </div>
+          <div className="flex flex-col space-y-1.5">
+            <Label htmlFor="description">Mô tả</Label>
+            <Input id="description" placeholder="Nhập mô tả" {...register("description")} />
+            {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
+          </div>
 
           {/* Status Toggle */}
           <div className="flex items-center space-x-4 rounded-md border p-4">
@@ -112,7 +114,7 @@ const AddBooth: React.FC = () => {
               <p className="text-sm font-medium leading-none">Trạng thái</p>
               <p className="text-sm text-muted-foreground">Bật hoặc tắt gian hàng.</p>
             </div>
-            <Switch id="status" checked={formData.status} onCheckedChange={handleToggle} />
+            <Switch id="status" checked={watch("status")} onCheckedChange={handleToggle} />
           </div>
 
           {/* Submit Button */}

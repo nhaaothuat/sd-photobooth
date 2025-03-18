@@ -1,128 +1,132 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import {
-     Dialog,
-     DialogContent,
-     DialogDescription,
-     DialogFooter,
-     DialogHeader,
-     DialogTitle,
-     DialogTrigger,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { BellRing } from "lucide-react";
-import { Switch } from "@/components/ui/switch"; // Ensure correct import
+import { Switch } from "@/components/ui/switch";
 import AxiosAPI from "@/configs/axios";
 import { toast } from "react-toastify";
 
+// Define validation schema using zod
+const paymentSchema = z.object({
+    methodName: z.string().min(1, "Method Name is required").max(100, "Max length is 100 characters"),
+    description: z.string().max(500, "Max length is 500 characters").nullable().optional(),
+    isActive: z.boolean(),
+});
+
+type PaymentFormData = z.infer<typeof paymentSchema>;
+
 interface AddPaymentProps {
-     onAddSuccess: () => void;
+    onAddSuccess: () => void;
 }
 
 const AddPayment: React.FC<AddPaymentProps> = ({ onAddSuccess }) => {
-     const [formData, setFormData] = useState({
-          methodName: "",
-          description: "",
-          isActive: true,
-     });
+    const [isOpen, setIsOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-     const [isOpen, setIsOpen] = useState(false);
-     const [loading, setLoading] = useState(false); // Track form submission state
+    // React Hook Form setup with Zod validation
+    const {
+        register,
+        handleSubmit,
+        setValue,
+        watch,
+        formState: { errors },
+        reset,
+    } = useForm<PaymentFormData>({
+        resolver: zodResolver(paymentSchema),
+        mode:"onChange",
+        defaultValues: {
+            methodName: "",
+            description: "",
+            isActive: true,
+        },
+    });
 
-     // Handle input changes
-     const handleChange = useCallback(
-          (e: React.ChangeEvent<HTMLInputElement>) => {
-               const { id, value } = e.target;
-               setFormData((prev) => ({ ...prev, [id]: value }));
-          },
-          []
-     );
+    const isActive = watch("isActive");
 
-     // Handle Switch toggle
-     const handleToggle = useCallback((checked: boolean) => {
-          setFormData((prev) => ({ ...prev, isActive: checked }));
-     }, []);
+    // Submit form
+    const onSubmit = async (data: PaymentFormData) => {
+        if (loading) return;
+        setLoading(true);
 
-     // Submit form
-     const handleSubmit = useCallback(
-          async (e: React.FormEvent) => {
-               e.preventDefault();
-               if (loading) return;
-               setLoading(true);
+        try {
+            await AxiosAPI.post("api/PaymentMethod", data);
+            toast.success("Payment method added successfully!");
+            reset();
+            setIsOpen(false);
+            onAddSuccess();
+        } catch (err: any) {
+            console.error("Save Error:", err);
+            toast.error(err.response?.data?.message || "Something went wrong");
+        } finally {
+            setLoading(false);
+        }
+    };
 
-               try {
-                    await AxiosAPI.post("api/PaymentMethod", formData);
-                    toast.success("Payment method added successfully!");
-
-                    // Reset form & close modal
-                    setFormData({ methodName: "", description: "", isActive: true });
-                    setIsOpen(false);
-                    onAddSuccess();
-               } catch (err: any) {
-                    console.error("Save Error:", err);
-                    toast.error(err.response?.data?.message || "Something went wrong");
-               } finally {
-                    setLoading(false);
-               }
-          },
-          [formData, loading, onAddSuccess]
-     );
-
-     return (
-          <Dialog open={isOpen} onOpenChange={setIsOpen}>
-               <DialogTrigger asChild>
-                    <Button variant="outline">Add Payment Method</Button>
-               </DialogTrigger>
-               <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                         <DialogTitle>Add Payment Method</DialogTitle>
-                         <DialogDescription>
-                              Fill in the details and click save when you're done.
-                         </DialogDescription>
-                    </DialogHeader>
-                    <form onSubmit={handleSubmit}>
-                         <div className="grid w-full items-center gap-4">
-                              <div className="flex flex-col space-y-1.5">
-                                   <Label htmlFor="methodName">Method Name</Label>
-                                   <Input
-                                        id="methodName"
-                                        placeholder="Enter method name"
-                                        value={formData.methodName}
-                                        onChange={handleChange}
-                                        required
-                                   />
-                              </div>
-                              <div className="flex flex-col space-y-1.5">
-                                   <Label htmlFor="description">Description</Label>
-                                   <Input
-                                        id="description"
-                                        placeholder="Enter description"
-                                        value={formData.description}
-                                        onChange={handleChange}
-                                        required
-                                   />
-                              </div>
-                              <div className="flex items-center space-x-4 rounded-md border p-4">
-                                   <BellRing />
-                                   <div className="flex-1 space-y-1">
-                                        <p className="text-sm font-medium leading-none">Status</p>
-                                        <p className="text-sm text-muted-foreground">
-                                             Enable or disable this payment method.
-                                        </p>
-                                   </div>
-                                   <Switch id="isActive" checked={formData.isActive} onCheckedChange={handleToggle} />
-                              </div>
-                         </div>
-                         <DialogFooter>
-                              <Button type="submit" disabled={loading}>
-                                   {loading ? "Saving..." : "Save Changes"}
-                              </Button>
-                         </DialogFooter>
-                    </form>
-               </DialogContent>
-          </Dialog>
-     );
+    return (
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTrigger asChild>
+                <Button variant="outline">Add Payment Method</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>Add Payment Method</DialogTitle>
+                    <DialogDescription>
+                        Fill in the details and click save when you're done.
+                    </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <div className="grid w-full items-center gap-4">
+                        <div className="flex flex-col space-y-1.5">
+                            <Label htmlFor="methodName">Method Name</Label>
+                            <Input id="methodName" placeholder="Enter method name" {...register("methodName")} />
+                            {errors.methodName && (
+                                <p className="text-sm text-red-500">{errors.methodName.message}</p>
+                            )}
+                        </div>
+                        <div className="flex flex-col space-y-1.5">
+                            <Label htmlFor="description">Description</Label>
+                            <Input id="description" placeholder="Enter description" {...register("description")} />
+                            {errors.description && (
+                                <p className="text-sm text-red-500">{errors.description.message}</p>
+                            )}
+                        </div>
+                        <div className="flex items-center space-x-4 rounded-md border p-4">
+                            <BellRing />
+                            <div className="flex-1 space-y-1">
+                                <p className="text-sm font-medium leading-none">Status</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Enable or disable this payment method.
+                                </p>
+                            </div>
+                            <Switch
+                                id="isActive"
+                                checked={isActive}
+                                onCheckedChange={(checked) => setValue("isActive", checked)}
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button type="submit" disabled={loading}>
+                            {loading ? "Saving..." : "Save Changes"}
+                        </Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
+    );
 };
 
 export default AddPayment;

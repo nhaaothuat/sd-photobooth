@@ -30,7 +30,8 @@ import { useEffect } from "react";
 import AxiosAPI from "@/configs/axios";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
-import axios from "axios";
+
+
 
 const formSchema = z.object({
   email: z.string().email({ message: "Hãy nhập đúng email" }),
@@ -40,7 +41,7 @@ const formSchema = z.object({
 
 const Home = () => {
   const { data: session, update } = useSession();
-  
+
   const router = useRouter();
   // const setToken = useAuthStore((state) => state.setToken);
   useEffect(() => {
@@ -112,7 +113,7 @@ const Home = () => {
           role,
         };
 
-        var x = await update({
+        await update({
           user
         });
 
@@ -139,116 +140,126 @@ const Home = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-muted p-6 md:p-10">
-      <div className="w-full max-w-sm flex flex-col gap-2">
-        <div className="flex justify-center">
-          <Image
-            src={fpt}
-            alt="FPT Logo"
-            width={200}
-            height={200}
-            className="rounded-md"
-          />
-        </div>
+    <div className="relative flex min-h-screen flex-col items-center justify-center h-[300px]  p-6 md:p-10">
+      <video
+        autoPlay
+        loop
+        muted
+        className="absolute top-0 left-0 w-full h-full object-cover z-0"
+      >
+        <source src="/background.mp4" type="video/mp4" />
 
-        <Card className="shadow-xl">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-semibold">
-              Welcome Back
-            </CardTitle>
-            <CardDescription className="text-gray-600">
+      </video>
+      <div className="relative z-10 w-full max-w-sm flex flex-col gap-2 min-h-screen">
+
+
+        <div className="absolute inset-0 flex items-center justify-center">
+
+
+          <Card className="shadow-xl w-full max-w-sm ">
+            <CardHeader className="text-center">
+              <div className="flex items-center justify-center">
+                <Image
+                  src={fpt}
+                  alt="FPT Logo"
+                  width={200}
+                  height={200}
+                  className="rounded-md"
+                />
+              </div>
+              {/* <CardDescription className="text-gray-600">
               This dashboard provides users with real-time insights and
               management tools for admin, user, staff. Please log in to access
-            </CardDescription>
-          </CardHeader>
+            </CardDescription> */}
+            </CardHeader>
 
-          <CardContent>
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(handleSubmit)}
-                className="space-y-4"
-              >
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="email"
-                          placeholder="Enter your email"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-
-                      <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="Enter your password"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Link
-                  href="/forget-password"
-                  className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+            <CardContent>
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(handleSubmit)}
+                  className="space-y-4"
                 >
-                  Forgot your password?
-                </Link>
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="email"
+                            placeholder="Enter your email"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Password</FormLabel>
+
+                        <FormControl>
+                          <Input
+                            type="password"
+                            placeholder="Enter your password"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Link
+                    href="/forget-password"
+                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                  >
+                    Forgot your password?
+                  </Link>
+
+                  <Button
+                    type="submit"
+                    variant={"destructive"}
+                    className="w-full font-semibold"
+                  >
+                    Login
+                  </Button>
+                </form>
+
+                <div className="relative flex items-center my-4">
+                  <div className="flex-1 border-t border-gray-300"></div>
+                  <span className="px-3 text-sm text-gray-500 bg-white">
+                    Or continue with
+                  </span>
+                  <div className="flex-1 border-t border-gray-300"></div>
+                </div>
 
                 <Button
-                  type="submit"
-                  variant={"destructive"}
-                  className="w-full   font-semibold"
+                  variant="outline"
+                  className="w-full flex items-center gap-2"
+                  onClick={async () => signIn("google")}
                 >
-                  Login
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    className="w-5 h-5"
+                  >
+                    <path
+                      d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                  Login with Google
                 </Button>
-              </form>
-
-              <div className="relative flex items-center my-4">
-                <div className="flex-1 border-t border-gray-300"></div>
-                <span className="px-3 text-sm text-gray-500 bg-white">
-                  Or continue with
-                </span>
-                <div className="flex-1 border-t border-gray-300"></div>
-              </div>
-
-              <Button
-                variant="outline"
-                className="w-full flex items-center gap-2"
-                onClick={async () => signIn("google")}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  className="w-5 h-5"
-                >
-                  <path
-                    d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
-                    fill="currentColor"
-                  />
-                </svg>
-                Login with Google
-              </Button>
-            </Form>
-          </CardContent>
-        </Card>
-
+              </Form>
+            </CardContent>
+          </Card>
+        </div>
         <footer className="mt-4 text-center text-sm text-gray-600 ">
           <Link href="/privacy" className=" hover:underline text-gray-800 mx-2">
             Privacy Policy
@@ -259,7 +270,12 @@ const Home = () => {
         </footer>
       </div>
     </div>
+
+
+
+
+
   );
 };
 
-export default Home;
+export default Home; 

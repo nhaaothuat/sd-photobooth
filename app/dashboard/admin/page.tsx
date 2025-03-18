@@ -11,7 +11,7 @@ const AdminPage = () => {
       <>
         <Title title="Dashboard" />
 
-        <DashboardCard />
+        {/* <DashboardCard /> */}
 
         <ChartCard />
       </>
