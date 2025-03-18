@@ -23,7 +23,7 @@ const UpdateCoupon: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type, checked } = e.target as HTMLInputElement;
     setCouponData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
