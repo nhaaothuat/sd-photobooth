@@ -14,7 +14,7 @@ interface PhotoStyleDetails {
   id: number;
   name: string;
   description: string;
-  imageUrl: string;s
+  imageUrl: string;
   createdAt: string;
   updatedAt: string;
 }
