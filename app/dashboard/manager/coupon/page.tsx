@@ -87,7 +87,7 @@ const CouponComponent = () => {
         <h2 className="text-xl font-bold">Danh sách địa điểm</h2>
         <AddCoupon onAddSuccess={fetchCoupons}/>
         <DeleteCoupon onAddSuccess={fetchCoupons}/>
-        <GPCoupon onAddSuccess={fetchCoupons}/>
+        {/* <GPCoupon /> */}
       </div>
       <ScrollArea h={450} onScrollPositionChange={({ y }) => setScrolled(y !== 0)} scrollbarSize={6} scrollHideDelay={0}>
         <Table striped withTableBorder withColumnBorders horizontalSpacing="md" verticalSpacing="xs" miw={700} layout="fixed">
