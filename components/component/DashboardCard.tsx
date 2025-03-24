@@ -20,25 +20,23 @@ type DashboardData = [
     { totalOrder: number, totalOrderPrev: number },
     { totalUser: number, totalUserPrev: number },
     { totalRevenue: number, totalRevenuePrev: number },
-]
+];
 
 const DashboardCard = () => {
     const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState(2);
+    const [dateFilter, setDateFilter] = useState(2); // Mặc định là "Tháng"
     const [data, setData] = useState<DashboardData | null>(null);
 
     const fetchData = async () => {
         setLoading(true);
         try {
-            const x= await Promise.all([
-                (await AxiosAPI.post("https://sdphotobooth.azurewebsites.net/api/Dashboard/statictis-order",3)).data,
-                (await AxiosAPI.post("https://sdphotobooth.azurewebsites.net/api/Dashboard/statictis-user",3)).data,
-                (await AxiosAPI.post("https://sdphotobooth.azurewebsites.net/api/Dashboard/statictis-revenue",3)).data,
+            const x = await Promise.all([
+                (await AxiosAPI.post("https://sdphotobooth.azurewebsites.net/api/Dashboard/statictis-order", dateFilter)).data,
+                (await AxiosAPI.post("https://sdphotobooth.azurewebsites.net/api/Dashboard/statictis-user", dateFilter)).data,
+                (await AxiosAPI.post("https://sdphotobooth.azurewebsites.net/api/Dashboard/statictis-revenue", dateFilter)).data,
             ]) as unknown as DashboardData;
 
             setData(x);
-
-            
         } catch (error) {
             console.error("Error fetching dashboard data:", error);
         } finally {
@@ -48,9 +46,45 @@ const DashboardCard = () => {
 
     useEffect(() => {
         fetchData();
-    }, [filter]);
+    }, [dateFilter]);
 
     if (loading || !data) return <Text>Loading...</Text>;
+
+    // const stats = [
+    //     {
+    //         title: "Total Orders",
+    //         icon: "order",
+    //         value: data[0].totalOrder,
+    //         diff:
+    //             data[0].totalOrderPrev > 0
+    //                 ? ((data[0].totalOrder - data[0].totalOrderPrev) /
+    //                      data[0].totalOrderPrev) *
+    //                   100
+    //                 : 100,
+    //     },
+    //     {
+    //         title: "Total Users",
+    //         icon: "user",
+    //         value: data[1].totalUser,
+    //         diff:
+    //             data[1].totalUserPrev > 0
+    //                 ? ((data[1].totalUser - data[1].totalUserPrev) /
+    //                      data[1].totalUserPrev) *
+    //                   100
+    //                 : 100,
+    //     },
+    //     {
+    //         title: "Total Revenue",
+    //         icon: "revenue",
+    //         value: data[2].totalRevenue,
+    //         diff:
+    //             data[2].totalRevenuePrev > 0
+    //                 ? ((data[2].totalRevenue - data[2].totalRevenuePrev) /
+    //                      data[2].totalRevenuePrev) *
+    //                   100
+    //                 : 100,
+    //     },
+    // ];
 
     const stats = [
         {
@@ -62,6 +96,8 @@ const DashboardCard = () => {
                     ? ((data[0].totalOrder - data[0].totalOrderPrev) /
                          data[0].totalOrderPrev) *
                       100
+                    : data[0].totalOrder === 0
+                    ? 0
                     : 100,
         },
         {
@@ -73,6 +109,8 @@ const DashboardCard = () => {
                     ? ((data[1].totalUser - data[1].totalUserPrev) /
                          data[1].totalUserPrev) *
                       100
+                    : data[1].totalUser === 0
+                    ? 0
                     : 100,
         },
         {
@@ -84,15 +122,17 @@ const DashboardCard = () => {
                     ? ((data[2].totalRevenue - data[2].totalRevenuePrev) /
                          data[2].totalRevenuePrev) *
                       100
+                    : data[2].totalRevenue === 0
+                    ? 0
                     : 100,
         },
     ];
-
+    
     return (
         <div className="pb-2">
             <Select
-                value={filter.toString()}
-                onChange={(value) => setFilter(Number(value))}
+                value={dateFilter.toString()}
+                onChange={(value) => setDateFilter(Number(value))}
                 data={[
                     { value: "0", label: "Ngày" },
                     { value: "1", label: "Tuần" },
@@ -101,6 +141,7 @@ const DashboardCard = () => {
                 ]}
                 className="mb-4"
             />
+
             <SimpleGrid cols={{ base: 1, xs: 2, md: 3 }} className="gap-6">
                 {stats.map((stat) => {
                     const Icon = icons[stat.icon as keyof typeof icons];

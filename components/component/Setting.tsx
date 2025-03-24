@@ -15,15 +15,15 @@ const Setting = () => {
      ));
      return (
           <div className='pl-4'>
-          <Card withBorder radius="md" p="sm" className=" bg-white dark:bg-gray-900 shadow-md rounded-md">
-               {/* <Text fz="lg" className="text-lg font-semibold" fw={500}>
+               <Card withBorder radius="md" p="sm" className=" bg-white dark:bg-gray-900 shadow-md rounded-md">
+                    {/* <Text fz="lg" className="text-lg font-semibold" fw={500}>
                     Configure notifications
                </Text>
                <Text fz="xs" className="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-4">
                     Choose what notifications you want to receive
                </Text> */}
-               {items}
-          </Card>
+                    {items}
+               </Card>
           </div>
      )
 }

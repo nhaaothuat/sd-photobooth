@@ -16,12 +16,12 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
-  const publicRoutes = [ "/","/forget-password"];
+  const publicRoutes = [ "/","/forget-password","/confirm-payment-payos","/payment-confirm", "/success", "/failed"];
 
   useEffect(() => {
+    console.log("pathname:", pathname);
     console.log(session);
     if (status === "loading") return;
-    if (pathname === "/") return;
 
     if (publicRoutes.includes(pathname)) return;
 
@@ -42,7 +42,7 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
         return;
       }
     }
-  }, [session, pathname]);
+  }, [pathname]);
 
   if (status === "loading") return <Loading />;
 

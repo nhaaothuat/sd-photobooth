@@ -47,6 +47,7 @@ const menuItems: Record<string, MenuItem[]> = {
       ],
     },
     { label: "Booth", link: "/dashboard/manager/booth", icon: FileText },
+    { label: "Session", link: "/dashboard/manager/session", icon: FileText },
   ],
   "/dashboard/staff": [
     { label: "Staff Dashboard", link: "/dashboard/staff", icon: Bot },

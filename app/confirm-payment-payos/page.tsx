@@ -1,38 +1,38 @@
-"use client"
-import { useSearchParams } from 'next/navigation';
-import React, { useEffect } from 'react';
+"use client";
 
-const ConfimPayOS = () => {
-     const searchParams = useSearchParams();
+import { useSearchParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
-     const code = searchParams.get("code");
-     const id = searchParams.get("id");
-     const cancel = searchParams.get("cancel");
-     const status = searchParams.get("status");
-     const orderCode = searchParams.get("orderCode");
+const PaymentConfirm = () => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const status = searchParams.get("status");
+  const cancel = searchParams.get("cancel");
 
-     useEffect(() => {
-          console.log("PayOS Response Data:", {
-               code,
-               id,
-               cancel,
-               status,
-               orderCode
-          });
-     }, [code, id, cancel, status, orderCode]);
+  const [message, setMessage] = useState("");
 
-     return (
-          <div className="p-6 max-w-2xl mx-auto">
-               <h1 className="text-2xl font-bold mb-4">Payment Confirmation</h1>
-               <div className="bg-white p-4 shadow-md rounded-md">
-                    <p><strong>Code:</strong> {code}</p>
-                    <p><strong>ID:</strong> {id}</p>
-                    <p><strong>Cancelled:</strong> {cancel}</p>
-                    <p><strong>Status:</strong> {status}</p>
-                    <p><strong>Order Code:</strong> {orderCode}</p>
-               </div>
-          </div>
-     );
+  useEffect(() => {
+    if (status === "SUCCESS") {
+      setMessage("Thanh toán thành công!");
+      setTimeout(() => router.replace("/success"), 3000);
+    } else if (cancel === "true" || status === "CANCELLED") {
+      setMessage("Thanh toán thất bại hoặc bị hủy.");
+      setTimeout(() => router.replace("/failed"), 3000);
+    }
+  }, [status, cancel, router]);
+
+  return (
+    <div className="p-6 max-w-2xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Kết quả thanh toán</h1>
+      <div className="bg-white p-4 shadow-md rounded-md">
+        <p className={status === "success" ? "text-green-500" : "text-red-500"}>
+          {message}
+        </p>
+        <p className="text-gray-500 mt-2">Bạn sẽ được chuyển hướng sau 3 giây...</p>
+      </div>
+    </div>
+  );
 };
 
-export default ConfimPayOS;
+export default PaymentConfirm;

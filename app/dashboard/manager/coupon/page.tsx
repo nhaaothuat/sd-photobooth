@@ -1,78 +1,144 @@
-"use client"
-import React, { useState } from 'react';
-import {
-    IconBuildingBank,
-    IconCreditCard,
-    IconReceiptRefund,
-    IconRepeat,
-    IconReceipt,
-} from '@tabler/icons-react';
-import { useDisclosure } from '@mantine/hooks';
-import { Card, SimpleGrid, Text, Title, UnstyledButton, useMantineTheme } from '@mantine/core';
-import AddUser from '@/components/component/AddUser';
-import { Button } from "@/components/ui/button";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
-import AddCoupon from '@/components/component/AddCoupon';
-import GPCoupon from '@/components/component/GPCoupon';
-import SearchCoupon from '@/components/component/SearchCoupon';
-import DeleteCoupon from '@/components/component/DeleteCoupon';
-import UpdateCoupon from '@/components/component/UpdateCoupon';
+"use client";
+import React, { useEffect, useState } from "react";
+import { Table, Text, ScrollArea, Group, Badge, UnstyledButton, Center } from "@mantine/core";
+import { IconChevronDown, IconChevronUp, IconSelector } from "@tabler/icons-react";
+import AxiosAPI from "@/configs/axios";
 
-const mockdata = [
-    { title: 'Create', icon: IconCreditCard, color: 'violet', component: <AddCoupon /> },
-    { title: 'Filter', icon: IconBuildingBank, color: 'indigo', component: <SearchCoupon />  },
-    { title: 'Update Status', icon: IconRepeat, color: 'blue', component: <UpdateCoupon /> },
-    { title: 'Get Detail', icon: IconReceiptRefund, color: 'green', component: <GPCoupon  /> },
-    { title: 'Change Role', icon: IconReceipt, color: 'teal', component: <DeleteCoupon /> },
-];
+import cx from "clsx";
+import AddCoupon from "@/components/component/AddCoupon";
 
-const Coupon = () => {
-    const theme = useMantineTheme();
-    const [opened, { toggle, close }] = useDisclosure(false);
-    const [currentComponent, setCurrentComponent] = useState<React.ReactNode>(null);
+import DeleteCoupon from "@/components/component/DeleteCoupon";
+import GPCoupon from "@/components/component/GPCoupon";
 
-    const handleButtonClick = (component: React.ReactNode) => {
-        setCurrentComponent(component);
-        toggle(); // Mở Dialog
-    };
+interface Coupon {
+  id: number;
+  name: string;
+  code: string;
+  isActive: boolean;
+  discount: number;
+  startDate: string;
+  endDate: string;
+}
 
-    const items = mockdata.map((item) => (
-        <UnstyledButton
-            key={item.title}
-            className="flex flex-col items-center justify-center text-center rounded-md h-[90px] bg-white dark:bg-dark-700 transition-shadow hover:shadow-md hover:scale-105"
-            onClick={() => handleButtonClick(item.component)}
-        >
-            <item.icon color={theme.colors[item.color][6]} size={32} />
-            <Text size="xs" mt={2}>{item.title}</Text>
-        </UnstyledButton>
-    ));
+interface ThProps {
+  children: React.ReactNode;
+  reversed: boolean;
+  sorted: boolean;
+  onSort: () => void;
+}
 
-    return (
-        <>
-            <Title>Coupon</Title>
-            <Card withBorder radius="md" className="bg-gray-50 dark:bg-dark-600 p-4">
-                <SimpleGrid cols={3} mt="md">
-                    {items}
-                </SimpleGrid>
-            </Card>
+function Th({ children, reversed, sorted, onSort }: ThProps) {
+  const Icon = sorted ? (reversed ? IconChevronUp : IconChevronDown) : IconSelector;
+  return (
+    <Table.Th className="p-0">
+      <UnstyledButton onClick={onSort} className="w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">
+        <Group justify="space-between">
+          <Text fw={500} fz="sm">{children}</Text>
+          <Center className="w-[21px] h-[21px] rounded-full">
+            <Icon size={16} stroke={1.5} />
+          </Center>
+        </Group>
+      </UnstyledButton>
+    </Table.Th>
+  );
+}
 
-            {/* Dialog hiển thị component */}
-            <Dialog open={opened} onOpenChange={toggle}>
-                <DialogContent className="sm:max-w-[600px]">
-                    <DialogHeader>
-                        <DialogTitle>Action</DialogTitle>
-                    </DialogHeader>
-                    {currentComponent}
-                </DialogContent>
-            </Dialog>
-        </>
-    );
+const CouponComponent = () => {
+  const [coupons, setCoupons] = useState<Coupon[]>([]);
+  const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState<keyof Coupon | null>(null);
+  const [reverseSortDirection, setReverseSortDirection] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  const fetchCoupons = async () => {
+    try {
+      const response = await AxiosAPI.get<Coupon[]>("https://sdphotobooth.azurewebsites.net/api/Coupon");
+      setCoupons(response.data ?? []);
+    } catch (err) {
+      console.error("Lỗi API:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchCoupons();
+  }, []);
+
+  const setSorting = (field: keyof Coupon) => {
+    const reversed = field === sortBy ? !reverseSortDirection : false;
+    setReverseSortDirection(reversed);
+    setSortBy(field);
+  };
+
+  const filteredData = coupons.filter((item) =>
+    item.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const sortedData = sortBy ? [...filteredData].sort((a, b) => {
+    return reverseSortDirection
+      ? b[sortBy].toString().localeCompare(a[sortBy].toString())
+      : a[sortBy].toString().localeCompare(b[sortBy].toString());
+  }) : filteredData;
+
+  
+
+  return (
+    <div className="space-y-4 p-6">
+       <div className='flex items-center justify-between'>
+        <h2 className="text-xl font-bold">Danh sách địa điểm</h2>
+        <AddCoupon onAddSuccess={fetchCoupons}/>
+        <DeleteCoupon onAddSuccess={fetchCoupons}/>
+        <GPCoupon onAddSuccess={fetchCoupons}/>
+      </div>
+      <ScrollArea h={450} onScrollPositionChange={({ y }) => setScrolled(y !== 0)} scrollbarSize={6} scrollHideDelay={0}>
+        <Table striped withTableBorder withColumnBorders horizontalSpacing="md" verticalSpacing="xs" miw={700} layout="fixed">
+          <Table.Thead className={cx("sticky top-0 bg-white dark:bg-gray-900 transition-shadow", { "shadow-md": scrolled })}>
+            <Table.Tr>
+              <Table.Th>ID</Table.Th>
+              <Th sorted={sortBy === 'name'} reversed={reverseSortDirection} onSort={() => setSorting('name')}>Name</Th>
+              <Table.Th>Code</Table.Th>
+              <Table.Th>Discount</Table.Th>
+              <Table.Th>Start Date</Table.Th>
+              <Table.Th>End Date</Table.Th>
+              <Table.Th>Status</Table.Th>
+              <Table.Th>Actions</Table.Th>
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>
+            {sortedData.length > 0 ? (
+              sortedData.map((coupon) => (
+                <Table.Tr key={coupon.id}>
+                  <Table.Td>{coupon.id}</Table.Td>
+                  <Table.Td>{coupon.name}</Table.Td>
+                  <Table.Td>{coupon.code}</Table.Td>
+                  <Table.Td>{coupon.discount}</Table.Td>
+                  <Table.Td>{new Date(coupon.startDate).toLocaleDateString()}</Table.Td>
+                  <Table.Td>{new Date(coupon.endDate).toLocaleDateString()}</Table.Td>
+                  <Table.Td>
+                    <Badge color={coupon.isActive ? "green" : "red"}>{coupon.isActive ? "Active" : "Inactive"}</Badge>
+                  </Table.Td>
+                  <Table.Td >
+                    <Group gap="sm">
+                      
+                      {/* <IDLocation id={location.id}/>
+                      <GPLocation id={location.id} onUpdateSuccess={fetchLocations} locationData={location}/> */}
+                    </Group>
+
+
+                  </Table.Td>
+                </Table.Tr>
+              ))
+            ) : (
+              <Table.Tr>
+                <Table.Td colSpan={7} align="center">
+                  <Text fw={500} ta="center">Không có dữ liệu</Text>
+                </Table.Td>
+              </Table.Tr>
+            )}
+          </Table.Tbody>
+        </Table>
+      </ScrollArea>
+    </div>
+  );
 };
 
-export default Coupon;
+export default CouponComponent;
