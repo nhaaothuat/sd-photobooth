@@ -1,3 +1,8 @@
+
+interface LoginRequest {
+  email: string;
+  password: string;
+}
 interface TokenResponse {
   message: string;
   token: string;
@@ -16,4 +21,4 @@ interface DecodedJWT {
   exp: number;
 }
 
-export type { TokenResponse, ErrorResponse, DecodedJWT };
+export type { TokenResponse, ErrorResponse, DecodedJWT,LoginRequest };

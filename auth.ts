@@ -2,11 +2,13 @@ import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 // import Credentials from "next-auth/providers/credentials"
 import AxiosAPI from "./configs/axios";
-import { DecodedJWT, ErrorResponse, TokenResponse } from "./types/token";
-import { encrypt } from "./app/helpers/dataEncryption";
+import { DecodedJWT, ErrorResponse, TokenResponse ,LoginRequest} from "./types/token";
+// import { encrypt } from "./app/helpers/dataEncryption";
 import { cookies } from "next/headers";
 import { jwtDecode } from "jwt-decode";
 
+
+import Credentials from "next-auth/providers/credentials"
 async function sendTokenToBackend(idToken: string) {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   try {
@@ -36,18 +38,68 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
    
+    Credentials({
+      
+      credentials: {
+        email: {  },
+        password: {  },
+      },
+      async authorize(credentials) {
+        try {
+          console.log("🔹 Đang gọi API đăng nhập với:", credentials);
+          const loginData: LoginRequest = {
+            email: credentials.email as unknown as string,
+            password: credentials.password as unknown as string,
+          };
+          const res = await AxiosAPI.post<TokenResponse>("api/Identity/login", loginData as any );
+
+         
+         
+          if (!res.data || !res.data.token) {
+            throw new Error("Invalid email or password");
+          }
+          
+          const cookieStore = await cookies();
+          cookieStore.set("AccessToken", res.data.token, { path: "/" });
+          
+          const decodedToken = jwtDecode<DecodedJWT>(res.data.token );
+          return {
+            id: decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"] || "",
+            name: decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"] || "",
+            email: decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/email"] || "",
+            role: decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || "guest",
+            emailVerified: decodedToken.email_verified ?? null,
+            token: res.data.token, 
+          };
+
+         
+        } catch (error) {
+          console.error("Login error:", error);
+          return null;
+        }
+      },
+    }),
+   
   ],
   callbacks: {
     async jwt({ token, trigger, account, session, user }) {
+      if (user) {
+        token.id = user.id;
+        token.name = user.name;
+        token.email = user.email;
+        token.role = user.role;
+        token.emailVerified = (user as any).emailVerified ?? null;
+        token.accessToken = (user as any).token; // Lưu token vào JWT
+      }
       // console.log("JWT callback called", { token, trigger, account, session, user });
 
       // console.log("xxx");
-      if(trigger === 'update') {
-        console.log(session);
-        if(session){
-          return session;
-        }
-      }
+      // if(trigger === 'update') {
+      //   console.log(session);
+      //   if(session){
+      //     return session;
+      //   }
+      // }
       if (account?.id_token) {
         token.accessToken = account.access_token;
 

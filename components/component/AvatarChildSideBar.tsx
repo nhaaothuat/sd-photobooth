@@ -13,9 +13,10 @@ import {
      IconTrash,
      IconArrowsLeftRight,
 } from '@tabler/icons-react';
-
-import image from "@/assets/fpt.png";
+import { useRouter } from "next/navigation";
+// import image from "@/assets/fpt.png";
 import ChildSideBar from './ChildSideBar';
+import Cookies from "js-cookie";
 import { useDisclosure } from '@mantine/hooks';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ChevronsUpDown } from 'lucide-react';
@@ -24,7 +25,13 @@ import { SidebarMenuButton } from '../ui/sidebar';
 const AvatarChildSideBar = () => {
      const [opened, { open, close }] = useDisclosure(false);
      const { data: session } = useSession();
+     const router = useRouter();
 
+     const handleLogout = async () => {
+          Cookies.remove("AccessToken"); // Xóa token ngay lập tức
+          await signOut({ redirect: false }); // Không tự reload trang
+          router.replace("/"); // Điều hướng về trang chủ
+        };
      
      return (
           <>
@@ -68,7 +75,7 @@ const AvatarChildSideBar = () => {
                               Settings
                          </Menu.Item>
                          <Menu.Divider />
-                         <Menu.Item onClick={() => signOut()} leftSection={<IconSettings size={14} />}>
+                         <Menu.Item onClick={handleLogout} leftSection={<IconSettings size={14} />}>
                               Log out
                          </Menu.Item>
 

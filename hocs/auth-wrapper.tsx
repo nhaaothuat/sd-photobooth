@@ -16,7 +16,12 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
-  const publicRoutes = [ "/","/forget-password","/confirm-payment-payos","/payment-confirm", "/success", "/failed"];
+  const publicRoutes = [ "/","/forget-password","/confirm-payment-payos", "/success", "/failed"];
+
+  useEffect(() => {
+    console.log("🔍 Updated Session:", session);
+    console.log("🔍 Updated AccessToken:", Cookies.get("AccessToken"));
+  }, [session]);
 
   useEffect(() => {
     console.log("pathname:", pathname);
@@ -30,6 +35,15 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    // if (!session || Cookies.get("AccessToken") === undefined) {
+    //   console.log("No session or token found → Logging out...");
+    //   signOut({ redirect: false }).then(() => {
+    //     Cookies.remove("AccessToken");
+    //     router.replace("/");
+    //   });
+    //   return;
+    // }
+
     const matchedRoute = Object.keys(protectedRoutes).find((route) =>
       pathname.startsWith(route)
     );
@@ -42,7 +56,7 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
         return;
       }
     }
-  }, [pathname]);
+  }, [pathname, session, status]);
 
   if (status === "loading") return <Loading />;
 

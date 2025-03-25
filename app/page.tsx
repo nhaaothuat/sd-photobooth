@@ -43,7 +43,7 @@ const Home = () => {
   const { data: session, update } = useSession();
 
   const router = useRouter();
-  // const setToken = useAuthStore((state) => state.setToken);
+
   useEffect(() => {
     if (session?.user?.role) {
       switch (session.user.role) {
@@ -69,74 +69,97 @@ const Home = () => {
   });
 
 
+  // const handleSubmit = async (data: z.infer<typeof formSchema>) => {
+
+  //   try {
+  //     const response = await AxiosAPI.post(
+  //       "api/Identity/login", data
+  //     );
+
+  //     const result = response.data as any;
+
+  //     if (result.token) {
+
+
+
+  //       Cookies.set("AccessToken", result.token, { expires: 1, path: "/" });
+
+
+
+  //       toast.success("Đăng nhập thành công!");
+
+  //       const decodedToken = JSON.parse(atob(result.token.split(".")[1]));
+  //       const user = {
+  //         id: decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"] || "",
+  //         name: decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"] || "",
+  //         email: decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/email"] || "",
+  //         role: decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || "guest",
+  //       };
+
+  //       console.log("Updating session with:", user);
+
+  //       // Cập nhật session trong NextAuth
+  //       await update({ user });
+
+
+  //       switch (user.role) {
+  //         case "Admin":
+  //           router.replace("/dashboard/admin");
+  //           break;
+  //         case "Manager":
+  //           router.replace("/dashboard/manager");
+  //           break;
+  //         case "Staff":
+  //           router.replace("/dashboard/staff");
+  //           break;
+  //         default:
+  //           router.replace("/dashboard");
+  //       }
+  //     } else {
+  //       toast.error("Đăng nhập thất bại! Vui lòng thử lại.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Login error:", error);
+  //   }
+  // };
+
   const handleSubmit = async (data: z.infer<typeof formSchema>) => {
-
-    try {
-      const response = await AxiosAPI.post(
-        "api/Identity/login", data
-      );
-
-      const result = response.data as any;
-
-      if (result.token) {
-
-
-        // Lưu token vào Cookies
-        Cookies.set("AccessToken", result.token, { expires: 1 });
-
-        // setToken(result.token);
-
-        toast.success("Đăng nhập thành công!");
-
-        // Xử lý điều hướng
-        const decodedToken = JSON.parse(atob(result.token.split(".")[1]));
-        const role = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-        const id =
-          decodedToken[
-          "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
-          ] || "";
-        const name =
-          decodedToken[
-          "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
-          ] || "";
-        const email =
-          decodedToken[
-          "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/email"
-          ] || "";
-        const emailVerified = decodedToken["email_verified"] ?? null;
-
-        var user = {
-          id,
-          name,
-          email,
-          emailVerified,
-          role,
-        };
-
-        await update({
-          user
-        });
-
-
-        switch (role) {
-          case "Admin":
-            router.replace("/dashboard/admin");
-            break;
-          case "Manager":
-            router.replace("/dashboard/manager");
-            break;
-          case "Staff":
-            router.replace("/dashboard/staff");
-            break;
-          default:
-            router.replace("/dashboard");
-        }
-      } else {
+    try{
+      console.log(data,"h")
+      const result = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false, // Không reload trang
+      });
+  
+      console.log(result);
+  
+      if (result?.error) {
         toast.error("Đăng nhập thất bại! Vui lòng thử lại.");
       }
-    } catch (error) {
-      console.error("Login error:", error);
+      const updatedSession = await update();
+      console.log("Updated Session:", updatedSession);
+  
+  
+      switch (updatedSession?.user?.role) {
+        case "Admin":
+          router.replace("/dashboard/admin");
+          break;
+        case "Manager":
+          router.replace("/dashboard/manager");
+          break;
+        case "Staff":
+          router.replace("/dashboard/staff");
+          break;
+        default:
+          router.replace("/dashboard");
+      }
+  
+    }catch(error){
+      console.error("🔴 Lỗi khi đăng nhập:", error);
+    toast.error("Đăng nhập thất bại! Vui lòng thử lại.");
     }
+    
   };
 
   return (
@@ -167,10 +190,7 @@ const Home = () => {
                   className="rounded-md"
                 />
               </div>
-              {/* <CardDescription className="text-gray-600">
-              This dashboard provides users with real-time insights and
-              management tools for admin, user, staff. Please log in to access
-            </CardDescription> */}
+
             </CardHeader>
 
             <CardContent>
@@ -242,7 +262,7 @@ const Home = () => {
                 <Button
                   variant="outline"
                   className="w-full flex items-center gap-2"
-                  onClick={async () => signIn("google")}
+                  onClick={async () => signIn("google", { redirectTo: "/" })}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
