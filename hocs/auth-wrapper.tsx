@@ -18,10 +18,7 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const publicRoutes = [ "/","/forget-password","/reset-password","/confirm-payment-payos", "/success", "/failed"];
 
-  useEffect(() => {
-    console.log("🔍 Updated Session:", session);
-    console.log("🔍 Updated AccessToken:", Cookies.get("AccessToken"));
-  }, [session]);
+  
 
   useEffect(() => {
     console.log("pathname:", pathname);

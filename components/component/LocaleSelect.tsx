@@ -1,64 +1,75 @@
 import React, { useTransition } from 'react'
-import {CheckIcon, LanguageIcon} from '@heroicons/react/24/solid';
+
 import * as Select from '@radix-ui/react-select';
 import clsx from 'clsx';
-
-import {Locale} from '@/i18n/config';
-import {setUserLocale} from '@/services/locale';
+import { GrLanguage } from "react-icons/gr";
+import { Locale } from '@/i18n/config';
+import { setUserLocale } from '@/services/locale';
+import { MdOutlineRadioButtonChecked } from "react-icons/md";
+import Image from 'next/image';
 type Props = {
-     defaultValue: string;
-     items: Array<{value: string; label: string}>; 
-     label: string;
-   };
+  defaultValue: string;
+  items: Array<{ value: string; label: string; image?: string }>;
+  label: string;
+};
 const LocaleSelect = ({
-     defaultValue,
-     items,
-     label
-   }: Props) => {
-     const [isPending, startTransition] = useTransition();
-     function onChange(value: string) {
-          const locale = value as Locale;
-          startTransition(() => {
-            setUserLocale(locale);
-          });
-        }
+  defaultValue,
+  items,
+  label
+}: Props) => {
+  const [isPending, startTransition] = useTransition();
+  function onChange(value: string) {
+    const locale = value as Locale;
+    startTransition(() => {
+      setUserLocale(locale);
+    });
+  }
   return (
-     <div className="relative">
+    <div className="relative">
       <Select.Root defaultValue={defaultValue} onValueChange={onChange}>
         <Select.Trigger
           aria-label={label}
           className={clsx(
-            'rounded-sm p-2 transition-colors hover:bg-slate-200',
+            ' rounded-full  bg-white border border-gray-300 hover:bg-gray-200 p-2 transition-colors dark:border-gray-700 dark:bg-black  dark:hover:bg-gray-700 ',
             isPending && 'pointer-events-none opacity-60'
           )}
         >
           <Select.Icon>
-            <LanguageIcon className="h-6 w-6 text-slate-600 transition-colors group-hover:text-slate-900" />
+            <GrLanguage className="h-6 w-6 text-slate-600 dark:text-slate-400 transition-colors dark:group-hover:text-slate-900 " />
+
           </Select.Icon>
         </Select.Trigger>
         <Select.Portal>
           <Select.Content
             align="end"
-            className="min-w-[8rem] overflow-hidden rounded-sm bg-white py-1 shadow-md"
+            className="min-w-[10rem]  overflow-hidden rounded-sm bg-white py-1 shadow-md border border-gray-300 dark:border-gray-700 dark:bg-black   "
             position="popper"
           >
             <Select.Viewport>
               {items.map((item) => (
                 <Select.Item
+
                   key={item.value}
-                  className="flex cursor-default items-center px-3 py-2 text-base data-[highlighted]:bg-slate-100"
+                  className="flex cursor-default items-center px-3 py-2 text-base data-[highlighted]:bg-slate-200 dark:data-[highlighted]:bg-slate-800"
                   value={item.value}
                 >
-                  <div className="mr-2 w-[1rem]">
+
+                  {item.image && (
+                    <Image src={item.image} alt={item.label} className=" rounded-full mr-2" width={24}
+                      height={24} />
+                  )}
+                  <span className="text-slate-900 dark:text-white ">{item.label}</span>
+
+                  <div className="ml-auto w-[1rem]">
                     {item.value === defaultValue && (
-                      <CheckIcon className="h-5 w-5 text-slate-600" />
+                      <MdOutlineRadioButtonChecked className=" text-slate-600" />
                     )}
                   </div>
-                  <span className="text-slate-900">{item.label}</span>
+
                 </Select.Item>
               ))}
             </Select.Viewport>
-            <Select.Arrow className="fill-white text-white" />
+            <Select.Arrow className="fill-gray-300 dark:fill-gray-500 text-white" />
           </Select.Content>
         </Select.Portal>
       </Select.Root>

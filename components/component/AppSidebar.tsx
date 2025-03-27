@@ -10,19 +10,19 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import fpt from "@/assets/fpt.png";
+import fpt from "@/assets/tech-x.png";
 import { usePathname } from "next/navigation";
 
 import Image from "next/image";
 import Link from "next/link";
-import { Bot, Users, Settings, FileText, CreditCard } from "lucide-react";
+import { Bot, Users, Settings, FileText, CreditCard, icons } from "lucide-react";
 
 // Định nghĩa kiểu dữ liệu cho menu
-type MenuItem = {
+type  MenuItem = {
   label: string;
   link: string;
   icon?: React.ElementType;
-  subMenu?: { label: string; link: string }[];
+  subMenu?: { label: string; link: string; icon?: React.ElementType }[];
 };
 
 const menuItems: Record<string, MenuItem[]> = {
@@ -43,7 +43,7 @@ const menuItems: Record<string, MenuItem[]> = {
       icon: FileText,
       subMenu: [
        
-        { label: "List Order", link: "/dashboard/manager/order/get" },
+        { label: "List Order", link: "/dashboard/manager/order/get", icon:Bot},
       ],
     },
     { label: "Booth", link: "/dashboard/manager/booth", icon: FileText },
@@ -69,7 +69,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <div className="flex justify-center items-center py-4">
-              <Image src={fpt} width={100} height={100} alt="logo" />
+              <Image src={fpt} width={150} height={150} alt="logo" />
             </div>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -96,7 +96,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       <SidebarMenuItem key={sub.label}>
                         <SidebarMenuButton asChild>
                           <Link href={sub.link} className="flex items-center gap-2 text-sm font-normal text-gray-600">
-                            - {sub.label}
+                            {sub.icon && <sub.icon size={20} />}
+                             {sub.label}
                           </Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>

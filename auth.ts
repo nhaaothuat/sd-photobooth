@@ -46,7 +46,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       async authorize(credentials) {
         try {
-          console.log("🔹 Đang gọi API đăng nhập với:", credentials);
+        
           const loginData: LoginRequest = {
             email: credentials.email as unknown as string,
             password: credentials.password as unknown as string,

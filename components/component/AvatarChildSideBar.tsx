@@ -1,8 +1,7 @@
 import React from 'react'
 import { signOut, useSession } from "next-auth/react";
-import { IconChevronRight } from "@tabler/icons-react";
-import { Group, UnstyledButton } from "@mantine/core";
 
+import { CiLogout } from "react-icons/ci";
 import { ThemeToggle } from "@/components/component/Theme-Toggle";
 import { Menu, Text, Modal } from '@mantine/core';
 import {
@@ -28,15 +27,15 @@ const AvatarChildSideBar = () => {
      const router = useRouter();
 
      const handleLogout = async () => {
-          Cookies.remove("AccessToken"); // Xóa token ngay lập tức
-          await signOut({ redirect: false }); // Không tự reload trang
-          router.replace("/"); // Điều hướng về trang chủ
+          Cookies.remove("AccessToken"); 
+          await signOut({ redirect: false }); 
+          router.replace("/");
         };
      
      return (
           <>
-               <Menu shadow="md" width={"200px"} >
-                    <Menu.Target >
+               <Menu  shadow="md" width={"200px"} >
+                    <Menu.Target  >
                          <SidebarMenuButton size="lg" className='flex items-center mx-2 cursor-pointer '>
                               <Avatar >
                                    <AvatarImage src="https://github.com/shadcn.png" />
@@ -55,27 +54,21 @@ const AvatarChildSideBar = () => {
 
                     <Menu.Dropdown>
                          <Menu.Label>
-                              {/* <div className="flex items-center gap-2 px-1 text-left text-sm">
-                                   <Avatar className="h-8 w-8 rounded-lg">
-                                        <AvatarImage src="https://github.com/shadcn.png" />
-                                        <AvatarFallback>CN</AvatarFallback>
-                                   </Avatar>
-
-
-                                   <div className="grid flex-1 text-left text-sm leading-tight">
-                                        <span className="truncate font-semibold">Test</span>
-                                        <span className="truncate text-xs">test@gmail.com</span>
-                                   </div>
-
-                              </div> */}
+                             
                               Application
                          </Menu.Label>
-                         <Menu.Divider />
+                         {/* <Menu.Divider /> */}
+                         <Menu.Item onClick={open} leftSection={<IconSettings size={14} />}>
+                              Settings
+                         </Menu.Item>
+                         <Menu.Item onClick={open} leftSection={<IconSettings size={14} />}>
+                              Settings
+                         </Menu.Item>
                          <Menu.Item onClick={open} leftSection={<IconSettings size={14} />}>
                               Settings
                          </Menu.Item>
                          <Menu.Divider />
-                         <Menu.Item onClick={handleLogout} leftSection={<IconSettings size={14} />}>
+                         <Menu.Item className='font-medium' onClick={handleLogout} leftSection={<CiLogout size={14} />}>
                               Log out
                          </Menu.Item>
 

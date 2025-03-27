@@ -1,8 +1,7 @@
 "use client";
-// import { AppSidebar } from "@/components/component/AppSidebar";
+
 import Navbar from "@/components/component/Navbar";
-// import Sidebar from "@/components/component/Sidebar";
-// import Trigger from "@/components/component/Trigger";
+
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
@@ -12,10 +11,11 @@ import {
 
 import { ThemeProvider } from "@/providers/theme-provider";
 import { AppSidebar } from "@/components/component/AppSidebar";
-import AuthWrapper from "@/hocs/auth-wrapper";
+import { useState } from "react";
 
 
 const DashBoardLayout = ({ children }: { children: React.ReactNode }) => {
+  const [isTriggered, setIsTriggered] = useState(false);
   return (
     <ThemeProvider
       attribute="class"
