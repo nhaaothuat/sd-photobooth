@@ -36,6 +36,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      
     }),
    
     Credentials({
@@ -82,15 +83,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
    
   ],
   callbacks: {
-    async jwt({ token, trigger, account, session, user }) {
+    async jwt({ token, account, session, user }) {
+     
       if (user) {
         token.id = user.id;
         token.name = user.name;
-        token.email = user.email;
+        token.email = user.email ;
         token.role = user.role;
         token.emailVerified = (user as any).emailVerified ?? null;
-        token.accessToken = (user as any).token; // Lưu token vào JWT
+        token.accessToken = (user as any).token; 
       }
+      
       // console.log("JWT callback called", { token, trigger, account, session, user });
 
       // console.log("xxx");
@@ -127,7 +130,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               decodedJWT[
                 "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
               ] || "guest";
-            token.emailVerified = decodedJWT["email_verified"] ?? null;
+            token.emailVerified = decodedJWT["email_verified"] ?? false;
           }
         } catch (error) {
           console.error("An error occurred: ", error);
@@ -139,6 +142,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
     async session({ session, trigger, token, user }) {
       // console.log("SESSION callback called", { session, trigger, token, user });
+
+      
 
       session.user = {
         id: (token.id as string) ?? null,

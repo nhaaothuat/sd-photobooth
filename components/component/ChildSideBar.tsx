@@ -1,148 +1,98 @@
-// import { Tabs } from '@mantine/core';
-// import { IconPhoto, IconMessageCircle, IconSettings } from '@tabler/icons-react';
-// import Profile from './Profile';
-// import Setting from './Setting';
+"use client";
+import { useState } from "react";
+import {
+  Icon2fa,
+  IconBellRinging,
+  IconDatabaseImport,
+  IconFingerprint,
+  IconKey,
+  IconReceipt2,
+  IconSettings,
+} from "@tabler/icons-react";
+import Profile from "./Profile";
 
-"use client"
-import * as React from "react"
-import {
-  Bell,
-  Check,
-  Globe,
-  Home,
-  Keyboard,
-  Link,
-  Lock,
-  Menu,
-  MessageCircle,
-  Paintbrush,
-  Settings,
-  Video,
-} from "lucide-react"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-} from "@/components/ui/sidebar"
-const data = {
-  nav: [
-    { name: "Notifications", icon: Bell },
-    { name: "Navigation", icon: Menu },
-    { name: "Home", icon: Home },
-    { name: "Appearance", icon: Paintbrush },
-    { name: "Messages & media", icon: MessageCircle },
-    { name: "Language & region", icon: Globe },
-    { name: "Accessibility", icon: Keyboard },
-    { name: "Mark as read", icon: Check },
-    { name: "Audio & video", icon: Video },
-    { name: "Connected accounts", icon: Link },
-    { name: "Privacy & visibility", icon: Lock },
-    { name: "Advanced", icon: Settings },
-  ],
-}
+
+type NavItem = {
+  label: string;
+  icon: React.ElementType;
+  component: React.ReactNode; 
+};
+
+
+const navItems: NavItem[] = [
+  {
+    label: "Profile",
+    icon: IconBellRinging,
+    component: <Profile />,
+  },
+  {
+    label: "Billing",
+    icon: IconReceipt2,
+    component: <div>💳 Billing Content</div>,
+  },
+  {
+    label: "Security",
+    icon: IconFingerprint,
+    component: <div>🔒 Security Content</div>,
+  },
+  {
+    label: "SSH Keys",
+    icon: IconKey,
+    component: <div>🔑 SSH Keys Content</div>,
+  },
+  {
+    label: "Databases",
+    icon: IconDatabaseImport,
+    component: <div>🗄 Databases Content</div>,
+  },
+  {
+    label: "Authentication",
+    icon: Icon2fa,
+    component: <div>✅ Authentication Content</div>,
+  },
+  {
+    label: "Other Settings",
+    icon: IconSettings,
+    component: <div>⚙️ Other Settings Content</div>,
+  },
+];
+
+// 🛠 Component Sidebar
 const ChildSideBar = () => {
-  const [open, setOpen] = React.useState(true)
+  const [active, setActive] = useState<NavItem>(navItems[1]); // Mặc định chọn "Billing"
+
   return (
-    // <Tabs color="indigo" variant="pills" radius="md" orientation="vertical" defaultValue="gallery">
-    //   <Tabs.List>
-    //     <Tabs.Tab value="gallery" leftSection={<IconPhoto size={12} />}>
-    //       Profile
-    //     </Tabs.Tab>
-    //     <Tabs.Tab value="messages" leftSection={<IconMessageCircle size={12} />}>
-    //       Messages
-    //     </Tabs.Tab>
-    //     <Tabs.Tab value="settings" leftSection={<IconSettings size={12} />}>
-    //       Settings
-    //     </Tabs.Tab>
+    <div className="flex ">
+      {/* Sidebar */}
+      <nav className="h-[700px] w-[250px] p-4 flex flex-col border-r border-gray-300 dark:border-gray-700">
+        <div className="flex-1 overflow-y-auto">
+          {navItems.map((item) => (
+            <button
+              key={item.label}
+              className={`flex items-center w-full text-sm font-medium px-3 py-2 rounded-md transition-all cursor-pointer 
+              ${
+                item.label === active.label
+                  ? "bg-blue-500 text-white"
+                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+              }`}
+              onClick={() => setActive(item)}
+            >
+              <item.icon className="w-6 h-6 mr-3" stroke={1.5} />
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </div>
+      </nav>
+
+    
+      <main className="flex-1 p-3 h-screen overflow-y-auto ">
         
-    //   </Tabs.List>
+        <div className="mt-4 text-gray-700 dark:text-gray-300">
+          {active.component}
+        </div>
+      </main>
+    </div>
+  );
+};
 
-    //   <Tabs.Panel value="gallery">
-    //     <Profile />
-    //   </Tabs.Panel>
-
-    //   <Tabs.Panel value="messages">
-    //     Messages tab content
-    //   </Tabs.Panel>
-
-    //   <Tabs.Panel value="settings">
-    //     <Setting />
-    //   </Tabs.Panel>
-    // </Tabs>
-  
-        <SidebarProvider className="items-start">
-          <Sidebar collapsible="none" className="hidden md:flex">
-            <SidebarContent>
-              <SidebarGroup>
-                <SidebarGroupContent>
-                  <SidebarMenu>
-                    {data.nav.map((item) => (
-                      <SidebarMenuItem key={item.name}>
-                        <SidebarMenuButton
-                          asChild
-                          isActive={item.name === "Messages & media"}
-                        >
-                          <a href="#">
-                            <item.icon />
-                            <span>{item.name}</span>
-                          </a>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </SidebarGroup>
-            </SidebarContent>
-          </Sidebar>
-          <main className="flex h-[480px] flex-1 flex-col overflow-hidden">
-            <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-              <div className="flex items-center gap-2 px-4">
-                <Breadcrumb>
-                  <BreadcrumbList>
-                    <BreadcrumbItem className="hidden md:block">
-                      <BreadcrumbLink href="#">Settings</BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator className="hidden md:block" />
-                    <BreadcrumbItem>
-                      <BreadcrumbPage>Messages & media</BreadcrumbPage>
-                    </BreadcrumbItem>
-                  </BreadcrumbList>
-                </Breadcrumb>
-              </div>
-            </header>
-            <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 pt-0">
-              {Array.from({ length: 10 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="aspect-video max-w-3xl rounded-xl bg-muted/50"
-                />
-              ))}
-            </div>
-          </main>
-        </SidebarProvider>
-     
-  )
-}
-
-export default ChildSideBar
+export default ChildSideBar;

@@ -1,5 +1,9 @@
 "use client";
 
+import { useState } from "react";
+import { usePathname } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
 import {
   Sidebar,
   SidebarContent,
@@ -10,19 +14,15 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { Bot, Users, Settings, FileText, CreditCard, ChevronUp, ChevronDown } from "lucide-react";
 import fpt from "@/assets/tech-x.png";
-import { usePathname } from "next/navigation";
 
-import Image from "next/image";
-import Link from "next/link";
-import { Bot, Users, Settings, FileText, CreditCard, icons } from "lucide-react";
 
-// Định nghĩa kiểu dữ liệu cho menu
-type  MenuItem = {
+type MenuItem = {
   label: string;
-  link: string;
+  link?: string;
   icon?: React.ElementType;
-  subMenu?: { label: string; link: string; icon?: React.ElementType }[];
+  subMenu?: { label: string; link: string }[];
 };
 
 const menuItems: Record<string, MenuItem[]> = {
@@ -32,6 +32,13 @@ const menuItems: Record<string, MenuItem[]> = {
     { label: "Type Session", link: "/dashboard/admin/type", icon: Settings },
     { label: "User", link: "/dashboard/admin/user", icon: Settings },
     { label: "Photo Style", link: "/dashboard/admin/style", icon: Settings },
+    {
+      label: "Settings",
+      icon: FileText,
+      subMenu: [{ label: "General", link: "/dashboard/admin/settings/general" },
+      
+      ],
+    },
   ],
   "/dashboard/manager": [
     { label: "Manager Dashboard", link: "/dashboard/manager", icon: Bot },
@@ -39,15 +46,20 @@ const menuItems: Record<string, MenuItem[]> = {
     { label: "Coupon", link: "/dashboard/manager/coupon", icon: FileText },
     {
       label: "Order",
-      link: "/dashboard/manager/order",
       icon: FileText,
-      subMenu: [
-       
-        { label: "List Order", link: "/dashboard/manager/order/get", icon:Bot},
+      subMenu: [{ label: "List Order", link: "/dashboard/manager/order/get" },
+      { label: "Create Order", link: "/dashboard/manager/order/create" }
       ],
     },
     { label: "Booth", link: "/dashboard/manager/booth", icon: FileText },
     { label: "Session", link: "/dashboard/manager/session", icon: FileText },
+    {
+      label: "Settings",
+      icon: FileText,
+      subMenu: [{ label: "General", link: "/dashboard/manager/settings/general" },
+      
+      ],
+    },
   ],
   "/dashboard/staff": [
     { label: "Staff Dashboard", link: "/dashboard/staff", icon: Bot },
@@ -58,10 +70,15 @@ const menuItems: Record<string, MenuItem[]> = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
   const currentPath = Object.keys(menuItems).find((key) => pathname.startsWith(key));
   const items = menuItems[currentPath || "/dashboard/staff"] || [];
+  const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
+
+  const toggleMenu = (label: string) => {
+    setOpenMenus((prev) => ({ ...prev, [label]: !prev[label] }));
+  };
 
   return (
     <Sidebar {...props}>
@@ -79,31 +96,46 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             {items.map((item) => (
               <div key={item.label}>
-                {/* Menu chính */}
                 <SidebarMenuItem>
-                  <SidebarMenuButton asChild>
-                    <Link href={item.link} className="flex items-center gap-2 font-medium">
-                      {item.icon && <item.icon size={20} />}
-                      {item.label}
-                    </Link>
-                  </SidebarMenuButton>
+                  {item.link ? (
+                    <SidebarMenuButton asChild >
+                      <Link href={item.link} className="flex items-center font-sans font-semibold gap-2 px-3 py-2 w-full">
+                        {item.icon && <item.icon size={20} />}
+                        {item.label}
+                      </Link>
+                    </SidebarMenuButton>
+                  ) : (
+                    <button
+                      className=" flex items-center justify-between font-sans font-semibold text-sm w-full px-3 py-1"
+                      onClick={() => toggleMenu(item.label)}
+                    >
+                      <div className="flex items-center gap-2 ">
+                        {item.icon && <item.icon size={16} />}
+                        {item.label}
+                      </div>
+                      {item.subMenu && (openMenus[item.label] ? <ChevronUp size={20} /> : <ChevronDown size={20} />)}
+                    </button>
+                  )}
+
                 </SidebarMenuItem>
 
-                {/* Kiểm tra và hiển thị subMenu nếu có */}
-                {item.subMenu && (
-                  <div className="ml-6">
+                {item.subMenu && openMenus[item.label] && (
+                  <div className="ml-5 border-l my-1 border-gray-300 pl-3">
                     {item.subMenu.map((sub) => (
                       <SidebarMenuItem key={sub.label}>
                         <SidebarMenuButton asChild>
-                          <Link href={sub.link} className="flex items-center gap-2 text-sm font-normal text-gray-600">
-                            {sub.icon && <sub.icon size={20} />}
-                             {sub.label}
+                          <Link href={sub.link} className="flex items-center gap-2 font-sans font-semibold text-sm text-gray-600 px-3 py-2">
+                            {sub.label}
                           </Link>
                         </SidebarMenuButton>
+
                       </SidebarMenuItem>
+
                     ))}
+
                   </div>
                 )}
+
               </div>
             ))}
           </SidebarMenu>

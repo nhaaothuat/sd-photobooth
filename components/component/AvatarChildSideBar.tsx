@@ -2,8 +2,8 @@ import React from 'react'
 import { signOut, useSession } from "next-auth/react";
 
 import { CiLogout } from "react-icons/ci";
-import { ThemeToggle } from "@/components/component/Theme-Toggle";
-import { Menu, Text, Modal } from '@mantine/core';
+
+import { Menu, Text, Modal,ScrollArea } from '@mantine/core';
 import {
      IconSettings,
      IconSearch,
@@ -13,13 +13,16 @@ import {
      IconArrowsLeftRight,
 } from '@tabler/icons-react';
 import { useRouter } from "next/navigation";
-// import image from "@/assets/fpt.png";
+
 import ChildSideBar from './ChildSideBar';
 import Cookies from "js-cookie";
-import { useDisclosure } from '@mantine/hooks';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+
+import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { ChevronsUpDown } from 'lucide-react';
 import { SidebarMenuButton } from '../ui/sidebar';
+
+import { useDisclosure } from '@mantine/hooks';
+
 
 const AvatarChildSideBar = () => {
      const [opened, { open, close }] = useDisclosure(false);
@@ -27,48 +30,57 @@ const AvatarChildSideBar = () => {
      const router = useRouter();
 
      const handleLogout = async () => {
-          Cookies.remove("AccessToken"); 
-          await signOut({ redirect: false }); 
+          Cookies.remove("AccessToken");
+          await signOut({ redirect: false });
           router.replace("/");
-        };
-     
+     };
+
      return (
           <>
-               <Menu  shadow="md" width={"200px"} >
+               <Menu shadow="md" width={"200px"}  >
                     <Menu.Target  >
-                         <SidebarMenuButton size="lg" className='flex items-center mx-2 cursor-pointer '>
+                         <SidebarMenuButton size="lg" className='flex items-center mx-2 cursor-pointer  '>
                               <Avatar >
                                    <AvatarImage src="https://github.com/shadcn.png" />
-                                   <AvatarFallback>{session?.user.name}</AvatarFallback>
+
                               </Avatar>
 
 
                               <div className="grid flex-1 text-left text-sm leading-tight mr-2">
-                                   <span className="truncate font-semibold">{session?.user.name ?? session?.user.email}</span>
-                                   <span className="truncate text-xs">{session?.user.role}</span>
+
+                                   <Text size="sm" className='font-sans dark:text-slate-400' fw={500}>
+                                        {session?.user?.name}
+                                   </Text>
+
                               </div>
-                              <ChevronsUpDown className="ml-auto size-4" />
+                              <ChevronsUpDown className="ml-auto size-4 dark:text-slate-300" />
                          </SidebarMenuButton>
 
                     </Menu.Target>
 
-                    <Menu.Dropdown>
+                    <Menu.Dropdown className='dark:bg-slate-800'>
                          <Menu.Label>
-                             
-                              Application
+
+                              <div style={{ flex: 1 }}>
+                                   <Text size="sm" className='font-sans' fw={500}>
+                                        {session?.user?.name}
+                                   </Text>
+
+                                   <Text c="dimmed" size="xs">
+                                        {session?.user?.role}
+                                   </Text>
+                              </div>
                          </Menu.Label>
-                         {/* <Menu.Divider /> */}
-                         <Menu.Item onClick={open} leftSection={<IconSettings size={14} />}>
-                              Settings
-                         </Menu.Item>
-                         <Menu.Item onClick={open} leftSection={<IconSettings size={14} />}>
-                              Settings
-                         </Menu.Item>
-                         <Menu.Item onClick={open} leftSection={<IconSettings size={14} />}>
-                              Settings
-                         </Menu.Item>
                          <Menu.Divider />
-                         <Menu.Item className='font-medium' onClick={handleLogout} leftSection={<CiLogout size={14} />}>
+                         {/* <Menu.Item onClick={open} leftSection={<IconSettings size={14} />}>
+                              Settings
+                         </Menu.Item>
+
+
+
+
+                         <Menu.Divider /> */}
+                         <Menu.Item className='font-sans font-light' onClick={handleLogout} leftSection={<CiLogout size={14} />}>
                               Log out
                          </Menu.Item>
 
@@ -78,9 +90,10 @@ const AvatarChildSideBar = () => {
 
                     </Menu.Dropdown>
                </Menu>
-               <Modal opened={opened} onClose={close} title="Settings" size={"50%"} centered >
+               <Modal opened={opened} onClose={close} size="xl" fullScreen  title="Settings" centered >
                     <ChildSideBar />
                </Modal>
+
           </>
      )
 }
