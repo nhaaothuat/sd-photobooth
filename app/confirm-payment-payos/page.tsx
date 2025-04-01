@@ -24,7 +24,7 @@ const PaymentConfirm = () => {
 
           if (response.status === 200 || response.status === 201) {
             setMessage("Thanh toán thành công!");
-            setSessionData(response.data);
+            setSessionData(response.data as any);
           } else {
             setMessage("Lỗi khi xác nhận thanh toán.");
             setTimeout(() => router.replace("/fail"), 3000);
