@@ -25,6 +25,7 @@ const PaymentConfirm = () => {
 
           if (response.status === 200 || response.status === 201) {
             setMessage("Thanh toán thành công!");
+            console.log("Thông tin phiên:", response.data);
             setSessionData(response.data); // Lưu thông tin session để hiển thị
           } else {
             setMessage("Lỗi khi xác nhận thanh toán.");
