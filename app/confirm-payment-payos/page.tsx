@@ -14,7 +14,9 @@ const PaymentConfirm = () => {
     const orderCode = searchParams.get("orderCode");
     const status = searchParams.get("status");
     const cancel = searchParams.get("cancel");
-
+    console.log("orderCode", orderCode);
+    console.log("status", status);
+    console.log("cancel", cancel);
     const confirmPayment = async () => {
       if (status === "SUCCESS" && orderCode) {
         try {
