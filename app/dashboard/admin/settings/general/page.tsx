@@ -28,16 +28,18 @@ interface User {
      phoneNumber: string;
      gender: number;
      birthDate: string | null;
+     avatar: string | null;
 }
 
 const GeneralPage = () => {
      const { data: session } = useSession();
-     const [user, setUser] = useState<User | null>(null);
+     const [users, setUser] = useState<User | null>(null);
 
      const fetchUsers = async () => {
           try {
                const response = await AxiosAPI.get<User>("/api/Identity/profile");
-               setUser(response.data);
+               console.log(response.data)
+               // setUser(response.data);
           } catch (err) {
                console.error("Lỗi API:", err);
           }
@@ -55,7 +57,7 @@ const GeneralPage = () => {
                </CardHeader>
                <CardContent>
                     {
-                         user && (
+                         users && (
                               <>
                                    <Card className='flex items-center justify-between p-5'>
 
@@ -64,14 +66,15 @@ const GeneralPage = () => {
                                         <div className='flex items-center gap-3'>
 
                                              <Avatar className="w-20 h-20">
-                                                  <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                                                  <AvatarImage src={users.avatar || "https://github.com/shadcn.png"} alt="@shadcn" />
+                                                  
                                                   <AvatarFallback>CN</AvatarFallback>
                                              </Avatar>
 
 
                                              <div>
                                                   <Text className='font-sans font-semibold'> {session?.user?.name}</Text>
-                                                  <Text className='font-sans font-normal text-slate-400'> {session?.user?.role} | {user.email}</Text>
+                                                  <Text className='font-sans font-normal text-slate-400'> {session?.user?.role} | {users.email}</Text>
                                              </div>
 
                                         </div>
@@ -97,12 +100,12 @@ const GeneralPage = () => {
                                                   <div className='flex items-center  gap-20'>
                                                        <div>
                                                             <Text className='font-sans font-semibold text-gray-500' size="lg">Full Name</Text>
-                                                            <Text className='font-sans font-medium' size="sm">{user.fullName || "N/A"}</Text>
+                                                            <Text className='font-sans font-medium' size="sm">{users.fullName || "N/A"}</Text>
                                                        </div>
 
                                                        <div>
                                                             <Text className='font-sans font-semibold text-gray-500' size="lg">Phone Number</Text>
-                                                            <Text className='font-sans font-medium' size="sm">{user.phoneNumber || "N/A"}</Text>
+                                                            <Text className='font-sans font-medium' size="sm">{users.phoneNumber || "N/A"}</Text>
                                                        </div>
                                                   </div>
 
@@ -112,11 +115,11 @@ const GeneralPage = () => {
                                              </div>
                                              <div className='py-10'>
                                                   <Text className='font-sans font-semibold text-gray-500' size="lg">Gender</Text>
-                                                  <Text className='font-sans font-medium' size="sm"> {user.gender === 0 ? "Nam" : user.gender === 1 ? "Nữ" : "Other"}</Text>
+                                                  <Text className='font-sans font-medium' size="sm"> {users.gender === 0 ? "Nam" : users.gender === 1 ? "Nữ" : "Other"}</Text>
                                              </div>
                                              <div className='pt-2'>
                                                   <Text className='font-sans font-semibold text-gray-500' size="lg">Birth Date</Text>
-                                                  <Text className='font-sans font-medium' size="sm">{user.birthDate || "N/A"}</Text>
+                                                  <Text className='font-sans font-medium' size="sm">{users.birthDate || "N/A"}</Text>
                                              </div>
 
                                         </CardContent>

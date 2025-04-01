@@ -61,7 +61,7 @@ export default async function RootLayout({
           <MantineProvider withCssVariables={false}>
             <SessionProvider>
               <AuthWrapper>
-                {children}
+                 {children}
                 <ToastContainer />
               </AuthWrapper>
             </SessionProvider>

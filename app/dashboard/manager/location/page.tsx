@@ -80,25 +80,25 @@ const LocationComponent = () => {
   }) : filteredData;
 
   const handleDelete = async (id: number) => {
-  
-  
-      try {
-        await AxiosAPI.delete(`api/Location/${id}`);
-  
-        toast.dismiss();
-        toast.success(`Location method deleted successfully!`)
-        fetchLocations()
-      } catch (err: any) {
-        console.error("Delete Error:", err);
-        toast.error(err.response?.data?.message || "Something went wrong");
-      }
-    };
+
+
+    try {
+      await AxiosAPI.delete(`api/Location/${id}`);
+
+      toast.dismiss();
+      toast.success(`Location method deleted successfully!`)
+      fetchLocations()
+    } catch (err: any) {
+      console.error("Delete Error:", err);
+      toast.error(err.response?.data?.message || "Something went wrong");
+    }
+  };
 
   return (
     <div className="space-y-4 p-6">
       <div className='flex items-center justify-between'>
-        <h2 className="text-xl font-bold">Danh sách địa điểm</h2>
-        <AddLocation onAddSuccess={fetchLocations}/>
+        <h2 className="text-xl font-semibold font-sans">Danh sách địa điểm</h2>
+        <AddLocation onAddSuccess={fetchLocations} />
       </div>
       <SearchInput search={search} onSearchChange={(e) => setSearch(e.currentTarget.value)} />
       <ScrollArea h={450} onScrollPositionChange={({ y }) => setScrolled(y !== 0)} scrollbarSize={6} scrollHideDelay={0}>
@@ -127,8 +127,8 @@ const LocationComponent = () => {
                   <Table.Td >
                     <Group gap="sm">
                       <DeletePayment id={location.id} onDelete={handleDelete} />
-                      <IDLocation id={location.id}/>
-                      <GPLocation id={location.id} onUpdateSuccess={fetchLocations} locationData={location}/>
+                      <IDLocation id={location.id} />
+                      <GPLocation id={location.id} onUpdateSuccess={fetchLocations} locationData={location} />
                     </Group>
 
 

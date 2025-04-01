@@ -1,6 +1,6 @@
 "use client";
 
-import BackButton from "@/components/component/BackButton";
+
 import Link from "next/link";
 
 export default function PrivacyPolicy() {
@@ -51,7 +51,7 @@ export default function PrivacyPolicy() {
         If you have any questions, please contact us at: <a href="mailto:support@yourdomain.com" className="text-blue-600">support@yourdomain.com</a>
       </p>
       
-      <BackButton text="Return" link="/"/>
+      
     </div>
   );
 }

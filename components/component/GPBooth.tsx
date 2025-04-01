@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import AxiosAPI from "@/configs/axios";
 
 interface Booth {
-  id: number;
+  id?: number;
   boothName: string;
   description: string;
   status: boolean;
@@ -52,7 +52,7 @@ const GPBooth: React.FC = () => {
           {loading ? "Đang tìm..." : "Tìm kiếm"}
         </Button>
       </div>
-      {booth && (
+      {booth ? (
         <Card className="shadow-none border p-4">
           <CardHeader>
             <CardTitle>Gian hàng: {booth.boothName}</CardTitle>
@@ -62,11 +62,14 @@ const GPBooth: React.FC = () => {
             <p><strong>Mô tả:</strong> {booth.description}</p>
             <p><strong>Trạng thái:</strong> {booth.status ? "Hoạt động" : "Không hoạt động"}</p>
             <p><strong>Ngày tạo:</strong> {new Date(booth.createdAt).toLocaleDateString()}</p>
-            <p><strong>Vị trí:</strong> {booth.location.locationName}</p>
-            <p><strong>Địa chỉ:</strong> {booth.location.address}</p>
+            <p><strong>Vị trí:</strong> {booth?.location?.locationName || "Không xác định"}</p>
+            <p><strong>Địa chỉ:</strong> {booth?.location?.address || "Không xác định"}</p>
           </CardContent>
         </Card>
+      ) : (
+        <p className="text-red-500">Dữ liệu gian hàng không hợp lệ.</p>
       )}
+
     </div>
   );
 };

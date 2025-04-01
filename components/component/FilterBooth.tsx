@@ -33,7 +33,7 @@ const FilterBooth: React.FC = () => {
   // Fetch booths theo locationId
   const fetchBooths = useCallback((locationId: string) => {
     setLoading(true);
-    AxiosAPI.get(`api/Booth/filter?locationId=${locationId}`)
+    AxiosAPI.get(`api/Booth/by-location/${locationId}`)
       .then((res) => setBooths(res.data as Booth[]))
       .catch((err) => {
         console.error("Error fetching booths:", err);

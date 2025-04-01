@@ -30,13 +30,18 @@ const menuItems: Record<string, MenuItem[]> = {
     { label: "Admin Dashboard", link: "/dashboard/admin", icon: Bot },
     { label: "Payment Method", link: "/dashboard/admin/payment", icon: Users },
     { label: "Type Session", link: "/dashboard/admin/type", icon: Settings },
-    { label: "User", link: "/dashboard/admin/user", icon: Settings },
+    {
+      label: "User", icon: Settings, subMenu: [{ label: "Test", link: "/dashboard/admin/user/test" },
+        {label: "Account (Manager)", link: "/dashboard/admin/user/account-manager" },
+        {label: "Account (Staff)", link: "/dashboard/admin/user/account-staff" },
+      ],
+    },
     { label: "Photo Style", link: "/dashboard/admin/style", icon: Settings },
     {
       label: "Settings",
       icon: FileText,
       subMenu: [{ label: "General", link: "/dashboard/admin/settings/general" },
-      
+
       ],
     },
   ],
@@ -57,7 +62,7 @@ const menuItems: Record<string, MenuItem[]> = {
       label: "Settings",
       icon: FileText,
       subMenu: [{ label: "General", link: "/dashboard/manager/settings/general" },
-      
+
       ],
     },
   ],
@@ -99,14 +104,14 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenuItem>
                   {item.link ? (
                     <SidebarMenuButton asChild >
-                      <Link href={item.link} className="flex items-center font-sans font-semibold gap-2 px-3 py-2 w-full">
-                        {item.icon && <item.icon size={20} />}
+                      <Link href={item.link} className="flex items-center font-sans font-medium gap-2 px-3 py-2 w-full">
+                        {item.icon && <item.icon size={30} />}
                         {item.label}
                       </Link>
                     </SidebarMenuButton>
                   ) : (
                     <button
-                      className=" flex items-center justify-between font-sans font-semibold text-sm w-full px-3 py-1"
+                      className=" flex items-center justify-between font-sans font-medium text-sm w-full px-3 py-1"
                       onClick={() => toggleMenu(item.label)}
                     >
                       <div className="flex items-center gap-2 ">

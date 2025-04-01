@@ -26,7 +26,7 @@ import GpFilter from '@/components/component/GpFilter';
 
 const mockdata = [
     { title: 'Create', icon: IconCreditCard, color: 'violet', component: <AddUser /> },
-    { title: 'Filter', icon: IconBuildingBank, color: 'indigo', component: <GpFilter /> },
+    // { title: 'Filter', icon: IconBuildingBank, color: 'indigo', component: <GpFilter /> },
     { title: 'Update Status', icon: IconRepeat, color: 'blue', component: <GPUserBan /> },
     { title: 'Get Detail', icon: IconReceiptRefund, color: 'green', component: <GPUser /> },
     { title: 'Change Role', icon: IconReceipt, color: 'teal', component: <GPRoleUser /> },
