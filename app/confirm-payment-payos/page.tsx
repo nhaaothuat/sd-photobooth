@@ -20,13 +20,18 @@ const PaymentConfirm = () => {
         try {
           const response = await AxiosAPI.post<{ orderCode: string }>(
             `/api/Session/${orderCode}`,
-            { orderCode }
+            { orderCode } // orderCode là string
           );
-
+console.log("Thông tin phiên:", response.data?.orderCode); // Log thông tin phiên để kiểm tra
           if (response.status === 200 || response.status === 201) {
             setMessage("Thanh toán thành công!");
             console.log("Thông tin phiên:", response.data);
             setSessionData(response.data); // Lưu thông tin session để hiển thị
+
+            // Chờ 3 giây rồi chuyển hướng đến /success
+            setTimeout(() => {
+              router.replace("/success");
+            }, 3000);
           } else {
             setMessage("Lỗi khi xác nhận thanh toán.");
             setTimeout(() => router.replace("/failed"), 3000);
