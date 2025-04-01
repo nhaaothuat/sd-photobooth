@@ -18,9 +18,9 @@ const PaymentConfirm = () => {
     const confirmPayment = async () => {
       if (status === "SUCCESS" && orderCode) {
         try {
-          const response = await AxiosAPI.post(`/api/Session/${orderCode}`, {
+          const response = await AxiosAPI.post(`/api/Session/${orderCode}`, 
             orderCode,
-          });
+          );
 
           if (response.status === 200 || response.status === 201) {
             setMessage("Thanh toán thành công!");
