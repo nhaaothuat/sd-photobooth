@@ -18,7 +18,7 @@ const PaymentConfirm = () => {
     console.log("status", status);
     console.log("cancel", cancel);
     const confirmPayment = async () => {
-      if (status === "SUCCESS" && orderCode) {
+      if (status === "PAID" && orderCode) {
         try {
           const response = await AxiosAPI.post(`/api/Session/${orderCode}`, 
             orderCode,
