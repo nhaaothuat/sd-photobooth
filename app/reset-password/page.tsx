@@ -43,10 +43,10 @@ const ResetPasswordPage = () => {
         token,
         newPassword: password,
       });
-console.log(res)
+      console.log(res)
       if (res.status === 200) {
         toast.success("Password updated successfully!");
-        router.replace("/"); // Chuyển hướng về trang đăng nhập
+        router.replace("/"); 
       } else {
         toast.error("Failed to update password.");
       }

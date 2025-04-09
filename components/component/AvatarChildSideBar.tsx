@@ -1,33 +1,51 @@
-import React from 'react'
+"use client"
+import React, { useCallback, useEffect, useState } from 'react'
 import { signOut, useSession } from "next-auth/react";
 
 import { CiLogout } from "react-icons/ci";
 
-import { Menu, Text, Modal,ScrollArea } from '@mantine/core';
-import {
-     IconSettings,
-     IconSearch,
-     IconPhoto,
-     IconMessageCircle,
-     IconTrash,
-     IconArrowsLeftRight,
-} from '@tabler/icons-react';
+import { Menu, Text, Modal, ScrollArea } from '@mantine/core';
+// import {
+//      IconSettings,
+//      IconSearch,
+//      IconPhoto,
+//      IconMessageCircle,
+//      IconTrash,
+//      IconArrowsLeftRight,
+// } from '@tabler/icons-react';
 import { useRouter } from "next/navigation";
 
 import ChildSideBar from './ChildSideBar';
 import Cookies from "js-cookie";
 
-import { Avatar, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ChevronsUpDown } from 'lucide-react';
 import { SidebarMenuButton } from '../ui/sidebar';
 
 import { useDisclosure } from '@mantine/hooks';
-
+import AxiosAPI from '@/configs/axios';
+interface User {
+     avatar: string | null;
+}
 
 const AvatarChildSideBar = () => {
      const [opened, { open, close }] = useDisclosure(false);
      const { data: session } = useSession();
      const router = useRouter();
+     const [user, setUser] = useState<User | null>(null);
+
+     const fetchUsers = useCallback(async () => {
+          try {
+               const response = await AxiosAPI.get<User>("/api/Identity/profile");
+               setUser(response.data);
+          } catch (err) {
+               console.error("Lỗi API:", err);
+          }
+     }, []);
+
+     useEffect(() => {
+          fetchUsers();
+     }, [fetchUsers]);
 
      const handleLogout = async () => {
           Cookies.remove("AccessToken");
@@ -40,10 +58,13 @@ const AvatarChildSideBar = () => {
                <Menu shadow="md" width={"200px"}  >
                     <Menu.Target  >
                          <SidebarMenuButton size="lg" className='flex items-center mx-2 cursor-pointer  '>
-                              <Avatar >
-                                   <AvatarImage src="https://github.com/shadcn.png" />
+                              {user && (
+                                   <Avatar >
+                                        <AvatarImage src={user.avatar || undefined} />
+                                        <AvatarFallback>CN</AvatarFallback>
+                                   </Avatar>
+                              )}
 
-                              </Avatar>
 
 
                               <div className="grid flex-1 text-left text-sm leading-tight mr-2">
@@ -90,7 +111,7 @@ const AvatarChildSideBar = () => {
 
                     </Menu.Dropdown>
                </Menu>
-               <Modal opened={opened} onClose={close} size="xl" fullScreen  title="Settings" centered >
+               <Modal opened={opened} onClose={close} size="xl" fullScreen title="Settings" centered >
                     <ChildSideBar />
                </Modal>
 

@@ -14,9 +14,7 @@ const PaymentConfirm = () => {
     const orderCode = searchParams.get("orderCode");
     const status = searchParams.get("status");
     const cancel = searchParams.get("cancel");
-    console.log("orderCode", orderCode);
-    console.log("status", status);
-    console.log("cancel", cancel);
+    
     const confirmPayment = async () => {
       if (status === "PAID" && orderCode) {
         try {
@@ -29,16 +27,16 @@ const PaymentConfirm = () => {
             setSessionData(response.data as any);
           } else {
             setMessage("Lỗi khi xác nhận thanh toán.");
-            setTimeout(() => router.replace("/fail"), 3000);
+            setTimeout(() => router.replace("/failed"), 3000);
           }
         } catch (error) {
           console.error("Lỗi khi gọi API:", error);
           setMessage("Có lỗi xảy ra trong quá trình xác nhận.");
-          setTimeout(() => router.replace("/fail"), 3000);
+          setTimeout(() => router.replace("/failed"), 3000);
         }
       } else if (cancel === "true" || status === "CANCELLED") {
         setMessage("Thanh toán thất bại hoặc bị hủy.");
-        setTimeout(() => router.replace("/fail"), 3000);
+        setTimeout(() => router.replace("/failed"), 3000);
       }
     };
 

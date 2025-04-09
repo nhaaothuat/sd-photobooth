@@ -1,6 +1,6 @@
 import { CustomAxiosResponse } from "@/types/axios-response";
 import handleAxiosError from "@/utils/handle-axios-error";
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import Cookies from "js-cookie";
 
 
@@ -10,6 +10,8 @@ const instance = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+
 
 instance.interceptors.request.use((config) => {
   const token = Cookies.get("AccessToken");
@@ -33,34 +35,58 @@ instance.interceptors.response.use(
   }
 );
 
+
 const AxiosAPI = {
-  get: async <T>(url: string): Promise<CustomAxiosResponse<T>> => {
+  get: async <T>(url: string, config?: AxiosRequestConfig): Promise<CustomAxiosResponse<T>> => {
     try {
-      const response = await instance.get<T>(url);
+      const response = await instance.get<T>(url, config);
       return response;
     } catch (error) {
       return handleAxiosError<T>(error);
     }
   },
-  post: async <T>(url: string, data: T): Promise<CustomAxiosResponse<T>> => {
+  post: async <T>(
+    url: string,
+    data: T,
+    config?: AxiosRequestConfig
+  ): Promise<CustomAxiosResponse<T>> => {
     try {
-      const response = await instance.post<T>(url, data);
+      const response = await instance.post<T>(url, data, config);
       return response;
     } catch (error) {
       return handleAxiosError<T>(error);
     }
   },
-  put: async <T>(url: string, data: T): Promise<CustomAxiosResponse<T>> => {
+  put: async <T>(
+    url: string,
+    data: T,
+    config?: AxiosRequestConfig
+  ): Promise<CustomAxiosResponse<T>> => {
     try {
-      const response = await instance.put<T>(url, data);
+      const response = await instance.put<T>(url, data, config);
       return response;
     } catch (error) {
       return handleAxiosError<T>(error);
     }
   },
-  delete: async <T>(url: string): Promise<CustomAxiosResponse<T>> => {
+  delete: async <T>(
+    url: string,
+    config?: AxiosRequestConfig
+  ): Promise<CustomAxiosResponse<T>> => {
     try {
-      const response = await instance.delete<T>(url);
+      const response = await instance.delete<T>(url, config);
+      return response;
+    } catch (error) {
+      return handleAxiosError<T>(error);
+    }
+  },
+  patch: async <T>(
+    url: string,
+    data: T,
+    config?: AxiosRequestConfig
+  ): Promise<CustomAxiosResponse<T>> => {
+    try {
+      const response = await instance.patch<T>(url, data, config);
       return response;
     } catch (error) {
       return handleAxiosError<T>(error);

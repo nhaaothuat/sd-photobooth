@@ -18,120 +18,85 @@ import { Button } from '@/components/ui/button';
 import { Pencil } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import AxiosAPI from '@/configs/axios';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 
-interface User {
-     id: string;
-     fullName: string | null;
-     userName: string;
-     email: string;
-     phoneNumber: string;
-     gender: number;
-     birthDate: string | null;
-}
 
 const GeneralPage = () => {
-     const { data: session } = useSession();
-     const [user, setUser] = useState<User | null>(null);
 
-     const fetchUsers = async () => {
-          try {
-               const response = await AxiosAPI.get<User>("/api/Identity/profile");
-               setUser(response.data);
-          } catch (err) {
-               console.error("Lỗi API:", err);
-          }
-     };
-
-     useEffect(() => {
-          fetchUsers();
-     }, []);
      return (
-          <Card>
-               <CardHeader>
-                    <CardTitle>Profile</CardTitle>
-
-
-               </CardHeader>
-               <CardContent>
-                    {
-                         user && (
-                              <>
-                                   <Card className='flex items-center justify-between p-5'>
-
-
-
-                                        <div className='flex items-center gap-3'>
-
-                                             <Avatar className="w-20 h-20">
-                                                  <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                                                  <AvatarFallback>CN</AvatarFallback>
-                                             </Avatar>
-
-
-                                             <div>
-                                                  <Text className='font-sans font-semibold'> {session?.user?.name}</Text>
-                                                  <Text className='font-sans font-normal text-slate-400'> {session?.user?.role} | {user.email}</Text>
-                                             </div>
-
-                                        </div>
-
-
-                                        <Button variant="outline" size={"lg"} className="flex items-center  ">
-                                             <Pencil className="w-10 h-10" />
-
-                                        </Button>
-
-
-                                   </Card>
-
-                                   <Card className=' my-5'>
-
-                                        <CardHeader>
-                                             <CardTitle>Personal Information</CardTitle>
-
-
-                                        </CardHeader>
-                                        <CardContent>
-                                             <div className='flex items-end justify-between '>
-                                                  <div className='flex items-center  gap-20'>
-                                                       <div>
-                                                            <Text className='font-sans font-semibold text-gray-500' size="lg">Full Name</Text>
-                                                            <Text className='font-sans font-medium' size="sm">{user.fullName || "N/A"}</Text>
-                                                       </div>
-
-                                                       <div>
-                                                            <Text className='font-sans font-semibold text-gray-500' size="lg">Phone Number</Text>
-                                                            <Text className='font-sans font-medium' size="sm">{user.phoneNumber || "N/A"}</Text>
-                                                       </div>
-                                                  </div>
-
-
-
-
-                                             </div>
-                                             <div className='py-10'>
-                                                  <Text className='font-sans font-semibold text-gray-500' size="lg">Gender</Text>
-                                                  <Text className='font-sans font-medium' size="sm"> {user.gender === 0 ? "Nam" : user.gender === 1 ? "Nữ" : "Other"}</Text>
-                                             </div>
-                                             <div className='pt-2'>
-                                                  <Text className='font-sans font-semibold text-gray-500' size="lg">Birth Date</Text>
-                                                  <Text className='font-sans font-medium' size="sm">{user.birthDate || "N/A"}</Text>
-                                             </div>
-
-                                        </CardContent>
-
-
-
-
-                                   </Card>
-                              </>
-                         )
-                    }
-
-
-               </CardContent>
-          </Card>
+          <div className='flex   flex-col-2 gap-4'>
+               <Card className="w-[350px]">
+                    <CardHeader>
+                         <CardTitle>Change Password</CardTitle>
+                         <CardDescription>Deploy your new project in one-click.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                         <form>
+                              <div className="grid w-full items-center gap-4">
+                                   <div className="flex flex-col space-y-1.5">
+                                        <Label htmlFor="name">Name</Label>
+                                        <Input id="name" placeholder="Name of your project" />
+                                   </div>
+                                   <div className="flex flex-col space-y-1.5">
+                                        <Label htmlFor="framework">Framework</Label>
+                                        <Select>
+                                             <SelectTrigger id="framework">
+                                                  <SelectValue placeholder="Select" />
+                                             </SelectTrigger>
+                                             <SelectContent position="popper">
+                                                  <SelectItem value="next">Next.js</SelectItem>
+                                                  <SelectItem value="sveltekit">SvelteKit</SelectItem>
+                                                  <SelectItem value="astro">Astro</SelectItem>
+                                                  <SelectItem value="nuxt">Nuxt.js</SelectItem>
+                                             </SelectContent>
+                                        </Select>
+                                   </div>
+                              </div>
+                         </form>
+                    </CardContent>
+                    <CardFooter className="flex justify-between">
+                         <Button variant="outline">Cancel</Button>
+                         <Button>Deploy</Button>
+                    </CardFooter>
+               </Card>
+               <Card className="w-[350px]">
+                    <CardHeader>
+                         <CardTitle>Create project</CardTitle>
+                         <CardDescription>Deploy your new project in one-click.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                         <form>
+                              <div className="grid w-full items-center gap-4">
+                                   <div className="flex flex-col space-y-1.5">
+                                        <Label htmlFor="name">Name</Label>
+                                        <Input id="name" placeholder="Name of your project" />
+                                   </div>
+                                   <div className="flex flex-col space-y-1.5">
+                                        <Label htmlFor="framework">Framework</Label>
+                                        <Select>
+                                             <SelectTrigger id="framework">
+                                                  <SelectValue placeholder="Select" />
+                                             </SelectTrigger>
+                                             <SelectContent position="popper">
+                                                  <SelectItem value="next">Next.js</SelectItem>
+                                                  <SelectItem value="sveltekit">SvelteKit</SelectItem>
+                                                  <SelectItem value="astro">Astro</SelectItem>
+                                                  <SelectItem value="nuxt">Nuxt.js</SelectItem>
+                                             </SelectContent>
+                                        </Select>
+                                   </div>
+                              </div>
+                         </form>
+                    </CardContent>
+                    <CardFooter className="flex justify-between">
+                         <Button variant="outline">Cancel</Button>
+                         <Button>Deploy</Button>
+                    </CardFooter>
+               </Card>
+          </div>
      )
 }
 

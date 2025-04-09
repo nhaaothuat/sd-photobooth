@@ -16,7 +16,7 @@ import AxiosAPI from "@/configs/axios";
 
 interface GPPhotoStyleProps {
   id: number;
-  photoStyleData?: { name: string; description: string; imageUrl: string };
+  photoStyleData?: { name: string; description: string; imageUrl: string,promt:string,negativePrompt:string };
   onUpdateSuccess: () => void;
 }
 
@@ -74,6 +74,10 @@ const GPPhotoStyle: React.FC<GPPhotoStyleProps> = ({ id, photoStyleData, onUpdat
               <Label htmlFor="description">Mô tả</Label>
               <Input id="description" placeholder="Nhập mô tả" value={formData.description} onChange={handleChange} required />
             </div>
+            {/* <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="promt">Promt</Label>
+              <Input id="promt" placeholder="Nhập mô tả" value={formData.} onChange={handleChange} required />
+            </div> */}
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="imageUrl">URL hình ảnh</Label>
               <Input id="imageUrl" placeholder="Nhập URL hình ảnh" value={formData.imageUrl} onChange={handleChange} required />

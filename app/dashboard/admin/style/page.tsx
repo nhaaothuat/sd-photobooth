@@ -20,7 +20,9 @@ import IDPhotoStyle from "@/components/component/IDPhotoStyle";
 interface PhotoStyle {
   id: number;
   name: string;
-  description: string;
+  // description: string;
+  negativePrompt: string;
+  prompt:string
   imageUrl: string;
   createdAt: string;
 }
@@ -95,7 +97,9 @@ const PhotoStyle = () => {
             <Table.Tr>
               <Table.Th>ID</Table.Th>
               <Table.Th>Name</Table.Th>
-              <Table.Th>Description</Table.Th>
+              <Table.Th>Prompt</Table.Th>
+              <Table.Th>NegativePrompt</Table.Th>
+             
               <Table.Th>Image</Table.Th>
               <Table.Th>Created At</Table.Th>
               <Table.Th>Action</Table.Th>
@@ -110,8 +114,12 @@ const PhotoStyle = () => {
                     <Text fz="sm" fw={500}>{style.name}</Text>
                   </Table.Td>
                   <Table.Td>
-                    <Text fz="xs" c="dimmed">{style.description}</Text>
+                    <Text fz="sm" fw={500}>{style.prompt}</Text>
                   </Table.Td>
+                  <Table.Td>
+                    <Text fz="xs" c="dimmed">{style.negativePrompt}</Text>
+                  </Table.Td>
+                  
                   <Table.Td>
                     <Image src={style.imageUrl} alt={style.name} width={50} height={50} radius="md" />
                   </Table.Td>
@@ -119,7 +127,7 @@ const PhotoStyle = () => {
                   <Table.Td >
                     <Group gap="sm">
                       <DeletePayment id={style.id} onDelete={handleDelete} />
-                      <GPPhotoStyle id={style.id} photoStyleData={style} onUpdateSuccess={fetchPhotoStyles} />
+                      {/* <GPPhotoStyle id={style.id} photoStyleData={style} onUpdateSuccess={fetchPhotoStyles} /> */}
                       <IDPhotoStyle id={style.id} />
                     </Group>
 

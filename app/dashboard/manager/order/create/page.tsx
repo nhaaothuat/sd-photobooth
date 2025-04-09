@@ -85,7 +85,7 @@ const Order = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await AxiosAPI.post("api/Order", formData);
+      const response = await AxiosAPI.post("api/Order/dashboard", formData);
       const data = response.data as unknown as OrderResponse;
       if (data.paymentLink) {
         setPaymentLink(data.paymentLink);
