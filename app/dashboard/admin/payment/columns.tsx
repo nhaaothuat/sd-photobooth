@@ -1,52 +1,50 @@
-import DeleteSticker from "@/components/component/DeleteSticker";
-import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Sticker } from "@/types/type";
-import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
-import Image from "next/image";
+import DeleteSticker from "@/components/component/DeleteSticker"
+import { Button } from "@/components/ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { PaymentMethod } from "@/types/type"
+import { ColumnDef } from "@tanstack/react-table"
+import { MoreHorizontal } from "lucide-react"
 
 const DateCell = ({ value }: { value: string }) => {
      const date = new Date(value)
      return <div>{date.toLocaleDateString()}</div>
 }
 
-export const columns: ColumnDef<Sticker>[] = [
+export const columns: ColumnDef<PaymentMethod>[] = [
      {
           accessorKey: "id",
           header: () => <div className="text-center">ID</div>,
           cell: ({ row }) => <div className="text-center">{row.getValue("id")}</div>,
      },
      {
-          accessorKey: "name",
-          header: "Name",
-          cell: ({ row }) => <div>{row.getValue("name")}</div>,
+          accessorKey: "methodName",
+          header: () => <div className="text-center">Method Name</div>,
+          cell: ({ row }) => <div className="text-center">{row.getValue("methodName")}</div>
      },
      {
-          accessorKey: "stickerStyleName",
-          header: "Style",
-          cell: ({ row }) => <div>{row.getValue("stickerStyleName")}</div>,
+          accessorKey: "description",
+          header: () => <div className="text-center">Description</div>,
+          cell: ({ row }) => <div className="text-center">{row.getValue("description")}</div>
      },
      {
-          accessorKey: "stickerUrl",
-          header: "Image",
-          cell: ({ row }) => <Image
-               src={row.getValue("stickerUrl")}
-               alt="Sticker"
-               width={50}
-               height={50}
-               className="rounded-md"
-          />,
+          accessorKey: "isActive",
+          header: () => <div className="text-center">Is Active</div>,
+          cell: ({ row }) => <div className="text-center">{row.getValue("isActive") ? "Yes" : "No"}</div>
+     },
+     {
+          accessorKey: "isOnline",
+          header: () => <div className="text-center">Is Online</div>,
+          cell: ({ row }) => <div className="text-center">{row.getValue("isOnline") ? "Yes" : "No"}</div>
+     },
+     {
+          accessorKey: "forMobile",
+          header: () => <div className="text-center">For Mobile</div>,
+          cell: ({ row }) => <div className="text-center">{row.getValue("forMobile") ? "Yes" : "No"}</div>
      },
      {
           accessorKey: "createdAt",
-          header: "Created At",
-          cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />,
-     },
-     {
-          accessorKey: "lastModified",
-          header: "Last Modified",
-          cell: ({ row }) => <DateCell value={row.getValue("lastModified")} />,
+          header: () => <div className="text-center">Created At</div>,
+          cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />
      },
      {
           id: "actions",
@@ -57,7 +55,7 @@ export const columns: ColumnDef<Sticker>[] = [
                     <DropdownMenu>
                          <DropdownMenuTrigger asChild>
                               <Button variant="ghost" className="h-8 w-8 p-0">
-                                  
+
                                    <MoreHorizontal />
                               </Button>
                          </DropdownMenuTrigger>
@@ -69,17 +67,17 @@ export const columns: ColumnDef<Sticker>[] = [
                               <DropdownMenuSeparator />
                               {/* <DropdownMenuItem>View details</DropdownMenuItem>
                               <DropdownMenuItem>Edit sticker</DropdownMenuItem> */}
-                              
+
                               <DeleteSticker />
                               {/* <DropdownMenuSeparator /> */}
                               <DeleteSticker />
                               {/* <DropdownMenuSeparator /> */}
                               <DeleteSticker />
-                              
-                             
+
+
                          </DropdownMenuContent>
                     </DropdownMenu>
                );
-          },
-     },
-];
+          }
+     }
+]

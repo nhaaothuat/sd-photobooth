@@ -61,9 +61,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           }
           
           const cookieStore = await cookies();
+          const decodedToken = jwtDecode<DecodedJWT>(res.data.token);
+
+          const role = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || "guest";
+          if (role !== "Staff" && role !== "Admin" && role !== "Manager") {
+            throw new Error("Invalid token");
+          }
+
           cookieStore.set("AccessToken", res.data.token, { path: "/" });
           
-          const decodedToken = jwtDecode<DecodedJWT>(res.data.token );
           return {
             id: decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"] || "",
             name: decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"] || "",

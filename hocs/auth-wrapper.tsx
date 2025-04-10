@@ -16,7 +16,7 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
-  const publicRoutes = [ "/","/forget-password","/reset-password","/confirm-payment-payos", "/success", "/failed"];
+  const publicRoutes = [ "/","/forget-password","/reset-password","/confirm-payment-payos", "/success", "/failed","/privacy","/about"];
 
   
 
