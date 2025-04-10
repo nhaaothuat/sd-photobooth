@@ -53,7 +53,7 @@ export const columns: ColumnDef<TypeSession>[] = [
           accessorKey: "createdAt",
           header: () => <div className="text-center">Created At</div>,
           cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />
-     }
+     },
      {
           id: "actions",
           enableHiding: false,
