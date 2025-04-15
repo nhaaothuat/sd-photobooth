@@ -11,6 +11,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import DeletePayment from "@/components/component/DeletePayment"
+import ViewDetailBooth from "@/components/component/IDBooth"
 
 const StatusCell = ({ value }: { value: boolean }) => (
   <div className="capitalize">{value ? "Active" : "Inactive"}</div>
@@ -21,60 +23,73 @@ const DateCell = ({ value }: { value: string }) => {
   return <div>{date.toLocaleDateString()}</div>
 }
 
-export const columns: ColumnDef<Booth>[] = [
-  {
-    accessorKey: "id",
-    header: () => <div className="text-center">ID</div>,
-    cell: ({ row }) => <div className="text-center">{row.getValue("id")}</div>,
-  },
-  {
-    accessorKey: "boothName",
-    header: "Booth Name",
-    cell: ({ row }) => <div>{row.getValue("boothName")}</div>,
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => <StatusCell value={row.getValue("status")} />,
-  },
-  {
-    accessorKey: "createdAt",
-    header: "Created At",
-    cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />,
-  },
-  {
-    accessorKey: "location.locationName",
-    header: "Location Name",
-    cell: ({ row }) => <div>{row.original.location.locationName}</div>,
-  },
-  {
-    accessorKey: "location.address",
-    header: "Address",
-    cell: ({ row }) => <div>{row.original.location.address}</div>,
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const booth = row.original
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(booth.id.toString())}>
-              Copy booth ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
+export const columns = (
+  onDelete: (id: number) => Promise<void>,
+  refetchData: () => void,
+): ColumnDef<Booth>[] => [
+    {
+      accessorKey: "id",
+      header: () => <div className="text-center">ID</div>,
+      cell: ({ row }) => <div className="text-center">{row.getValue("id")}</div>,
     },
-  },
-]
+    {
+      accessorKey: "boothName",
+      header: "Booth Name",
+      cell: ({ row }) => <div>{row.getValue("boothName")}</div>,
+    },
+    
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => <StatusCell value={row.getValue("status")} />,
+    },
+    {
+      accessorKey: "createdAt",
+      header: "Created At",
+      cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />,
+    },
+    {
+      accessorKey: "location.locationName",
+      header: "Location Name",
+      cell: ({ row }) => <div>{row.original.location.locationName}</div>,
+    },
+    {
+      accessorKey: "location.address",
+      header: "Address",
+      cell: ({ row }) => <div>{row.original.location.address}</div>,
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const id = row.original.id
+        const booth = row.original
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => navigator.clipboard.writeText(booth.id.toString())}>
+                Copy booth ID
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+
+              <DropdownMenuItem asChild>
+                <DeletePayment id={id} onDelete={onDelete} />
+              </DropdownMenuItem>
+
+              <DropdownMenuItem asChild>
+                <ViewDetailBooth id={id} />
+              </DropdownMenuItem>
+
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )
+      },
+    },
+  ]

@@ -1,29 +1,55 @@
-import React, { useState, useCallback, useEffect } from "react";
+"use client";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "react-toastify";
 import AxiosAPI from "@/configs/axios";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "react-toastify";
+import { Upload, Smartphone, Image, PlusCircle } from "lucide-react";
+import { Location } from "@/types/type";
 
 const boothSchema = z.object({
-  boothName: z.string().min(1, "Tên gian hàng là bắt buộc").max(100, "Tên gian hàng tối đa 100 ký tự"),
-  description: z.string().max(500, "Mô tả tối đa 500 ký tự").optional(),
-  status: z.boolean(),
+  boothName: z.string().min(1, "Name is required"),
+  locationId: z.string().min(1, "FrameStyleId is required"),
+  description: z.string().min(1, "Description is required"),
+  status: z.boolean().optional(),
+ 
 });
 
-interface BoothForm {
-  locationId: number;
-}
+type BoothFormData = z.infer<typeof boothSchema>;
 
-const AddBooth: React.FC = () => {
+const  AddBooth = ({ onSuccess }: { onSuccess: () => void }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [locations, setLocations] = useState<{ id: number; locationName: string }[]>([]);
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [loadingLocations, setLoadingLocations] = useState(true);
+
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const res = await AxiosAPI.get("/api/Location");
+        setLocations(res.data as Location[]);
+      } catch (error) {
+        console.error("Failed to fetch locations", error);
+      } finally {
+        setLoadingLocations(false);
+      }
+    };
+    fetchLocations();
+  }, []);
 
   const {
     register,
@@ -31,99 +57,109 @@ const AddBooth: React.FC = () => {
     setValue,
     watch,
     formState: { errors },
-  } = useForm<BoothForm & z.infer<typeof boothSchema>>({
+    reset,
+  } = useForm<BoothFormData>({
     resolver: zodResolver(boothSchema),
-    mode:"onChange",
+    mode: "onChange",
     defaultValues: {
-      locationId: 0,
       boothName: "",
+      locationId: "",
       description: "",
       status: true,
     },
   });
 
-  // Fetch danh sách location từ API
-  useEffect(() => {
-    AxiosAPI.get("api/Location")
-      .then((res) => setLocations(res.data as { id: number; locationName: string }[])) // Ép kiểu
-      .catch((err) => console.error("Error fetching locations:", err));
-  }, []);
+  const status = watch("status");
 
-  const handleSelectLocation = useCallback((value: string) => {
-    setValue("locationId", Number(value));
-  }, [setValue]);
-
-  const handleToggle = useCallback((checked: boolean) => {
-    setValue("status", checked);
-  }, [setValue]);
-
-  const onSubmit = async (data: BoothForm & z.infer<typeof boothSchema>) => {
-    if (loading) return;
-    setLoading(true);
-
+  const onSubmit = async (data: BoothFormData) => {
     try {
-      await AxiosAPI.post("api/Booth", data);
-      toast.success("Thêm gian hàng thành công!");
-    } catch (error) {
-      console.error("Create Error:", error);
-      toast.error("Thêm gian hàng thất bại.");
+      setLoading(true);
+      await AxiosAPI.post("/api/Booth", {
+        locationId: Number(data.locationId),
+        boothName: data.boothName,
+        description: data.description,
+        status: data.status ?? true,
+      });
+      toast.success("Booth added successfully!");
+      reset();
+      setIsOpen(false);
+      onSuccess();
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err?.response?.data?.message || "Error while adding location");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Card className="w-full shadow-none border-none max-h-[450px] overflow-y-auto">
-      <CardHeader>
-        <CardTitle>Thêm gian hàng</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Select Location */}
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <DialogTrigger asChild>
+      <Button variant="outline"><PlusCircle className="mr-2 h-4 w-4" /> Add Booth</Button>
+    </DialogTrigger>
+    <DialogContent className="sm:max-w-[500px]">
+      <DialogHeader>
+        <DialogTitle>Add Location</DialogTitle>
+        <DialogDescription>Enter location info</DialogDescription>
+      </DialogHeader>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="grid gap-4">
           <div className="flex flex-col space-y-1.5">
-            <Label htmlFor="locationId">Chọn địa điểm</Label>
-            <Select onValueChange={handleSelectLocation} value={String(watch("locationId"))}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Chọn địa điểm" />
-              </SelectTrigger>
-              <SelectContent>
-                {locations.map((loc) => (
-                  <SelectItem key={loc.id} value={String(loc.id)}>
-                    {loc.locationName}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label htmlFor="boothName">Booth Name</Label>
+            <Input id="boothName" {...register("boothName")} />
+            {errors.boothName && <p className="text-sm text-red-500">{errors.boothName.message}</p>}
           </div>
 
-          {/* Booth Name & Description */}
           <div className="flex flex-col space-y-1.5">
-            <Label htmlFor="boothName">Tên gian hàng</Label>
-            <Input id="boothName" placeholder="Nhập tên gian hàng" {...register("boothName")} />
-            {errors.boothName && <p className="text-red-500 text-sm">{errors.boothName.message}</p>}
-          </div>
-          <div className="flex flex-col space-y-1.5">
-            <Label htmlFor="description">Mô tả</Label>
-            <Input id="description" placeholder="Nhập mô tả" {...register("description")} />
-            {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
+            <Label htmlFor="locationId">Location</Label>
+            <select
+              id="locationId"
+              {...register("locationId")}
+              className="border border-input bg-background px-3 py-2 rounded-md text-sm"
+              defaultValue=""
+            >
+              <option value="" disabled>
+                {loadingLocations ? "Loading..." : "Select location"}
+              </option>
+              {locations.map((loc) => (
+                <option key={loc.id} value={loc.id}>
+                  {loc.locationName}
+                </option>
+              ))}
+            </select>
+            {errors.locationId && (
+              <p className="text-sm text-red-500">{errors.locationId.message}</p>
+            )}
           </div>
 
-          {/* Status Toggle */}
+          <div className="flex flex-col space-y-1.5">
+            <Label htmlFor="description">Description</Label>
+            <Input id="description" {...register("description")} />
+            {errors.description && <p className="text-sm text-red-500">{errors.description.message}</p>}
+          </div>
+
           <div className="flex items-center space-x-4 rounded-md border p-4">
+            <Smartphone />
             <div className="flex-1 space-y-1">
-              <p className="text-sm font-medium leading-none">Trạng thái</p>
-              <p className="text-sm text-muted-foreground">Bật hoặc tắt gian hàng.</p>
+              <p className="text-sm font-medium">Status</p>
+              <p className="text-sm text-muted-foreground">Enable or disable this location</p>
             </div>
-            <Switch id="status" checked={watch("status")} onCheckedChange={handleToggle} />
+            <Switch
+              id="status"
+              checked={status}
+              onCheckedChange={(checked) => setValue("status", checked)}
+            />
           </div>
+        </div>
 
-          {/* Submit Button */}
-          <Button type="submit" disabled={loading} className="w-full">
-            {loading ? "Đang lưu..." : "Lưu gian hàng"}
+        <DialogFooter>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Saving..." : "Save Location"}
           </Button>
-        </form>
-      </CardContent>
-    </Card>
+        </DialogFooter>
+      </form>
+    </DialogContent>
+  </Dialog>
   );
 };
 

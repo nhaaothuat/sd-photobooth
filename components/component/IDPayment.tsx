@@ -1,72 +1,62 @@
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import AxiosAPI from "@/configs/axios";
-import { toast } from "react-toastify";
+import { useEffect, useState } from "react"
+import { PaymentMethod } from "@/types/type"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import AxiosAPI from "@/configs/axios"
+import { Loader2 } from "lucide-react"
 
+const ViewDetail = ({ id }: { id: number }) => {
+  const [payment, setPayment] = useState<PaymentMethod | null>(null)
+  const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-interface PaymentMethodDetails {
-  id: number;
-  methodName: string;
-  description: string;
-  isActive: boolean;
-  createdAt: string;
-}
-
-interface IDPaymentMethodProps {
-  id: number;
-}
-
-const IDPaymentMethod: React.FC<IDPaymentMethodProps> = ({ id }) => {
-  const [data, setData] = useState<PaymentMethodDetails | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const fetchDetails = async () => {
-    setLoading(true);
+  const fetchDetail = async () => {
     try {
-      const response = await AxiosAPI.get<PaymentMethodDetails>(`/api/PaymentMethod/${id}`);
-      setData(response.data);
-    } catch (err) {
-      console.error("Error fetching payment method:", err);
-      toast.error("Failed to fetch payment method details");
+      setLoading(true)
+      const response = await AxiosAPI.get<PaymentMethod>(`/api/PaymentMethod/${id}`)
+      setPayment(response.data)
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu chi tiết", error)
+      setPayment(null)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
+
+  useEffect(() => {
+    if (open) fetchDetail()
+  }, [open])
 
   return (
-    <Dialog onOpenChange={(open) => open && fetchDetails()}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">View Details</Button>
+        <Button variant="outline">Xem</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle>Payment Method Details</DialogTitle>
+          <DialogTitle>Chi tiết phương thức thanh toán</DialogTitle>
         </DialogHeader>
+
         {loading ? (
-          <p>Loading...</p>
-        ) : data ? (
-          <div className="space-y-4">
-            <p><strong>Method Name:</strong> {data.methodName}</p>
-            <p><strong>Description:</strong> {data.description}</p>
-            <p>
-              <strong>Status:</strong> 
-              {data.isActive ? " Active ✅" : " Inactive ❌"}
-            </p>
-            <p><strong>Created At:</strong> {new Date(data.createdAt).toLocaleDateString()}</p>
+          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+            <Loader2 className="animate-spin h-4 w-4" /> <span>Đang tải...</span>
+          </div>
+        ) : payment ? (
+          <div className="space-y-2 text-sm">
+            <p><strong>ID:</strong> {payment.id}</p>
+            <p><strong>Method Name:</strong> {payment.methodName}</p>
+            <p><strong>Description:</strong> {payment.description}</p>
+            <p><strong>Is Active:</strong> {payment.isActive ? "Yes" : "No"}</p>
+            <p><strong>Is Online:</strong> {payment.isOnline ? "Yes" : "No"}</p>
+            <p><strong>For Mobile:</strong> {payment.forMobile ? "Yes" : "No"}</p>
+            <p><strong>Created At:</strong> {new Date(payment.createdAt).toLocaleString()}</p>
           </div>
         ) : (
-          <p>No data available</p>
+          <div className="text-sm text-red-500">Không thể tải dữ liệu chi tiết</div>
         )}
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default IDPaymentMethod;
+export default ViewDetail

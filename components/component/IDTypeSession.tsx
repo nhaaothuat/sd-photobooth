@@ -1,72 +1,67 @@
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import AxiosAPI from "@/configs/axios";
-import { toast } from "react-toastify";
+import { useEffect, useState } from "react"
+import { TypeSession } from "@/types/type"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import AxiosAPI from "@/configs/axios"
+import { Loader2 } from "lucide-react"
+import Image from "next/image"
 
-interface TypeSessionDetails {
-  id: number;
-  name: string;
-  description: string;
-  duration: number;
-  price: number;
-  isPrinting: boolean;
-  ableTakenNumber: number;
-}
+const ViewDetailTypeSession = ({ id }: { id: number }) => {
+  const [typeSession, setTypeSession] = useState<TypeSession | null>(null)
+  const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-interface IDTypeSessionProps {
-  id: number;
-}
-
-const IDTypeSession: React.FC<IDTypeSessionProps> = ({ id }) => {
-  const [data, setData] = useState<TypeSessionDetails | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const fetchDetails = async () => {
-    setLoading(true);
+  const fetchDetail = async () => {
     try {
-      const response = await AxiosAPI.get<TypeSessionDetails>(`/api/TypeSession/${id}`);
-      setData(response.data);
-    } catch (err) {
-      console.error("Error fetching session:", err);
-      toast.error("Failed to fetch session details");
+      setLoading(true)
+      const response = await AxiosAPI.get<TypeSession>(`/api/TypeSession/${id}`)
+      setTypeSession(response.data)
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu chi tiết", error)
+      setTypeSession(null)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
+
+  useEffect(() => {
+    if (open) fetchDetail()
+  }, [open])
+
 
   return (
-    <Dialog onOpenChange={(open) => open && fetchDetails()}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">View Details</Button>
+        <Button variant="outline">Xem</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle>Type Session Details</DialogTitle>
+          <DialogTitle>Chi tiết phương thức thanh toán</DialogTitle>
         </DialogHeader>
+
         {loading ? (
-          <p>Loading...</p>
-        ) : data ? (
-          <div className="space-y-4">
-            <p><strong>Name:</strong> {data.name}</p>
-            <p><strong>Description:</strong> {data.description}</p>
-            <p><strong>Duration:</strong> {data.duration} minutes</p>
-            <p><strong>Price:</strong> ${data.price}</p>
-            <p><strong>Printing:</strong> {data.isPrinting ? "Enabled ✅" : "Disabled ❌"}</p>
-            <p><strong>Max Participants:</strong> {data.ableTakenNumber}</p>
+          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+            <Loader2 className="animate-spin h-4 w-4" /> <span>Đang tải...</span>
+          </div>
+        ) : typeSession ? (
+          <div className="space-y-2 text-sm">
+            <p><strong>ID:</strong> {typeSession.id}</p>
+            <p><strong>Method Name:</strong> {typeSession.name}</p>
+            
+            
+            <p><strong>Style Name:</strong> {typeSession.description}</p>
+            <p><strong>Slot Count:</strong> {typeSession.duration}</p>
+            <p><strong>Slot Count:</strong> {typeSession.isPrinting ? "Yes" : "No"}</p>
+            <p><strong>Slot Count:</strong> {typeSession.ableTakenNumber}</p>
+            <p><strong>For Mobile:</strong> {typeSession.forMobile ? "Yes" : "No"}</p>
+            <p><strong>Created At:</strong> {new Date(typeSession.createdAt).toLocaleString()}</p>
           </div>
         ) : (
-          <p>No data available</p>
+          <div className="text-sm text-red-500">Không thể tải dữ liệu chi tiết</div>
         )}
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default IDTypeSession;
+export default ViewDetailTypeSession

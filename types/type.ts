@@ -3,10 +3,11 @@ export type Booth = {
   boothName: string;
   status: boolean;
   createdAt: string;
-  location: {
-    locationName: string;
-    address: string;
-  };
+  // location: {
+  //   locationName: string;
+  //   address: string;
+  // };
+  location:Location
 };
 
 export type Coupon = {
@@ -37,11 +38,13 @@ export type Frame = {
   name: string;
   frameUrl: string;
   frameStyleName: string;
+  forMobile: boolean;
   slotCount: number;
   createdAt: string;
   lastModified: string
   createdById: string | null
   lastModifiedById: string | null
+  frameStyleId: number
 };
 
 export type FrameStyle = {
@@ -97,7 +100,7 @@ export type StickerStyle = {
   lastModified: string
   createdById: string
   lastModifiedById: string
-  stickers: Sticker[]
+ 
 }
 
 
@@ -117,6 +120,7 @@ export type TypeSession = {
   description: string
   duration: number
   price: number
+  forMobile: boolean
   isPrinting: boolean
   ableTakenNumber: number
   createdAt: string
@@ -127,8 +131,8 @@ export type TypeSession = {
 
 export type PaymentMethod = {
   id: number
-  methodName: string
-  description: string
+  methodName: string 
+  description: string 
   isActive: boolean
   createdAt: string
   lastModified: string
@@ -173,4 +177,85 @@ export type PhotoStyle = {
   isDeleted: boolean;
   createdById: string;
   lastModifiedById: string;
+};
+
+export type Product = {
+  id: number;
+  name: string;
+  createdAt: string;
+  lastModified: string;
+  createdById: number | null;
+  lastModifiedById: number | null;
+  productId: string;
+  levelMembershipId: number;
+  depositId: number;
+  couponId: number | null;
+  levelMembership: string | null;
+  deposit: any | null;         
+  coupon: string | null;
+  discount: number | null;
+}
+
+export type Transaction = {
+  id: number;
+  paymentId: number;
+  paymentMethodName: string;
+  type: number;
+  amount: number;
+  createdAt: string; 
+  orderId: number;
+  depositId: number | null;
+  description: string | null;
+  accountNumber: string | null;
+  reference: string | null;
+  transactionDateTime: string | null; 
+}
+
+export type User = {
+  id: string;
+  fullName: string | null;
+  userName: string;
+  email: string;
+  phoneNumber: string;
+  gender: number; 
+  birthDate: string ; 
+  avatar: string | null;
+  role:  string; 
+  isBanned: boolean;
+  location: string | null;
+};
+
+export type Order = {
+  id: number;
+  code: number;
+  status: number; 
+  amount: number;
+  email: string;
+  phone: string;
+  createdAt: string; 
+  
+  sessionCode: string;
+  paymentMethodName: string;
+  couponCode: string;
+  locationName: string;
+  boothName: string;
+  typeSessionName: string;
+  user: {
+    id: string;
+    email: string;
+    phoneNumber: string;
+
+  }
+};
+
+export type DepositProduct = {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  amountAdd: number;
+  createdAt: string; 
+  lastModified: string; 
+  
+  productId: string;
 };

@@ -14,16 +14,18 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { BellRing } from "lucide-react";
+import { BellRing, Smartphone, Wifi } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import AxiosAPI from "@/configs/axios";
 import { toast } from "react-toastify";
+import { CirclePlus } from 'lucide-react';
 
-// Define validation schema using zod
 const paymentSchema = z.object({
     methodName: z.string().min(1, "Method Name is required").max(100, "Max length is 100 characters"),
     description: z.string().max(500, "Max length is 500 characters").nullable().optional(),
     isActive: z.boolean(),
+    isOnline: z.boolean().optional(),
+    forMobile: z.boolean().optional(),
 });
 
 type PaymentFormData = z.infer<typeof paymentSchema>;
@@ -36,7 +38,6 @@ const AddPayment: React.FC<AddPaymentProps> = ({ onAddSuccess }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    // React Hook Form setup with Zod validation
     const {
         register,
         handleSubmit,
@@ -46,17 +47,20 @@ const AddPayment: React.FC<AddPaymentProps> = ({ onAddSuccess }) => {
         reset,
     } = useForm<PaymentFormData>({
         resolver: zodResolver(paymentSchema),
-        mode:"onChange",
+        mode: "onChange",
         defaultValues: {
             methodName: "",
             description: "",
             isActive: true,
+            isOnline: true,
+            forMobile: true,
         },
     });
 
     const isActive = watch("isActive");
+    const isOnline = watch("isOnline");
+    const forMobile = watch("forMobile");
 
-    // Submit form
     const onSubmit = async (data: PaymentFormData) => {
         if (loading) return;
         setLoading(true);
@@ -78,7 +82,7 @@ const AddPayment: React.FC<AddPaymentProps> = ({ onAddSuccess }) => {
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline">Add Payment Method</Button>
+                <Button variant="outline"><CirclePlus /></Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
@@ -103,6 +107,8 @@ const AddPayment: React.FC<AddPaymentProps> = ({ onAddSuccess }) => {
                                 <p className="text-sm text-red-500">{errors.description.message}</p>
                             )}
                         </div>
+
+                        {/* isActive */}
                         <div className="flex items-center space-x-4 rounded-md border p-4">
                             <BellRing />
                             <div className="flex-1 space-y-1">
@@ -115,6 +121,38 @@ const AddPayment: React.FC<AddPaymentProps> = ({ onAddSuccess }) => {
                                 id="isActive"
                                 checked={isActive}
                                 onCheckedChange={(checked) => setValue("isActive", checked)}
+                            />
+                        </div>
+
+                        {/* isOnline */}
+                        <div className="flex items-center space-x-4 rounded-md border p-4">
+                            <Wifi />
+                            <div className="flex-1 space-y-1">
+                                <p className="text-sm font-medium leading-none">Online Payment</p>
+                                <p className="text-sm text-muted-foreground">
+                                    This method supports online transactions.
+                                </p>
+                            </div>
+                            <Switch
+                                id="isOnline"
+                                checked={isOnline}
+                                onCheckedChange={(checked) => setValue("isOnline", checked)}
+                            />
+                        </div>
+
+                        {/* forMobile */}
+                        <div className="flex items-center space-x-4 rounded-md border p-4">
+                            <Smartphone />
+                            <div className="flex-1 space-y-1">
+                                <p className="text-sm font-medium leading-none">Mobile Support</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Available on mobile platform.
+                                </p>
+                            </div>
+                            <Switch
+                                id="forMobile"
+                                checked={forMobile}
+                                onCheckedChange={(checked) => setValue("forMobile", checked)}
                             />
                         </div>
                     </div>

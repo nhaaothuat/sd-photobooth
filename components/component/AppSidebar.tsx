@@ -29,7 +29,29 @@ const menuItems: Record<string, MenuItem[]> = {
   "/dashboard/admin": [
     { label: "Admin Dashboard", link: "/dashboard/admin", icon: Bot },
     { label: "Payment Method", link: "/dashboard/admin/payment", icon: Users },
-    {label:"Membership Card", link:"/dashboard/admin/levelmembership", icon: Users},
+    { label: "Level Membership", link: "/dashboard/admin/levelmembership", icon: Users },
+    // { label: "Frame", link: "/dashboard/admin/frame", icon: Bot },
+    {
+      label: "Frame",
+      icon: FileText,
+      subMenu: [
+        { label: "List Frame", link: "/dashboard/admin/frame/list" },
+        { label: "Get by Frame Style", link: "/dashboard/admin/frame/byframe" },
+
+      ],
+    },
+    { label: "Frame Style", link: "/dashboard/admin/frame-style", icon: Bot },
+    // { label: "Sticker", link: "/dashboard/admin/sticker", icon: Bot },
+    {
+      label: "Sticker",
+      icon: FileText,
+      subMenu: [
+        { label: "List Sticker", link: "/dashboard/admin/sticker/list" },
+        { label: "Get by Sticker Style", link: "/dashboard/admin/sticker/bysticker" },
+
+      ],
+    },
+    { label: "Sticker Style", link: "/dashboard/admin/sticker-style", icon: Bot },
     { label: "Type Session", link: "/dashboard/admin/type", icon: Settings },
     {
       label: "User", icon: Settings, subMenu: [{ label: "Test", link: "/dashboard/admin/user/test" },
@@ -41,7 +63,8 @@ const menuItems: Record<string, MenuItem[]> = {
     {
       label: "Settings",
       icon: FileText,
-      subMenu: [{ label: "General", link: "/dashboard/admin/settings/general" },
+      subMenu: [
+        { label: "General", link: "/dashboard/admin/settings/general" },
 
       ],
     },
@@ -50,8 +73,7 @@ const menuItems: Record<string, MenuItem[]> = {
     { label: "Manager Dashboard", link: "/dashboard/manager", icon: Bot },
     { label: "Location", link: "/dashboard/manager/location", icon: Users },
     { label: "Coupon", link: "/dashboard/manager/coupon", icon: FileText },
-    { label: "Frame", link: "/dashboard/manager/frame", icon: Bot },
-    { label: "Sticker", link: "/dashboard/manager/sticker", icon: Bot },
+
     {
       label: "Order",
       icon: FileText,
@@ -62,11 +84,13 @@ const menuItems: Record<string, MenuItem[]> = {
     // { label: "Booth", link: "/dashboard/manager/booth", icon: FileText },
     {
       label: "Booth", icon: FileText, subMenu: [
-      { label: "List Booth", link: "/dashboard/manager/booth/list" },
-      { label: "Create Booth", link: "/dashboard/manager/booth/create" },
+        { label: "Get Booth by Location", link: "/dashboard/manager/booth/bylocation" },
+        { label: "List Booth", link: "/dashboard/manager/booth/list" },
       ],
     },
     { label: "Session", link: "/dashboard/manager/session", icon: FileText },
+    { label: "Deposit Product", link: "/dashboard/manager/deposit-product", icon: FileText },
+    { label: "Transaction", link: "/dashboard/manager/transaction", icon: FileText },
     {
       label: "Settings",
       icon: FileText,

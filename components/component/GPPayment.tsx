@@ -1,112 +1,129 @@
-import React, { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react"
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { BellRing } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
-import { toast } from "react-toastify";
-import AxiosAPI from "@/configs/axios";
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
+import { PaymentMethod } from "@/types/type"
+import AxiosAPI from "@/configs/axios"
+import { toast } from "react-toastify"
+import { BookUser } from 'lucide-react';
+const EditPaymentMethod = ({ id, onUpdated }: { id: number; onUpdated?: () => void }) => {
+  const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [form, setForm] = useState({
+    methodName: "",
+    description: "",
+    isActive: false,
+    isOnline: false,
+    forMobile: false,
+  })
 
-interface GPPaymentProps {
-  id: number;
-  paymentData?: { methodName: string; description: string; isActive: boolean }; // Lấy từ Payment
-  onUpdateSuccess: () => void;
-}
 
-const GPPayment: React.FC<GPPaymentProps> = ({ id, paymentData, onUpdateSuccess }) => {
-  const [formData, setFormData] = useState(paymentData || { methodName: "", description: "", isActive: true });
-  const [loading, setLoading] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-
-  
   useEffect(() => {
-    if (isOpen && paymentData) {
-      setFormData(paymentData);
+    if (!open) return
+
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        const res = await AxiosAPI.get<PaymentMethod>(`/api/PaymentMethod/${id}`)
+        const data = res.data
+        setForm({
+          methodName: data?.methodName || "",
+          description: data?.description || "",
+          isActive: data?.isActive ?? false,
+          isOnline: data?.isOnline ?? false,
+          forMobile: data?.forMobile ?? false,
+        })
+      } catch (err) {
+        toast.error("Lỗi khi lấy thông tin phương thức")
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
     }
-  }, [isOpen, paymentData]);
 
-  
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({ ...prev, [id]: value }));
-  };
+    fetchData()
+  }, [open, id])
 
-  
-  const handleToggle = (checked: boolean) => {
-    setFormData((prev) => ({ ...prev, isActive: checked }));
-  };
-
-  // Cập nhật phương thức thanh toán
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (loading) return;
-    setLoading(true);
-
+  // Handle update
+  const handleUpdate = async () => {
     try {
-      await AxiosAPI.put(`api/PaymentMethod/${id}`, formData);
-      toast.success("Cập nhật phương thức thanh toán thành công!");
-      setIsOpen(false);
-      onUpdateSuccess(); // Cập nhật lại danh sách trên Payment
+      await AxiosAPI.put(`/api/PaymentMethod/${id}`, form)
+      toast.success("Cập nhật thành công!")
+
+      setOpen(false)
+      onUpdated?.()
     } catch (error) {
-      console.error("Update Error:", error);
-      toast.error("Cập nhật thất bại.");
-    } finally {
-      setLoading(false);
+      toast.error("Cập nhật thất bại")
+      console.error(error)
     }
-  };
+  }
+
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Chỉnh sửa</Button>
+        <Button variant="outline"> <BookUser /></Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent role="dialog" aria-modal="false">
         <DialogHeader>
-          <DialogTitle>Chỉnh sửa phương thức thanh toán</DialogTitle>
-          <DialogDescription>Cập nhật thông tin và nhấn lưu.</DialogDescription>
+          <DialogTitle>Sửa phương thức thanh toán</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <div className="grid w-full items-center gap-4">
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="methodName" >
-                Tên phương thức
-              </Label>
-              <Input id="methodName" placeholder="Nhập tên" value={formData.methodName} onChange={handleChange} required />
+
+        {loading ? (
+          <p className="text-muted-foreground text-sm">Đang tải dữ liệu...</p>
+        ) : (
+          <div className="space-y-4">
+            <Input
+              placeholder="Tên phương thức"
+
+              value={form.methodName}
+              onChange={(e) => setForm({ ...form, methodName: e.target.value })}
+            />
+            <Input
+              placeholder="Mô tả"
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+            />
+
+            <div className="flex items-center gap-2">
+              <Checkbox
+                checked={form.isActive}
+                onCheckedChange={(val) => setForm({ ...form, isActive: Boolean(val) })}
+              />
+              <span>Kích hoạt</span>
             </div>
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="description" >
-                Mô tả
-              </Label>
-              <Input id="description" placeholder="Nhập mô tả" value={formData.description} onChange={handleChange} required />
+
+            <div className="flex items-center gap-2">
+              <Checkbox
+                checked={form.isOnline}
+                onCheckedChange={(val) => setForm({ ...form, isOnline: Boolean(val) })}
+              />
+              <span>Trực tuyến</span>
             </div>
-            {/* Status Toggle */}
-            <div className="flex items-center space-x-4 rounded-md border p-4">
-              <BellRing />
-              <div className="flex-1 space-y-1">
-                <p className="text-sm font-medium leading-none">Trạng thái</p>
-                <p className="text-sm text-muted-foreground">Bật hoặc tắt phương thức này.</p>
-              </div>
-              <Switch id="isActive" checked={formData.isActive} onCheckedChange={handleToggle} />
+
+            <div className="flex items-center gap-2">
+              <Checkbox
+                checked={form.forMobile}
+                onCheckedChange={(val) => setForm({ ...form, forMobile: Boolean(val) })}
+              />
+              <span>Dành cho di động</span>
             </div>
-          </div>
-          <DialogFooter>
-            <Button type="submit" disabled={loading}>
-              {loading ? "Đang lưu..." : "Lưu thay đổi"}
+
+            <Button onClick={handleUpdate} className="w-full mt-2">
+              Cập nhật
             </Button>
-          </DialogFooter>
-        </form>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default GPPayment; 
+export default EditPaymentMethod

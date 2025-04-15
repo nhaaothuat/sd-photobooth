@@ -1,152 +1,268 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import {
-  Table,
-  Text,
-  ScrollArea,
-  Group,
-  Image,
-} from "@mantine/core";
-import AxiosAPI from "@/configs/axios";
-import SearchInput from "@/components/component/SearchInput";
-import cx from "clsx";
-import AddPhotoStyle from "@/components/component/AddPhotoStyle";
-import DeleteStyle from "@/components/component/DeleteStyle";
-import DeletePayment from "@/components/component/DeletePayment";
-import { toast } from "react-toastify";
-import GPPhotoStyle from "@/components/component/GPPhotoStyle";
-import IDPhotoStyle from "@/components/component/IDPhotoStyle";
+"use client"
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { columns } from "./columns"
+import type { PhotoStyle } from "@/types/type"
+import AxiosAPI from "@/configs/axios"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { debounce } from 'lodash'
+import { toast } from 'react-toastify'
+import { Label } from '@/components/ui/label'
+import AddFrame from '@/components/component/AddFrame'
 
-interface PhotoStyle {
-  id: number;
-  name: string;
-  // description: string;
-  negativePrompt: string;
-  prompt:string
-  imageUrl: string;
-  createdAt: string;
+const usePhotoStyleData = () => {
+  const [data, setData] = useState<PhotoStyle[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [totalItems, setTotalItems] = useState(0)
+
+  const fetchCount = useCallback(async () => {
+    try {
+      const response = await AxiosAPI.get<number>("/api/PhotoStyle/count")
+      setTotalItems(response.data || 0)
+    } catch (err) {
+      console.error("Failed to fetch total count", err)
+    }
+  }, [])
+
+  const fetchData = useCallback(async (page: number, pageSize: number) => {
+    try {
+      setLoading(true)
+      const response = await AxiosAPI.get<PhotoStyle[]>("/api/PhotoStyle", {
+        params: { PageNumber: page, PageSize: pageSize }
+      })
+      setData(response.data || [])
+      setError(null)
+    } catch (err: any) {
+      setError(err.message || "Failed to fetch data")
+      setData([])
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  const fetchByName = useCallback(async (name: string, page: number, pageSize: number) => {
+    try {
+      setLoading(true)
+      const response = await AxiosAPI.get<PhotoStyle[]>(`/api/PhotoStyle/by-name/${name}`, {
+        params: { PageNumber: page, PageSize: pageSize }
+      })
+      setData(response.data || [])
+      setError(null)
+    } catch (err: any) {
+      setError(err.message || "Failed to fetch by name")
+      setData([])
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  const handleSearch = useMemo(() =>
+    debounce((term: string, page: number, size: number) => {
+      if (term.trim() === "") {
+        fetchData(page, size)
+      } else {
+        fetchByName(term, page, size)
+      }
+    }, 500),
+    [fetchData, fetchByName]
+  )
+
+  useEffect(() => {
+    fetchCount()
+    return () => {
+      handleSearch.cancel()
+    }
+  }, [fetchCount, handleSearch])
+
+  
+  
+
+  return {
+    data,
+    loading,
+    error,
+    totalItems,
+    fetchCount,
+    handleSearch,
+    fetchData,
+  }
 }
 
 const PhotoStyle = () => {
-  const [photoStyles, setPhotoStyles] = useState<PhotoStyle[]>([]);
-  const [search, setSearch] = useState("");
-  const [scrolled, setScrolled] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("")
+  const [pageSize, setPageSize] = useState(5)
+  const [pageIndex, setPageIndex] = useState(0)
 
-  const fetchPhotoStyles = async () => {
+  const {
+    data,
+    loading,
+    error,
+    totalItems,
+    fetchCount,
+    handleSearch,
+    
+  } = usePhotoStyleData()
+  const refetchData = useCallback(() => {
+    handleSearch(searchTerm, pageIndex + 1, pageSize)
+  }, [handleSearch, searchTerm, pageIndex, pageSize])
+  const deleteFrame = useCallback(async (id: number) => {
     try {
-      const response = await AxiosAPI.get<PhotoStyle[]>(
-        "api/PhotoStyle"
-      );
-      setPhotoStyles(response.data ?? []);
-    } catch (err) {
-      console.error("Error fetching photo styles:", err);
+      const res = await AxiosAPI.delete(`/api/PhotoStyle/${id}`)
+
+      if (res.status !== 200) throw new Error("Xóa thất bại")
+
+      toast.success("Đã xóa phương thức thanh toán thành công")
+      fetchCount()
+      if (data.length <= 1 && pageIndex > 0) {
+        setPageIndex(prev => prev - 1)
+      } else {
+        handleSearch(searchTerm, pageIndex + 1, pageSize)
+      }
+    } catch (error) {
+      toast.error("Xóa thất bại")
+      console.error(error)
     }
-  };
+  }, [data.length, fetchCount, handleSearch, pageIndex, pageSize, searchTerm])
+
+  const memoizedColumns = useMemo(() => columns(deleteFrame,refetchData), [deleteFrame,refetchData])
+
+  const table = useReactTable({
+    data,
+    columns: memoizedColumns,
+    pageCount: Math.ceil(totalItems / pageSize),
+    state: {
+      pagination: {
+        pageIndex,
+        pageSize
+      }
+    },
+    manualPagination: true,
+    getCoreRowModel: getCoreRowModel(),
+    onPaginationChange: (updater) => {
+      const newPagination = typeof updater === "function"
+        ? updater({ pageIndex, pageSize })
+        : updater
+      setPageIndex(newPagination.pageIndex)
+      setPageSize(newPagination.pageSize)
+    }
+  })
 
   useEffect(() => {
-    fetchPhotoStyles();
-  }, []);
+    handleSearch(searchTerm, pageIndex + 1, pageSize)
+  }, [searchTerm, pageIndex, pageSize, handleSearch])
 
-  const filteredData = photoStyles.filter((item) =>
-    item.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value)
+    setPageIndex(0)
+  }, [])
 
-  const handleDelete = async (id: number) => {
-
-
-    try {
-      await AxiosAPI.delete(`api/PhotoStyle/${id}`);
-
-      toast.dismiss();
-      toast.success(`Payment method deleted successfully!`)
-      fetchPhotoStyles();
-    } catch (err: any) {
-      console.error("Delete Error:", err);
-      toast.error(err.response?.data?.message || "Something went wrong");
-    }
-  };
-
+  const handlePageSizeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setPageSize(Number(e.target.value))
+    setPageIndex(0)
+  }, [])
 
   return (
-    <div className="space-y-4 p-6">
-      <div className='flex items-center justify-between'>
-        <h2 className="text-xl font-bold">Danh sách phương thức thanh toán</h2>
-        <AddPhotoStyle onAddSuccess={fetchPhotoStyles} />
-      </div>
-      <SearchInput search={search} onSearchChange={(e) => setSearch(e.currentTarget.value)} />
-      <ScrollArea
-        h={450}
-        onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
-        scrollbarSize={6}
-        scrollHideDelay={0}
-      >
-        <Table
-          striped
-          withTableBorder
-          withColumnBorders
-          horizontalSpacing="md"
-          verticalSpacing="xs"
-          miw={700}
-          layout="fixed"
-        >
-          <Table.Thead
-            className={cx("sticky top-0 bg-white dark:bg-gray-900 transition-shadow", {
-              "shadow-md": scrolled,
-            })}
+    <div className="w-full space-y-4">
+      <div className="flex items-center justify-between py-4">
+        <Input
+          placeholder="Tìm kiếm Payment Method"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          className="max-w-sm"
+        />
+
+        <div className="flex items-center space-x-2">
+          <div className='gap-5'>
+            
+            {/* <AddFrame onSuccess={() => {
+              fetchCount()
+              handleSearch(searchTerm, 1, pageSize)
+              setPageIndex(0)
+            }} /> */}
+          </div>
+          <Label htmlFor="pageSize" className="text-sm">Số hàng/trang:</Label>
+          <select
+            id="pageSize"
+            value={pageSize}
+            onChange={handlePageSizeChange}
+            className="border border-gray-300 rounded px-2 py-1 text-sm"
           >
-            <Table.Tr>
-              <Table.Th>ID</Table.Th>
-              <Table.Th>Name</Table.Th>
-              <Table.Th>Prompt</Table.Th>
-              <Table.Th>NegativePrompt</Table.Th>
-             
-              <Table.Th>Image</Table.Th>
-              <Table.Th>Created At</Table.Th>
-              <Table.Th>Action</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {filteredData.length > 0 ? (
-              filteredData.map((style) => (
-                <Table.Tr key={style.id}>
-                  <Table.Td>{style.id}</Table.Td>
-                  <Table.Td>
-                    <Text fz="sm" fw={500}>{style.name}</Text>
-                  </Table.Td>
-                  <Table.Td>
-                    <Text fz="sm" fw={500}>{style.prompt}</Text>
-                  </Table.Td>
-                  <Table.Td>
-                    <Text fz="xs" c="dimmed">{style.negativePrompt}</Text>
-                  </Table.Td>
-                  
-                  <Table.Td>
-                    <Image src={style.imageUrl} alt={style.name} width={50} height={50} radius="md" />
-                  </Table.Td>
-                  <Table.Td>{new Date(style.createdAt).toLocaleDateString()}</Table.Td>
-                  <Table.Td >
-                    <Group gap="sm">
-                      <DeletePayment id={style.id} onDelete={handleDelete} />
-                      {/* <GPPhotoStyle id={style.id} photoStyleData={style} onUpdateSuccess={fetchPhotoStyles} /> */}
-                      <IDPhotoStyle id={style.id} />
-                    </Group>
+            {[5, 10, 15, 20].map(size => (
+              <option key={size} value={size}>{size}</option>
+            ))}
+          </select>
+        </div>
+      </div>
 
+      {loading ? (
+        <div className="text-sm text-muted-foreground">Đang tải dữ liệu...</div>
+      ) : error ? (
+        <div className="text-red-500 p-4">Error: {error}</div>
+      ) : (
+        <>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                {table.getHeaderGroups().map(headerGroup => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map(header => (
+                      <TableHead key={header.id}>
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map(row => (
+                    <TableRow key={row.id}>
+                      {row.getVisibleCells().map(cell => (
+                        <TableCell key={cell.id}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={memoizedColumns.length} className="text-center">
+                      No results
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
 
-                  </Table.Td>
-                </Table.Tr>
-              ))
-            ) : (
-              <Table.Tr>
-                <Table.Td colSpan={5} align="center">
-                  <Text fw={500} ta="center">Không có dữ liệu</Text>
-                </Table.Td>
-              </Table.Tr>
-            )}
-          </Table.Tbody>
-        </Table>
-      </ScrollArea>
+          <div className="flex items-center justify-end space-x-2 py-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPageIndex(prev => prev - 1)}
+              disabled={pageIndex === 0}
+            >
+              Previous
+            </Button>
+            <span className="text-sm text-muted-foreground">
+              Page {pageIndex + 1} of {table.getPageCount()}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPageIndex(prev => prev + 1)}
+              disabled={pageIndex + 1 >= table.getPageCount()}
+            >
+              Next
+            </Button>
+          </div>
+        </>
+      )}
     </div>
-  );
+  )
 };
 
 export default PhotoStyle;

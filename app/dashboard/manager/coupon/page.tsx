@@ -1,144 +1,270 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { Table, Text, ScrollArea, Group, Badge, UnstyledButton, Center } from "@mantine/core";
-import { IconChevronDown, IconChevronUp, IconSelector } from "@tabler/icons-react";
-import AxiosAPI from "@/configs/axios";
+"use client"
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { columns } from "./columns"
+import { Coupon } from "@/types/type"
+import AxiosAPI from "@/configs/axios"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { debounce } from 'lodash'
+import { toast } from 'react-toastify'
+import { Label } from '@/components/ui/label'
+import AddBooth from '@/components/component/AddBooth'
+import AddCoupon from '@/components/component/AddCoupon'
 
-import cx from "clsx";
-import AddCoupon from "@/components/component/AddCoupon";
+const useCouponData = () => {
+  const [data, setData] = useState<Coupon[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [totalItems, setTotalItems] = useState(0)
 
-import DeleteCoupon from "@/components/component/DeleteCoupon";
-import GPCoupon from "@/components/component/GPCoupon";
-
-interface Coupon {
-  id: number;
-  name: string;
-  code: string;
-  isActive: boolean;
-  discount: number;
-  startDate: string;
-  endDate: string;
-}
-
-interface ThProps {
-  children: React.ReactNode;
-  reversed: boolean;
-  sorted: boolean;
-  onSort: () => void;
-}
-
-function Th({ children, reversed, sorted, onSort }: ThProps) {
-  const Icon = sorted ? (reversed ? IconChevronUp : IconChevronDown) : IconSelector;
-  return (
-    <Table.Th className="p-0">
-      <UnstyledButton onClick={onSort} className="w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">
-        <Group justify="space-between">
-          <Text fw={500} fz="sm">{children}</Text>
-          <Center className="w-[21px] h-[21px] rounded-full">
-            <Icon size={16} stroke={1.5} />
-          </Center>
-        </Group>
-      </UnstyledButton>
-    </Table.Th>
-  );
-}
-
-const CouponComponent = () => {
-  const [coupons, setCoupons] = useState<Coupon[]>([]);
-  const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState<keyof Coupon | null>(null);
-  const [reverseSortDirection, setReverseSortDirection] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  const fetchCoupons = async () => {
+  const fetchCount = useCallback(async () => {
     try {
-      const response = await AxiosAPI.get<Coupon[]>("https://sdphotobooth.azurewebsites.net/api/Coupon");
-      setCoupons(response.data ?? []);
+      const response = await AxiosAPI.get<number>("/api/Coupon/count")
+      setTotalItems(response.data || 0)
     } catch (err) {
-      console.error("Lỗi API:", err);
+      console.error("Failed to fetch total count", err)
     }
-  };
+  }, [])
+
+  const fetchData = useCallback(async (page: number, pageSize: number) => {
+    try {
+      setLoading(true)
+      const response = await AxiosAPI.get<Coupon[]>("/api/Coupon", {
+        params: { PageNumber: page, PageSize: pageSize }
+      })
+      setData(response.data || [])
+      setError(null)
+    } catch (err: any) {
+      setError(err.message || "Failed to fetch data")
+      setData([])
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  const fetchByName = useCallback(async (name: string, page: number, pageSize: number) => {
+    try {
+      setLoading(true)
+      const response = await AxiosAPI.get<Coupon[]>(`/api/Booth/search/${name}`, {
+        params: { PageNumber: page, PageSize: pageSize }
+      })
+      setData(response.data || [])
+      setError(null)
+    } catch (err: any) {
+      setError(err.message || "Failed to fetch by name")
+      setData([])
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  const handleSearch = useMemo(() =>
+    debounce((term: string, page: number, size: number) => {
+      if (term.trim() === "") {
+        fetchData(page, size)
+      } else {
+        fetchByName(term, page, size)
+      }
+    }, 500),
+    [fetchData, fetchByName]
+  )
 
   useEffect(() => {
-    fetchCoupons();
-  }, []);
-
-  const setSorting = (field: keyof Coupon) => {
-    const reversed = field === sortBy ? !reverseSortDirection : false;
-    setReverseSortDirection(reversed);
-    setSortBy(field);
-  };
-
-  const filteredData = coupons.filter((item) =>
-    item.name.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const sortedData = sortBy ? [...filteredData].sort((a, b) => {
-    return reverseSortDirection
-      ? b[sortBy].toString().localeCompare(a[sortBy].toString())
-      : a[sortBy].toString().localeCompare(b[sortBy].toString());
-  }) : filteredData;
+    fetchCount()
+    return () => {
+      handleSearch.cancel()
+    }
+  }, [fetchCount, handleSearch])
 
   
+  
+
+  return {
+    data,
+    loading,
+    error,
+    totalItems,
+    fetchCount,
+    handleSearch,
+    fetchData,
+  }
+}
+
+
+const CouponPage = () => {
+  const [searchTerm, setSearchTerm] = useState("")
+  const [pageSize, setPageSize] = useState(5)
+  const [pageIndex, setPageIndex] = useState(0)
+
+  const {
+    data,
+    loading,
+    error,
+    totalItems,
+    fetchCount,
+    handleSearch,
+    
+  } = useCouponData()
+  const refetchData = useCallback(() => {
+    handleSearch(searchTerm, pageIndex + 1, pageSize)
+  }, [handleSearch, searchTerm, pageIndex, pageSize])
+  const deleteFrame = useCallback(async (id: number) => {
+    try {
+      const res = await AxiosAPI.delete(`/api/Coupon/${id}`)
+
+      if (res.status !== 200) throw new Error("Xóa thất bại")
+
+      toast.success("Đã xóa phương thức thanh toán thành công")
+      fetchCount()
+      if (data.length <= 1 && pageIndex > 0) {
+        setPageIndex(prev => prev - 1)
+      } else {
+        handleSearch(searchTerm, pageIndex + 1, pageSize)
+      }
+    } catch (error) {
+      toast.error("Xóa thất bại")
+      console.error(error)
+    }
+  }, [data.length, fetchCount, handleSearch, pageIndex, pageSize, searchTerm])
+
+  const memoizedColumns = useMemo(() => columns(deleteFrame,refetchData), [deleteFrame,refetchData])
+
+  const table = useReactTable({
+    data,
+    columns: memoizedColumns,
+    pageCount: Math.ceil(totalItems / pageSize),
+    state: {
+      pagination: {
+        pageIndex,
+        pageSize
+      }
+    },
+    manualPagination: true,
+    getCoreRowModel: getCoreRowModel(),
+    onPaginationChange: (updater) => {
+      const newPagination = typeof updater === "function"
+        ? updater({ pageIndex, pageSize })
+        : updater
+      setPageIndex(newPagination.pageIndex)
+      setPageSize(newPagination.pageSize)
+    }
+  })
+
+  useEffect(() => {
+    handleSearch(searchTerm, pageIndex + 1, pageSize)
+  }, [searchTerm, pageIndex, pageSize, handleSearch])
+
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value)
+    setPageIndex(0)
+  }, [])
+
+  const handlePageSizeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setPageSize(Number(e.target.value))
+    setPageIndex(0)
+  }, [])
 
   return (
-    <div className="space-y-4 p-6">
-       <div className='flex items-center justify-between'>
-        <h2 className="text-xl font-bold">Danh sách địa điểm</h2>
-        <AddCoupon onAddSuccess={fetchCoupons}/>
-        <DeleteCoupon onAddSuccess={fetchCoupons}/>
-        {/* <GPCoupon /> */}
+    <div className="w-full space-y-4">
+      <div className="flex items-center justify-between py-4">
+        <Input
+          placeholder="Tìm kiếm Payment Method"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          className="max-w-sm"
+        />
+
+        <div className="flex items-center space-x-2">
+          <div className='gap-5'>
+            
+            <AddCoupon onAddSuccess={() => {
+              fetchCount()
+              handleSearch(searchTerm, 1, pageSize)
+              setPageIndex(0)
+            }} />
+          </div>
+          <Label htmlFor="pageSize" className="text-sm">Số hàng/trang:</Label>
+          <select
+            id="pageSize"
+            value={pageSize}
+            onChange={handlePageSizeChange}
+            className="border border-gray-300 rounded px-2 py-1 text-sm"
+          >
+            {[5, 10, 15, 20].map(size => (
+              <option key={size} value={size}>{size}</option>
+            ))}
+          </select>
+        </div>
       </div>
-      <ScrollArea h={450} onScrollPositionChange={({ y }) => setScrolled(y !== 0)} scrollbarSize={6} scrollHideDelay={0}>
-        <Table striped withTableBorder withColumnBorders horizontalSpacing="md" verticalSpacing="xs" miw={700} layout="fixed">
-          <Table.Thead className={cx("sticky top-0 bg-white dark:bg-gray-900 transition-shadow", { "shadow-md": scrolled })}>
-            <Table.Tr>
-              <Table.Th>ID</Table.Th>
-              <Th sorted={sortBy === 'name'} reversed={reverseSortDirection} onSort={() => setSorting('name')}>Name</Th>
-              <Table.Th>Code</Table.Th>
-              <Table.Th>Discount</Table.Th>
-              <Table.Th>Start Date</Table.Th>
-              <Table.Th>End Date</Table.Th>
-              <Table.Th>Status</Table.Th>
-              <Table.Th>Actions</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {sortedData.length > 0 ? (
-              sortedData.map((coupon) => (
-                <Table.Tr key={coupon.id}>
-                  <Table.Td>{coupon.id}</Table.Td>
-                  <Table.Td>{coupon.name}</Table.Td>
-                  <Table.Td>{coupon.code}</Table.Td>
-                  <Table.Td>{coupon.discount}</Table.Td>
-                  <Table.Td>{new Date(coupon.startDate).toLocaleDateString()}</Table.Td>
-                  <Table.Td>{new Date(coupon.endDate).toLocaleDateString()}</Table.Td>
-                  <Table.Td>
-                    <Badge color={coupon.isActive ? "green" : "red"}>{coupon.isActive ? "Active" : "Inactive"}</Badge>
-                  </Table.Td>
-                  <Table.Td >
-                    <Group gap="sm">
-                      
-                      {/* <IDLocation id={location.id}/>
-                      <GPLocation id={location.id} onUpdateSuccess={fetchLocations} locationData={location}/> */}
-                    </Group>
 
+      {loading ? (
+        <div className="text-sm text-muted-foreground">Đang tải dữ liệu...</div>
+      ) : error ? (
+        <div className="text-red-500 p-4">Error: {error}</div>
+      ) : (
+        <>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                {table.getHeaderGroups().map(headerGroup => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map(header => (
+                      <TableHead key={header.id}>
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map(row => (
+                    <TableRow key={row.id}>
+                      {row.getVisibleCells().map(cell => (
+                        <TableCell key={cell.id}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={memoizedColumns.length} className="text-center">
+                      No results
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
 
-                  </Table.Td>
-                </Table.Tr>
-              ))
-            ) : (
-              <Table.Tr>
-                <Table.Td colSpan={7} align="center">
-                  <Text fw={500} ta="center">Không có dữ liệu</Text>
-                </Table.Td>
-              </Table.Tr>
-            )}
-          </Table.Tbody>
-        </Table>
-      </ScrollArea>
+          <div className="flex items-center justify-end space-x-2 py-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPageIndex(prev => prev - 1)}
+              disabled={pageIndex === 0}
+            >
+              Previous
+            </Button>
+            <span className="text-sm text-muted-foreground">
+              Page {pageIndex + 1} of {table.getPageCount()}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPageIndex(prev => prev + 1)}
+              disabled={pageIndex + 1 >= table.getPageCount()}
+            >
+              Next
+            </Button>
+          </div>
+        </>
+      )}
     </div>
-  );
-};
+  )
+}
 
-export default CouponComponent;
+export default CouponPage

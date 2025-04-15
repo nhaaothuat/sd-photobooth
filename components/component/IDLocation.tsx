@@ -1,66 +1,61 @@
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import AxiosAPI from "@/configs/axios";
-import { toast } from "react-toastify";
+import { useEffect, useState } from "react"
+import { Location } from "@/types/type"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import AxiosAPI from "@/configs/axios"
+import { Loader2 } from "lucide-react"
 
-interface LocationDetails {
-  id: number;
-  locationName: string;
-  address: string;
-  createdAt: string;
-}
 
-interface IDLocationProps {
-  id: number;
-}
+const ViewDetailLocation = ({ id }: { id: number }) => {
+  const [location, setLocation] = useState<Location | null>(null)
+  const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-const IDLocation: React.FC<IDLocationProps> = ({ id }) => {
-  const [data, setData] = useState<LocationDetails | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const fetchDetails = async () => {
-    setLoading(true);
+  const fetchDetail = async () => {
     try {
-      const response = await AxiosAPI.get<LocationDetails>(`api/Location/${id}`);
-      setData(response.data);
-    } catch (err) {
-      console.error("Error fetching location details:", err);
-      toast.error("Failed to fetch location details");
+      setLoading(true)
+      const response = await AxiosAPI.get<Location>(`/api/Location/${id}`)
+      setLocation(response.data)
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu chi tiết", error)
+      setLocation(null)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
+
+  useEffect(() => {
+    if (open) fetchDetail()
+  }, [open])
+
 
   return (
-    <Dialog onOpenChange={(open) => open && fetchDetails()}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">View Details</Button>
+        <Button variant="outline">Xem</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle>Location Details</DialogTitle>
+          <DialogTitle>Chi tiết phương thức thanh toán</DialogTitle>
         </DialogHeader>
+
         {loading ? (
-          <p>Loading...</p>
-        ) : data ? (
-          <div className="space-y-4">
-            <p><strong>Location Name:</strong> {data.locationName}</p>
-            <p><strong>Address:</strong> {data.address}</p>
-            <p><strong>Created At:</strong> {new Date(data.createdAt).toLocaleDateString()}</p>
+          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+            <Loader2 className="animate-spin h-4 w-4" /> <span>Đang tải...</span>
+          </div>
+        ) : location ? (
+          <div className="space-y-2 text-sm">
+            <p><strong>ID:</strong> {location.id}</p>
+            <p><strong>ID:</strong> {location.locationName}</p>
+            <p><strong>ID:</strong> {location.address}</p>
+            <p><strong>Created At:</strong> {new Date(location.createdAt).toLocaleString()}</p>
           </div>
         ) : (
-          <p>No data available</p>
+          <div className="text-sm text-red-500">Không thể tải dữ liệu chi tiết</div>
         )}
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default IDLocation;
+export default ViewDetailLocation

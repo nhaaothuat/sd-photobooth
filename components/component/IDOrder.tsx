@@ -1,83 +1,65 @@
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import AxiosAPI from "@/configs/axios";
-import { toast } from "react-toastify";
-import { View } from "lucide-react";
+import { useEffect, useState } from "react"
+import { Order } from "@/types/type"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import AxiosAPI from "@/configs/axios"
+import { Loader2 } from "lucide-react"
 
-interface OrderDetails {
-  id: number;
-  status: number;
-  email: string;
-  phone: string;
-  createdAt: string;
-  paymentMethod?: {
-    methodName: string;
-  };
-}
 
-interface IDOrderProps {
-  id: number;
-}
+const ViewDetailOrder = ({ id }: { id: number }) => {
+  const [order, setOrder] = useState<Order | null>(null)
+  const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-const orderStatusMap: Record<number, string> = {
-  0: "None",
-  1: "Pending",
-  2: "Processing",
-  3: "Completed",
-  4: "Failed",
-  5: "Cancelled",
-};
-
-const IDOrder: React.FC<IDOrderProps> = ({ id }) => {
-  const [data, setData] = useState<OrderDetails | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const fetchDetails = async () => {
-    setLoading(true);
+  const fetchDetail = async () => {
     try {
-      const response = await AxiosAPI.get<OrderDetails>(`/api/Order/${id}`);
-      setData(response.data);
-    } catch (err) {
-      console.error("Error fetching order details:", err);
-      toast.error("Failed to fetch order details");
+      setLoading(true)
+      const response = await AxiosAPI.get<Order>(`/api/Order/${id}`)
+      setOrder(response.data)
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu chi tiết", error)
+      setOrder(null)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
+
+  useEffect(() => {
+    if (open) fetchDetail()
+  }, [open])
+
 
   return (
-    <Dialog onOpenChange={(open) => open && fetchDetails()}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline"><View /></Button>
+        <Button variant="outline">Xem</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle>Order Details</DialogTitle>
+          <DialogTitle>Chi tiết phương thức thanh toán</DialogTitle>
         </DialogHeader>
+
         {loading ? (
-          <p>Loading...</p>
-        ) : data ? (
-          <div className="space-y-4">
-            <p><strong>ID:</strong> {data.id}</p>
-            <p><strong>Status:</strong> {orderStatusMap[data.status] ?? "Unknown"}</p>
-            <p><strong>Email:</strong> {data.email}</p>
-            <p><strong>Phone:</strong> {data.phone}</p>
-            <p><strong>Created At:</strong> {new Date(data.createdAt).toLocaleDateString()}</p>
-            <p><strong>Payment Method:</strong> {data.paymentMethod?.methodName ?? "N/A"}</p>
+          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+            <Loader2 className="animate-spin h-4 w-4" /> <span>Đang tải...</span>
+          </div>
+        ) : order ? (
+          <div className="space-y-2 text-sm">
+            <p><strong>ID:</strong> {order.id}</p>
+            <p><strong>Method Name:</strong> {order.code}</p>
+          
+            <p><strong>Method Name:</strong> {order.couponCode}</p>
+            <p><strong>Booth Name:</strong> {order.boothName}</p>
+            <p><strong>Method Name:</strong> {order.phone}</p>
+            <p><strong>Method Name:</strong> {order.sessionCode}</p>
+            <p><strong>Created At:</strong> {new Date(order.createdAt).toLocaleString()}</p>
           </div>
         ) : (
-          <p>No data available</p>
+          <div className="text-sm text-red-500">Không thể tải dữ liệu chi tiết</div>
         )}
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default IDOrder;
+export default ViewDetailOrder

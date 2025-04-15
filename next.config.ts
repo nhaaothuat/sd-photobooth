@@ -16,7 +16,9 @@ const nextConfig: NextConfig = {
         pathname: "/v0/b/**", 
       },
       
+      
     ],
+   
   },
  
   experimental: {

@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,7 +22,6 @@ import { Switch } from "@/components/ui/switch";
 import AxiosAPI from "@/configs/axios";
 import { toast } from "react-toastify";
 
-// Schema validation với zod
 const formSchema = z.object({
      name: z.string().min(1, "Name is required").max(100, "Max length is 100 characters"),
      description: z.string().max(500, "Max length is 500 characters").optional(),
@@ -28,6 +29,7 @@ const formSchema = z.object({
      price: z.coerce.number().min(0, "Price must be a positive value"),
      ableTakenNumber: z.coerce.number().min(0, "Max participants must be a non-negative value"),
      isPrinting: z.boolean(),
+     forMobile: z.boolean().optional(),
 });
 
 interface AddTypeSessionProps {
@@ -42,11 +44,10 @@ const AddTypeSession: React.FC<AddTypeSessionProps> = ({ onAddSuccess }) => {
           control,
           handleSubmit,
           reset,
-          watch,
           formState: { errors },
      } = useForm({
           resolver: zodResolver(formSchema),
-          mode:"onChange",
+          mode: "onChange",
           defaultValues: {
                name: "",
                description: "",
@@ -54,10 +55,10 @@ const AddTypeSession: React.FC<AddTypeSessionProps> = ({ onAddSuccess }) => {
                price: 0,
                isPrinting: true,
                ableTakenNumber: 0,
+               forMobile: true,
           },
      });
 
-     // Xử lý gửi form
      const onSubmit = async (values: any) => {
           if (loading) return;
           setLoading(true);
@@ -101,7 +102,7 @@ const AddTypeSession: React.FC<AddTypeSessionProps> = ({ onAddSuccess }) => {
                          </div>
                          <div>
                               <Label htmlFor="duration">Duration (minutes)</Label>
-                              <Input id="duration" type="number" min="0" placeholder="Enter duration" {...control.register("duration", { valueAsNumber: true })} />
+                              <Input id="duration" type="number" min="0" {...control.register("duration", { valueAsNumber: true })} />
                               {errors.duration && <p className="text-red-500 text-sm">{errors.duration.message}</p>}
                          </div>
                          <div>
@@ -112,13 +113,13 @@ const AddTypeSession: React.FC<AddTypeSessionProps> = ({ onAddSuccess }) => {
                                    render={({ field }) => (
                                         <NumericFormat
                                              id="price"
-                                             thousandSeparator="," 
+                                             thousandSeparator=","
                                              decimalSeparator="."
                                              allowNegative={false}
                                              decimalScale={0}
                                              fixedDecimalScale
                                              customInput={Input}
-                                             {...field}
+                                             value={field.value}
                                              onValueChange={(values) => field.onChange(values.floatValue)}
                                         />
                                    )}
@@ -127,19 +128,46 @@ const AddTypeSession: React.FC<AddTypeSessionProps> = ({ onAddSuccess }) => {
                          </div>
                          <div>
                               <Label htmlFor="ableTakenNumber">Max Participants</Label>
-                              <Input id="ableTakenNumber" type="number" min="0" placeholder="Enter max participants" {...control.register("ableTakenNumber", { valueAsNumber: true })} />
+                              <Input id="ableTakenNumber" type="number" min="0" {...control.register("ableTakenNumber", { valueAsNumber: true })} />
                               {errors.ableTakenNumber && <p className="text-red-500 text-sm">{errors.ableTakenNumber.message}</p>}
                          </div>
+
+                         {/* isPrinting Switch */}
                          <div className="flex items-center space-x-4 rounded-md border p-4">
                               <FileText />
                               <div className="flex-1 space-y-1">
                                    <p className="text-sm font-medium leading-none">Print Ticket</p>
                                    <p className="text-sm text-muted-foreground">Enable or disable printing for this session.</p>
                               </div>
-                              <Switch {...control.register("isPrinting")} checked={watch("isPrinting")} />
+                              <Controller
+                                   name="isPrinting"
+                                   control={control}
+                                   render={({ field }) => (
+                                        <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                   )}
+                              />
                          </div>
+
+                         {/* forMobile Switch */}
+                         <div className="flex items-center space-x-4 rounded-md border p-4">
+                              <FileText />
+                              <div className="flex-1 space-y-1">
+                                   <p className="text-sm font-medium leading-none">Mobile Support</p>
+                                   <p className="text-sm text-muted-foreground">Enable or disable mobile mode.</p>
+                              </div>
+                              <Controller
+                                   name="forMobile"
+                                   control={control}
+                                   render={({ field }) => (
+                                        <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                   )}
+                              />
+                         </div>
+
                          <DialogFooter>
-                              <Button type="submit" disabled={loading}>{loading ? "Saving..." : "Save Changes"}</Button>
+                              <Button type="submit" disabled={loading}>
+                                   {loading ? "Saving..." : "Save Changes"}
+                              </Button>
                          </DialogFooter>
                     </form>
                </DialogContent>
