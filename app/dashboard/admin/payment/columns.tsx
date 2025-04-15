@@ -53,6 +53,16 @@ export const columns = (
                cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />
           },
           {
+               id:"edit",
+               header: () => <div className="text-center">Edit</div>,
+               cell: ({row}) => {
+                    const id = row.original.id;
+                    return(
+                         <EditPaymentMethod id={id} onUpdated={refetchData} />
+                    )
+               }
+          },
+          {
                id: "actions",
                enableHiding: false,
                cell: ({ row }) => {
@@ -73,19 +83,20 @@ export const columns = (
                                    </DropdownMenuItem> */}
                                    {/* <DropdownMenuSeparator /> */}
 
-                                  
 
-                                   {/* <DropdownMenuItem asChild>
-                                        <DeletePayment id={id} onDelete={onDelete} />
-                                   </DropdownMenuItem> */}
-
-                                   {/* <DropdownMenuItem asChild>
-                                        <ViewDetail id={id} />
-                                   </DropdownMenuItem> */}
 
                                    <DropdownMenuItem asChild>
-                                   <EditPaymentMethod id={id} onUpdated={refetchData} />
+                                        <DeletePayment id={id} onDelete={onDelete} />
                                    </DropdownMenuItem>
+
+                                   <DropdownMenuItem asChild>
+                                        <ViewDetail id={id} />
+                                   </DropdownMenuItem>
+
+                                   {/* <DropdownMenuItem asChild> */}
+                                        {/* <EditPaymentMethod id={id} onUpdated={refetchData} /> */}
+                                   {/* </DropdownMenuItem> */}
+                                   
 
                               </DropdownMenuContent>
                          </DropdownMenu>

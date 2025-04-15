@@ -194,6 +194,7 @@ export type Product = {
   deposit: any | null;         
   coupon: string | null;
   discount: number | null;
+  discountPercent:number | null
 }
 
 export type Transaction = {

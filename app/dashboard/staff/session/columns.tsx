@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { DepositProduct } from "@/types/type"
+import { Session } from "@/types/type"
 import { MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import DeletePayment from "@/components/component/DeletePayment"
+import ViewDetailSession from "@/components/component/IDSession"
 
 
 const StatusCell = ({ value }: { value: boolean }) => (
@@ -23,45 +24,41 @@ const DateCell = ({ value }: { value: string }) => {
   return <div>{date.toLocaleDateString()}</div>
 }
 
-export const columns: ColumnDef<DepositProduct>[] = [
+export const columns = (
+//   onDelete: (id: number) => Promise<void>,
+//   refetchData: () => void,
+): ColumnDef<Session>[] => [
     {
       accessorKey: "id",
       header: () => <div className="text-center">ID</div>,
       cell: ({ row }) => <div className="text-center">{row.getValue("id")}</div>,
     },
     {
-      accessorKey: "name",
-      header: "Name",
-      cell: ({ row }) => <div>{row.getValue("name")}</div>,
+      accessorKey: "code",
+      header: "Code",
+      cell: ({ row }) => <div>{row.getValue("code")}</div>,
     },
     {
-     accessorKey: "description",
-     header: "Description",
-     cell: ({ row }) => <div>{row.getValue("description")}</div>,
+     accessorKey: "expired",
+     header: "Expired",
+     cell: ({ row }) => <DateCell value={row.getValue("expired")} />,
    },
    {
-     accessorKey: "price",
-     header: "Price",
-     cell: ({ row }) => <div>{row.getValue("price")}</div>,
+     accessorKey: "orderId",
+     header: "OrderID",
+     cell: ({ row }) => <div>{row.getValue("orderId")}</div>,
    },
-   {
-     accessorKey: "amountAdd",
-     header: "Amount",
-     cell: ({ row }) => <div>{row.getValue("amountAdd")}</div>,
-   },
-   {
-     accessorKey: "productId",
-     header: "Product",
-     cell: ({ row }) => <div>{row.getValue("productId")}</div>,
-   },
-  
+    {
+      accessorKey: "isActive",
+      header: "IsActive",
+      cell: ({ row }) => <StatusCell value={row.getValue("isActive")} />,
+    },
     {
       accessorKey: "createdAt",
       header: "Created At",
       cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />,
     },
-   
-   
+    
     {
       id: "actions",
       enableHiding: false,
@@ -87,9 +84,9 @@ export const columns: ColumnDef<DepositProduct>[] = [
                 <DeletePayment id={id} onDelete={onDelete} />
               </DropdownMenuItem> */}
 
-              {/* <DropdownMenuItem asChild>
-                <ViewDetailCoupon id={id} />
-              </DropdownMenuItem> */}
+              <DropdownMenuItem asChild>
+                <ViewDetailSession id={id} />
+              </DropdownMenuItem>
 
             </DropdownMenuContent>
           </DropdownMenu>

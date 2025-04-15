@@ -90,6 +90,7 @@ const menuItems: Record<string, MenuItem[]> = {
     },
     { label: "Session", link: "/dashboard/manager/session", icon: FileText },
     { label: "Deposit Product", link: "/dashboard/manager/deposit-product", icon: FileText },
+    { label: "TypeSession Product", link: "/dashboard/manager/typesession-product", icon: FileText },
     { label: "Transaction", link: "/dashboard/manager/transaction", icon: FileText },
     {
       label: "Settings",
@@ -103,9 +104,16 @@ const menuItems: Record<string, MenuItem[]> = {
   "/dashboard/staff": [
     { label: "Staff Dashboard", link: "/dashboard/staff", icon: Bot },
     { label: "Customer", link: "/dashboard/staff/customer", icon: Users },
-    { label: "Session Code", link: "/dashboard/staff/code", icon: FileText },
+    { label: "Session Code", link: "/dashboard/staff/session", icon: FileText },
     { label: "Payment", link: "/dashboard/staff/payment", icon: CreditCard },
-    { label: "Order", link: "/dashboard/staff/order", icon: CreditCard },
+    { label: "Photo History", link: "/dashboard/staff/photo", icon: Users },
+    {
+      label: "Order",
+      icon: FileText,
+      subMenu: [{ label: "List Order", link: "/dashboard/staff/order/get" },
+      { label: "Create Order", link: "/dashboard/staff/order/create" }
+      ],
+    },
   ],
 };
 
