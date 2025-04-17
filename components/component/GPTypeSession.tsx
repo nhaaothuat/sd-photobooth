@@ -1,92 +1,90 @@
-import React, { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { FileText } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
-import { toast } from "react-toastify";
+  Modal,
+  Button,
+  TextInput,
+  NumberInput,
+  Stack,
+  Group,
+  LoadingOverlay,
+  Checkbox,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import AxiosAPI from "@/configs/axios";
+import { toast } from "react-toastify";
 import { CiEdit } from "react-icons/ci";
+import { TypeSession } from "@/types/type";
 
-interface TypeSessionDataProps {
-  name: string;
-  description: string;
-  duration: number;
-  price: number;
-  isPrinting: boolean;
-  ableTakenNumber: number;
-}
-
-interface GPTypeSessionProps {
+const EditTypeSession = ({
+  id,
+  onUpdateSuccess,
+}: {
   id: number;
-  typeSessionData?: TypeSessionDataProps;
   onUpdateSuccess: () => void;
-}
-
-const GPTypeSession: React.FC<GPTypeSessionProps> = ({ id, typeSessionData, onUpdateSuccess }) => {
-  const [formData, setFormData] = useState<TypeSessionDataProps>(
-    typeSessionData || { name: "", description: "", duration: 0, price: 0, isPrinting: true, ableTakenNumber: 0 }
-  );
+}) => {
+  const [opened, { open, close }] = useDisclosure(false);
   const [loading, setLoading] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "" ,
+    description: "",
+    duration: 0,
+    price: 0,
+    isPrinting: true,
+    forMobile:true,
+    ableTakenNumber: 0,
+  });
 
-  // useEffect(() => {
-  //   if (isOpen && typeSessionData) {
-  //     setFormData(typeSessionData);
-  //   }
-  // }, [isOpen, typeSessionData]);
   useEffect(() => {
-    if (isOpen && typeSessionData) {
-      setFormData({
-        ...typeSessionData,
-        isPrinting: typeSessionData.isPrinting ?? true, // ✅ Chỉ cập nhật đúng dữ liệu
-      });
-    }
-  }, [isOpen, typeSessionData]);
+    if (!opened) return;
 
+    const fetchTypeSession = async () => {
+      try {
+        setLoading(true);
+        const res = await AxiosAPI.get<TypeSession>(`/api/TypeSession/${id}`);
+        const data = res.data;
+        setFormData({
+          name: data?.name || "",
+          description: data?.description || "",
+          duration: data?.duration || 0,
+          price: data?.price || 0,
+          isPrinting: data?.isPrinting ?? true,
+          forMobile: data?.forMobile ?? true,
+          ableTakenNumber: data?.ableTakenNumber || 0,
+        });
+      } catch (err) {
+        toast.error("Không thể tải thông tin loại phiên");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
+    fetchTypeSession();
+  }, [opened, id]);
+
+  const handleChange = (
+    field: keyof TypeSession,
+    value: string | number | boolean
+  ) => {
     setFormData((prev) => ({
       ...prev,
-      [id]: value,
+      [field]:
+        typeof value === "string" &&
+        ["duration", "price", "ableTakenNumber"].includes(field)
+          ? parseFloat(value) || 0
+          : value,
     }));
   };
 
-  const handleToggle = (checked: boolean) => {
-    console.log("Giá trị isPrinting trước khi thay đổi:", formData.isPrinting);
-    console.log("Giá trị isPrinting sau khi thay đổi:", checked);
-  
-    setFormData((prev) => ({
-      ...prev,
-      isPrinting: checked,
-    }));
-  };
-  
-
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (loading) return;
-    setLoading(true);
-    console.log(formData)
+  const handleSubmit = async () => {
     try {
-      const response = await AxiosAPI.put(`api/TypeSession/${id}`, formData);
-      console.log(response.data)
+      setLoading(true);
+      await AxiosAPI.put(`/api/TypeSession/${id}`, formData);
       toast.success("Cập nhật loại phiên thành công!");
-      setIsOpen(false);
+      close();
       onUpdateSuccess();
     } catch (error) {
-      console.error("Update Error:", error);
+      console.error("Update error:", error);
       toast.error("Cập nhật thất bại.");
     } finally {
       setLoading(false);
@@ -94,57 +92,68 @@ const GPTypeSession: React.FC<GPTypeSessionProps> = ({ id, typeSessionData, onUp
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline"><CiEdit /></Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Chỉnh sửa loại phiên</DialogTitle>
-          <DialogDescription>Cập nhật thông tin và nhấn lưu.</DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <div className="grid w-full items-center gap-4">
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="name">Tên phiên</Label>
-              <Input id="name" placeholder="Nhập tên" value={formData.name} onChange={handleChange} required />
-            </div>
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="description">Mô tả</Label>
-              <Input id="description" placeholder="Nhập mô tả" value={formData.description} onChange={handleChange} required />
-            </div>
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="duration">Thời lượng (phút)</Label>
-              <Input type="number" id="duration" value={formData.duration} onChange={handleChange} required />
-            </div>
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="price">Giá</Label>
-              <Input type="number" id="price" value={formData.price} onChange={handleChange} required />
-            </div>
-            <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="ableTakenNumber">Số lượng tối đa</Label>
-              <Input type="number" id="ableTakenNumber" value={formData.ableTakenNumber} onChange={handleChange} required />
-            </div>
+    <>
+      <Button variant="outline" onClick={open}>
+        <CiEdit />
+      </Button>
 
-            <div className="flex items-center space-x-4 rounded-md border p-4">
-              <FileText />
-              <div className="flex-1 space-y-1">
-                <p className="text-sm font-medium leading-none">In phiếu</p>
-                <p className="text-sm text-muted-foreground">Bật hoặc tắt tính năng in phiếu.</p>
-              </div>
-              <Switch id="isPrinting" checked={formData.isPrinting ?? true} onCheckedChange={handleToggle} />
-
-            </div>
-          </div>
-          <DialogFooter>
-            <Button type="submit" disabled={loading}>
-              {loading ? "Đang lưu..." : "Lưu thay đổi"}
+      <Modal opened={opened} onClose={close} title="Chỉnh sửa loại phiên" centered>
+        <LoadingOverlay visible={loading} overlayProps={{ blur: 2 }} />
+        <Stack gap="sm">
+          <TextInput
+            label="Tên phiên"
+            placeholder="Nhập tên"
+            value={formData.name}
+            onChange={(e) => handleChange("name", e.currentTarget.value)}
+            required
+          />
+          <TextInput
+            label="Mô tả"
+            placeholder="Nhập mô tả"
+            value={formData.description}
+            onChange={(e) => handleChange("description", e.currentTarget.value)}
+            required
+          />
+          <NumberInput
+            label="Thời lượng (phút)"
+            value={formData.duration}
+            onChange={(value) => handleChange("duration", value || 0)}
+            required
+          />
+          <NumberInput
+            label="Giá"
+            value={formData.price}
+            onChange={(value) => handleChange("price", value || 0)}
+            required
+          />
+          <NumberInput
+            label="Số lượng tối đa"
+            value={formData.ableTakenNumber}
+            onChange={(value) => handleChange("ableTakenNumber", value || 0)}
+            required
+          />
+          <Checkbox
+            label="In phiếu"
+            checked={formData.isPrinting}
+            onChange={(e) => handleChange("isPrinting", e.currentTarget.checked)}
+          />
+           <Checkbox
+            label="For Mobile"
+            checked={formData.isPrinting}
+            onChange={(e) => handleChange("forMobile", e.currentTarget.checked)}
+          />
+          <Group justify="flex-end" mt="md">
+            <Button variant="outline" onClick={close}>
+              Hủy
             </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+            <Button onClick={handleSubmit} loading={loading}>
+              Cập nhật
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
+    </>
   );
 };
 
-export default GPTypeSession;
+export default EditTypeSession;

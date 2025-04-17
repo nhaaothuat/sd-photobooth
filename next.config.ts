@@ -15,7 +15,21 @@ const nextConfig: NextConfig = {
         hostname: "firebasestorage.googleapis.com",
         pathname: "/v0/b/**", 
       },
-      
+      {
+        protocol: "https",
+        hostname: "mlf2vmoci1kz.i.optimole.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "i.etsystatic.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "www.prostarra.com",
+        pathname: "/**",
+      }
       
     ],
    

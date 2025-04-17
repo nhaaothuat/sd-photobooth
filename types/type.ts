@@ -67,6 +67,7 @@ export type LevelMembership = {
   discountPercent: number
   maxDiscount: number
   minOrder: number
+  
 }
 
 export type MembershipCard = {
@@ -76,9 +77,22 @@ export type MembershipCard = {
   isActive: boolean
   createdAt: string
   lastModified: string
+  discountPercent: number
+  maxDiscount: number
+  minOrder: number
   createdById: string | null
   lastModifiedById: string | null
-  levelMemberShip: LevelMembership
+  levelMemberShip: {
+    id:number
+    name:string
+    point:number
+  }
+  customer:{
+    id:string
+    fullName: string | null
+    email: string | null
+    phoneNumber: number
+  }
 }
 
 export type Sticker = {
@@ -116,7 +130,7 @@ export type Location = {
 
 export type TypeSession = {
   id: number
-  name: string
+  name: string 
   description: string
   duration: number
   price: number
@@ -223,7 +237,7 @@ export type User = {
   avatar: string | null;
   role:  string; 
   isBanned: boolean;
-  location: string | null;
+  location: Location | null;
 };
 
 export type Order = {
@@ -260,3 +274,24 @@ export type DepositProduct = {
   
   productId: string;
 };
+
+export type TypeSessionProduct = {
+  id: number;
+  name: string;
+  createdAt: string;
+  lastModified: string;
+  createdById: string | null;
+  lastModifiedById: string | null;
+  productId: string;
+  levelMembershipId: number | null;
+  typeSessionId: number | null;
+  couponId: number | null;
+  levelMembership: LevelMembership
+  coupon: Coupon
+  typeSession: TypeSession
+  discount: number | null;
+};
+
+export type PhotoHistory = {
+  id: number
+}

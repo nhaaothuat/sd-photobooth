@@ -72,6 +72,16 @@ export const columns = (
       cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />,
     },
     {
+      id: "edit",
+      header: () => <div className="text-center">Edit</div>,
+      cell: ({ row }) => {
+        const id = row.original.id;
+        return (
+          <UpdateFrame id={id} onUpdated={refetchData} />
+        )
+      }
+    },
+    {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
@@ -103,7 +113,7 @@ export const columns = (
               </DropdownMenuItem>
 
               <DropdownMenuItem asChild>
-                <UpdateFrame id={id}  onUpdated={refetchData} />
+                <UpdateFrame id={id} onUpdated={refetchData} />
               </DropdownMenuItem>
 
             </DropdownMenuContent>

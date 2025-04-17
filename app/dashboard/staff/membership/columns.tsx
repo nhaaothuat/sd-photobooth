@@ -2,19 +2,20 @@
 
 import DeletePayment from "@/components/component/DeletePayment"
 import DeleteSticker from "@/components/component/DeleteSticker"
-import EditPhotoStyle from "@/components/component/GPPhotoStyle"
+import EditMembershipCard from "@/components/component/GPMembershipCard"
+import ViewDetailMembershipCard from "@/components/component/IDMemberShipCard"
 import ViewDetailPhotoStyle from "@/components/component/IDPhotoStyle"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { PhotoStyle } from "@/types/type"
+import { MembershipCard } from "@/types/type"
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal } from "lucide-react"
 import Image from "next/image"
 
 export const columns = (
-     onDelete: (id: number) => Promise<void>,
+     // onDelete: (id: number) => Promise<void>,
      refetchData: () => void,
-): ColumnDef<PhotoStyle>[] => [
+): ColumnDef<MembershipCard>[] => [
           {
                accessorKey: "id",
                header: () => <div className="text-center">ID</div>,
@@ -30,38 +31,53 @@ export const columns = (
                header: () => <div className="text-center">Description</div>,
                cell: ({ row }) => <div className="text-center">{row.getValue("description")}</div>
           },
-          // {
-          //      accessorKey: "imageUrl",
-          //      header: () => <div className="text-center">Image</div>,
-          //      cell: ({ row }) => <Image
-          //           src={row.getValue("imageUrl")}
-          //           alt="image"
-          //           width={50}
-          //           height={50}
-          //           className="rounded-md"
-          //      />,
-
-          // },
           {
-               accessorKey: "faceImage",
-               header: () => <div className="text-center">Face Image</div>,
-               cell: ({ row }) => <div className="text-center">{row.getValue("faceImage") ? "Yes" : "No"}</div>
-          },
-          {
-               accessorKey: "backgroundRemover",
-               header: () => <div className="text-center">Background Remover</div>,
-               cell: ({ row }) => <div className="text-center">{row.getValue("backgroundRemover") ? "Yes" : "No"}</div>
-          },
-          {
-               id: "edit",
-               header: () => <div className="text-center">Edit</div>,
+               accessorKey: "customer.fullName",
+               header: () => <div className="text-center">customer name</div>,
                cell: ({ row }) => {
+                    const name = row.original.customer.fullName;
+                    return <div className="text-center">{name || "No Name"}</div>;
+               }
+          },
+          {
+               accessorKey: "customer.email",
+               header: () => <div className="text-center">customer name</div>,
+               cell: ({ row }) => {
+                    const email = row.original.customer.email;
+                    return <div className="text-center">{email || "No Name"}</div>;
+               }
+          },
+          {
+               accessorKey: "points",
+               header: () => <div className="text-center">Points</div>,
+               cell: ({ row }) => <div className="text-center">{row.getValue("points")}</div>
+          },
+
+          {
+               accessorKey: "levelMemberShip",
+               header: () => <div className="text-center">levelMemberShip</div>,
+               cell: ({ row }) => {
+                    const name = row.original.levelMemberShip.name;
+                    return <div className="text-center">{name || "No Name"}</div>;
+               }
+          },
+
+          {
+               accessorKey: "isActive",
+               header: () => <div className="text-center">Is Active</div>,
+               cell: ({ row }) => <div className="text-center">{row.getValue("isActive") ? "Yes" : "No"}</div>
+          },
+          {
+               id:"edit",
+               header: () => <div className="text-center">Edit</div>,
+               cell: ({row}) => {
                     const id = row.original.id;
-                    return (
-                         <EditPhotoStyle id={id} onUpdateSuccess={refetchData} />
+                    return(
+                         <EditMembershipCard id={id} onUpdated={refetchData} />
                     )
                }
           },
+         
           {
                id: "actions",
                enableHiding: false,
@@ -78,19 +94,17 @@ export const columns = (
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="center">
                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                   {/* <DropdownMenuItem onClick={() => navigator.clipboard.writeText(sticker.id.toString())}>
-                                   Copy Sticker ID
-                              </DropdownMenuItem> */}
+
                                    <DropdownMenuSeparator />
-                                   <DropdownMenuItem asChild>
+                                   {/* <DropdownMenuItem asChild>
                                         <DeletePayment id={id} onDelete={onDelete} />
                                    </DropdownMenuItem>
 
+                                   */}
+
                                    <DropdownMenuItem asChild>
-                                        <ViewDetailPhotoStyle id={id} />
+                                        <ViewDetailMembershipCard id={id} />
                                    </DropdownMenuItem>
-
-
 
                               </DropdownMenuContent>
                          </DropdownMenu>

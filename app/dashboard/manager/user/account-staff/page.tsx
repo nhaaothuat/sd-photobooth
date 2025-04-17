@@ -26,14 +26,15 @@ const useCustomerData = () => {
     try {
       setLoading(true)
       const response = await AxiosAPI.get<ApiResponse>(
-        "https://sdphotobooth.azurewebsites.net/api/User/staff",
+        "/api/User/staff",
         {
           params: {
-            PageNumber: pageIndex + 1, // Convert to 1-based index for API
+            PageNumber: pageIndex + 1, 
             PageSize: pageSize
           }
         }
       )
+      console.log(response.data?.data || [])
       setData(response.data?.data || [])
       setTotalItems(response.data?.totalCount || 0)
       setError(null)

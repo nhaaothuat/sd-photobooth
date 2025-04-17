@@ -64,7 +64,7 @@ const AddUser = () => {
       if (response.status === 201 || response.status === 200) {
         toast.success("User created successfully!");
         setFormData({
-          role: 3,
+          role: 1,
           userName: "",
           email: "",
           phoneNumber: "",
@@ -96,10 +96,10 @@ const AddUser = () => {
                 <SelectValue placeholder="Select Role" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="0">Admin</SelectItem>
+               
                 <SelectItem value="1">Manager</SelectItem>
                 <SelectItem value="2">Staff</SelectItem>
-                <SelectItem value="3">Customer</SelectItem>
+                
               </SelectContent>
             </Select>
           </div>

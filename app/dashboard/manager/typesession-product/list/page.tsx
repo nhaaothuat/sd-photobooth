@@ -1,46 +1,43 @@
 "use client"
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { columns } from "./columns"
-import { User } from "@/types/type"
+import { TypeSessionProduct } from "@/types/type"
 import AxiosAPI from "@/configs/axios"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
+// import AddFrame from './AddFrame'
 import { toast } from 'react-toastify'
-import AddCustomer from '@/components/component/AddCustomer'
-import AddStaff from '@/components/component/AddStaff'
 
-interface ApiResponse {
-  data: User[]
-  totalCount: number
-}
+import ExportButton from '@/components/component/ButtonExportTypeProduct'
 
-const useCustomerData = () => {
-  const [data, setData] = useState<User[]>([])
+const useTypeSessionProductData = () => {
+  const [data, setData] = useState<TypeSessionProduct[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [totalItems, setTotalItems] = useState(0)
 
-  const fetchData = useCallback(async (pageIndex: number, pageSize: number) => {
+  const fetchCount = useCallback(async () => {
+    try {
+      const response = await AxiosAPI.get<number>("/api/TypeSessionProduct/count")
+      setTotalItems(response.data || 0)
+    } catch (err) {
+      console.error("Failed to fetch total count", err)
+    }
+  }, [])
+
+  const fetchData = useCallback(async (page: number, pageSize: number) => {
     try {
       setLoading(true)
-      const response = await AxiosAPI.get<ApiResponse>(
-        "https://sdphotobooth.azurewebsites.net/api/User/staff",
-        {
-          params: {
-            PageNumber: pageIndex + 1, // Convert to 1-based index for API
-            PageSize: pageSize
-          }
-        }
-      )
-      setData(response.data?.data || [])
-      setTotalItems(response.data?.totalCount || 0)
+      const response = await AxiosAPI.get<TypeSessionProduct[]>("/api/TypeSessionProduct", {
+        params: { PageNumber: page, PageSize: pageSize }
+      })
+      setData(response.data || [])
       setError(null)
     } catch (err: any) {
       setError(err.message || "Failed to fetch data")
       setData([])
-      setTotalItems(0)
     } finally {
       setLoading(false)
     }
@@ -51,25 +48,50 @@ const useCustomerData = () => {
     loading,
     error,
     totalItems,
+    fetchCount,
     fetchData,
   }
 }
 
-const CustomerPage = () => {
+const TypeSessionProductPage = () => {
   const [pageSize, setPageSize] = useState(5)
   const [pageIndex, setPageIndex] = useState(0)
 
-  const { data, loading, error, totalItems, fetchData } = useCustomerData()
+  const {
+    data,
+    loading,
+    error,
+    totalItems,
+    fetchCount,
+    fetchData,
+  } = useTypeSessionProductData()
 
- 
-  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize))
+  const deleteFrame = useCallback(async (id: number) => {
+    try {
+      const res = await AxiosAPI.delete(`/api/TypeSessionProduct/${id}`)
 
-  const memoizedColumns = useMemo(() => columns(), [])
+      if (res.status !== 204) throw new Error("Xóa thất bại")
+
+      toast.success("Đã xóa phương thức thanh toán thành công")
+      fetchCount()
+      if (data.length <= 1 && pageIndex > 0) {
+        setPageIndex(prev => prev - 1)
+      } else {
+        fetchData(pageIndex + 1, pageSize)
+      }
+    } catch (error) {
+      toast.error("Xóa thất bại")
+      console.error(error)
+    }
+  }, [data.length, fetchCount, fetchData, pageIndex, pageSize])
+
+  const memoizedColumns = useMemo(() => columns(deleteFrame, () => fetchData(pageIndex + 1, pageSize)),
+    [deleteFrame, fetchData, pageIndex, pageSize])
 
   const table = useReactTable({
     data,
     columns: memoizedColumns,
-    pageCount: totalPages,
+    pageCount: Math.ceil(totalItems / pageSize),
     state: {
       pagination: {
         pageIndex,
@@ -82,39 +104,26 @@ const CustomerPage = () => {
       const newPagination = typeof updater === "function"
         ? updater({ pageIndex, pageSize })
         : updater
-      setPageIndex(Math.min(Math.max(newPagination.pageIndex, 0), totalPages - 1))
+      setPageIndex(newPagination.pageIndex)
       setPageSize(newPagination.pageSize)
     }
   })
 
-  
   useEffect(() => {
-    fetchData(pageIndex, pageSize)
-  }, [fetchData, pageIndex, pageSize])
+    fetchData(pageIndex + 1, pageSize)
+    fetchCount()
+  }, [fetchData, fetchCount, pageIndex, pageSize])
 
   const handlePageSizeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newSize = Number(e.target.value)
-    setPageSize(newSize)
-  
+    setPageSize(Number(e.target.value))
     setPageIndex(0)
   }, [])
-
-  const handlePrevious = useCallback(() => {
-    setPageIndex(prev => Math.max(prev - 1, 0))
-  }, [])
-
-  const handleNext = useCallback(() => {
-    setPageIndex(prev => Math.min(prev + 1, totalPages - 1))
-  }, [totalPages])
 
   return (
     <div className="w-full space-y-4">
       <div className="flex items-center justify-between py-4">
         <div className="flex items-center space-x-2">
-          <AddStaff onSuccess={() => {
-            
-            setPageIndex(0)
-          }} />
+          <ExportButton />
           <Label htmlFor="pageSize" className="text-sm">Số hàng/trang:</Label>
           <select
             id="pageSize"
@@ -174,21 +183,19 @@ const CustomerPage = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={handlePrevious}
-              disabled={pageIndex === 0 || loading}
+              onClick={() => setPageIndex(prev => prev - 1)}
+              disabled={pageIndex === 0}
             >
               Previous
             </Button>
-
             <span className="text-sm text-muted-foreground">
-              Page {pageIndex + 1} of {totalPages}
+              Page {pageIndex + 1} of {table.getPageCount()}
             </span>
-
             <Button
               variant="outline"
               size="sm"
-              onClick={handleNext}
-              disabled={pageIndex >= totalPages - 1 || loading || !totalItems}
+              onClick={() => setPageIndex(prev => prev + 1)}
+              disabled={pageIndex + 1 >= table.getPageCount()}
             >
               Next
             </Button>
@@ -199,4 +206,4 @@ const CustomerPage = () => {
   )
 }
 
-export default CustomerPage
+export default TypeSessionProductPage

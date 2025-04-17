@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { toast } from 'react-toastify'
 import AddCustomer from '@/components/component/AddCustomer'
-import AddStaff from '@/components/component/AddStaff'
 
 interface ApiResponse {
   data: User[]
@@ -26,7 +25,7 @@ const useCustomerData = () => {
     try {
       setLoading(true)
       const response = await AxiosAPI.get<ApiResponse>(
-        "https://sdphotobooth.azurewebsites.net/api/User/staff",
+        "https://sdphotobooth.azurewebsites.net/api/User/customer",
         {
           params: {
             PageNumber: pageIndex + 1, // Convert to 1-based index for API
@@ -111,7 +110,7 @@ const CustomerPage = () => {
     <div className="w-full space-y-4">
       <div className="flex items-center justify-between py-4">
         <div className="flex items-center space-x-2">
-          <AddStaff onSuccess={() => {
+          <AddCustomer onSuccess={() => {
             
             setPageIndex(0)
           }} />

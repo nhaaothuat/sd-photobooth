@@ -1,12 +1,7 @@
-
-import * as React from "react"
-import {
-     ColumnDef,
-
-} from "@tanstack/react-table"
+import { ColumnDef } from "@tanstack/react-table"
+import { TypeSessionProduct } from "@/types/type"
 import { MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
-
 import {
      DropdownMenu,
      DropdownMenuCheckboxItem,
@@ -16,12 +11,9 @@ import {
      DropdownMenuSeparator,
      DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-
-import Image from "next/image"
-import { FrameStyle } from "@/types/type"
 import DeletePayment from "@/components/component/DeletePayment"
-import ViewDetailFrameStyle from "@/components/component/IDFrameStyle"
-import UpdateFrameStyle from "@/components/component/GPFrameStyle"
+import ViewDetailBooth from "@/components/component/IDBooth"
+import ViewDetailTypeSessionProduct from "@/components/component/IDTypeSessionProduct"
 
 
 const DateCell = ({ value }: { value: string }) => {
@@ -32,7 +24,7 @@ const DateCell = ({ value }: { value: string }) => {
 export const columns = (
      onDelete: (id: number) => Promise<void>,
      refetchData: () => void,
-): ColumnDef<FrameStyle>[] => [
+): ColumnDef<TypeSessionProduct>[] => [
           {
                accessorKey: "id",
                header: () => <div className="text-center">ID</div>,
@@ -44,34 +36,27 @@ export const columns = (
                cell: ({ row }) => <div>{row.getValue("name")}</div>,
           },
           {
-               accessorKey: "description",
-               header: "Description",
-               cell: ({ row }) => <div>{row.getValue("description")}</div>,
+               accessorKey: "productId",
+               header: "Product",
+               cell: ({ row }) => <div>{row.getValue("productId")}</div>,
+          },
+          {
+               accessorKey: "levelMembershipId",
+               header: "Level Membership ID",
+               cell: ({ row }) => <div>{row.getValue("levelMembershipId")}</div>,
+          },
+          {
+               accessorKey: "typeSessionId",
+               header: "TypeSession ID",
+               cell: ({ row }) => <div>{row.getValue("typeSessionId")}</div>,
+          },
+          {
+               accessorKey: "couponId",
+               header: "Coupon ID",
+               cell: ({ row }) => <div>{row.getValue("couponId")}</div>,
           },
 
-          {
-               accessorKey: "imageUrl",
-               header: "Preview",
-               cell: ({ row }) => (
-                    <Image
-                         src={row.getValue("imageUrl")}
-                         alt="Frame"
-                         width={80}
-                         height={80}
-                         className="rounded-md"
-                    />
-               ),
-          },
-          {
-               id: "edit",
-               header: () => <div className="text-center">Edit</div>,
-               cell: ({ row }) => {
-                 const id = row.original.id;
-                 return (
-                   <UpdateFrameStyle id={id} onUpdated={refetchData} />
-                 )
-               }
-             },
+
           {
                accessorKey: "createdAt",
                header: "Created At",
@@ -81,8 +66,8 @@ export const columns = (
                id: "actions",
                enableHiding: false,
                cell: ({ row }) => {
-                    const id = row.original.id;
-                    const framestyle = row.original
+                    const id = row.original.id
+                    const sticker = row.original;
                     return (
                          <DropdownMenu>
                               <DropdownMenuTrigger asChild>
@@ -93,23 +78,19 @@ export const columns = (
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="center">
                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                   {/* <DropdownMenuItem onClick={() => navigator.clipboard.writeText(payment.id.toString())}>
-                             Copy Sticker ID
-                        </DropdownMenuItem> */}
-                                   {/* <DropdownMenuSeparator /> */}
-
-
-
+                                  
+                                   <DropdownMenuSeparator />
                                    <DropdownMenuItem asChild>
                                         <DeletePayment id={id} onDelete={onDelete} />
                                    </DropdownMenuItem>
 
-                                   <DropdownMenuItem asChild>
-                                        <ViewDetailFrameStyle id={id} />
-                                   </DropdownMenuItem>
+
+                                   {/* <DropdownMenuSeparator /> */}
+
+                                   {/* <DropdownMenuSeparator /> */}
 
                                    <DropdownMenuItem asChild>
-                                        {/* <UpdateFrame id={id}  onUpdated={refetchData} /> */}
+                                        <ViewDetailTypeSessionProduct id={id} />
                                    </DropdownMenuItem>
 
                               </DropdownMenuContent>
@@ -117,4 +98,6 @@ export const columns = (
                     );
                }
           }
+
+
      ]

@@ -53,8 +53,8 @@ const Order = () => {
     const fetchData = async () => {
       try {
         const [typeSessionRes, paymentMethodRes] = await Promise.all([
-          AxiosAPI.get("api/TypeSession"),
-          AxiosAPI.get("api/PaymentMethod"),
+          AxiosAPI.get("/api/TypeSession"),
+          AxiosAPI.get("/api/PaymentMethod/all/web"),
         ]);
         setTypeSessions(typeSessionRes.data as TypeSession[]);
         setPaymentMethods(paymentMethodRes.data as PaymentMethod[]);

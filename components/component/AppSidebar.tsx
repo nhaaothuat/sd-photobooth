@@ -90,8 +90,24 @@ const menuItems: Record<string, MenuItem[]> = {
     },
     { label: "Session", link: "/dashboard/manager/session", icon: FileText },
     { label: "Deposit Product", link: "/dashboard/manager/deposit-product", icon: FileText },
-    { label: "TypeSession Product", link: "/dashboard/manager/typesession-product", icon: FileText },
+    // { label: "TypeSession Product", link: "/dashboard/manager/typesession-product", icon: FileText },
+    {
+      label: "TypeSession Product",
+      icon: FileText,
+      subMenu: [{ label: "TypeSession Product List", link: "/dashboard/manager/typesession-product/list" },
+      { label: "Get by Coupon", link: "/dashboard/manager/typesession-product/bycoupon" },
+      { label: "Get by Type Session", link: "/dashboard/manager/typesession-product/bytype" },
+
+      ],
+    },
     { label: "Transaction", link: "/dashboard/manager/transaction", icon: FileText },
+    {
+      label: "User", icon: Settings, subMenu: [{ label: "Test", link: "/dashboard/manager/user/test" },
+
+      { label: "Account (Customer)", link: "/dashboard/manager/user/account-customer" },
+      { label: "Account (Staff)", link: "/dashboard/manager/user/account-staff" },
+      ],
+    },
     {
       label: "Settings",
       icon: FileText,
@@ -103,10 +119,16 @@ const menuItems: Record<string, MenuItem[]> = {
   ],
   "/dashboard/staff": [
     { label: "Staff Dashboard", link: "/dashboard/staff", icon: Bot },
-    { label: "Customer", link: "/dashboard/staff/customer", icon: Users },
+    // { label: "Customer", link: "/dashboard/staff/customer", icon: Users },
     { label: "Session Code", link: "/dashboard/staff/session", icon: FileText },
-    { label: "Payment", link: "/dashboard/staff/payment", icon: CreditCard },
+    { label: "Membership Card", link: "/dashboard/staff/membership", icon: CreditCard },
     { label: "Photo History", link: "/dashboard/staff/photo", icon: Users },
+    {
+      label: "User", icon: Settings, subMenu: [{ label: "Test", link: "/dashboard/admin/user/test" },
+
+      { label: "Account (Customer)", link: "/dashboard/staff/user/account-customer" },
+      ],
+    },
     {
       label: "Order",
       icon: FileText,

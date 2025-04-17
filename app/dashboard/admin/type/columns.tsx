@@ -2,6 +2,7 @@
 
 import DeletePayment from "@/components/component/DeletePayment"
 import DeleteSticker from "@/components/component/DeleteSticker"
+import EditTypeSession from "@/components/component/GPTypeSession"
 import ViewDetailTypeSession from "@/components/component/IDTypeSession"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -58,6 +59,16 @@ export const columns = (
                accessorKey: "createdAt",
                header: () => <div className="text-center">Created At</div>,
                cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />
+          },
+          {
+               id:"edit",
+               header: () => <div className="text-center">Edit</div>,
+               cell: ({row}) => {
+                    const id = row.original.id;
+                    return(
+                         <EditTypeSession id={id} onUpdateSuccess={refetchData} />
+                    )
+               }
           },
           {
                id: "actions",

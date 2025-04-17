@@ -1,81 +1,202 @@
 "use client"
-import React, { useEffect, useState } from 'react';
-import { Table, Text, ScrollArea, Badge } from "@mantine/core";
-import AxiosAPI from "@/configs/axios";
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { columns } from "./columns"
+import { User } from "@/types/type"
+import AxiosAPI from "@/configs/axios"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { toast } from 'react-toastify'
+import AddCustomer from '@/components/component/AddCustomer'
+import AddManager from '@/components/component/AddManager'
 
-interface User {
-  id: string;
-  fullName: string | null;
-  userName: string;
-  email: string;
-  phoneNumber: string;
-  gender: number;
-  role: string;
+interface ApiResponse {
+  data: User[]
+  totalCount: number
 }
 
-const AccountPageManager = () => {
-  const [users, setUsers] = useState<User[]>([]);
+const useCustomerData = () => {
+  const [data, setData] = useState<User[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [totalItems, setTotalItems] = useState(0)
 
-  const fetchUsers = async () => {
+  const fetchData = useCallback(async (pageIndex: number, pageSize: number) => {
     try {
-      const response = await AxiosAPI.get<User[]>("/api/User");
-      const userData = response.data ?? [];
-      const filteredUsers = userData.filter(user => user.role === "Manager");
-      setUsers(filteredUsers);
-    } catch (err) {
-      console.error("Lỗi API:", err);
+      setLoading(true)
+      const response = await AxiosAPI.get<ApiResponse>(
+        "https://sdphotobooth.azurewebsites.net/api/User/customer",
+        {
+          params: {
+            PageNumber: pageIndex + 1, // Convert to 1-based index for API
+            PageSize: pageSize
+          }
+        }
+      )
+      setData(response.data?.data || [])
+      setTotalItems(response.data?.totalCount || 0)
+      setError(null)
+    } catch (err: any) {
+      setError(err.message || "Failed to fetch data")
+      setData([])
+      setTotalItems(0)
+    } finally {
+      setLoading(false)
     }
-  };
+  }, [])
 
+  return {
+    data,
+    loading,
+    error,
+    totalItems,
+    fetchData,
+  }
+}
+
+const ManagerPage = () => {
+  const [pageSize, setPageSize] = useState(5)
+  const [pageIndex, setPageIndex] = useState(0)
+
+  const { data, loading, error, totalItems, fetchData } = useCustomerData()
+
+ 
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize))
+
+  const memoizedColumns = useMemo(() => columns(), [])
+
+  const table = useReactTable({
+    data,
+    columns: memoizedColumns,
+    pageCount: totalPages,
+    state: {
+      pagination: {
+        pageIndex,
+        pageSize
+      }
+    },
+    manualPagination: true,
+    getCoreRowModel: getCoreRowModel(),
+    onPaginationChange: (updater) => {
+      const newPagination = typeof updater === "function"
+        ? updater({ pageIndex, pageSize })
+        : updater
+      setPageIndex(Math.min(Math.max(newPagination.pageIndex, 0), totalPages - 1))
+      setPageSize(newPagination.pageSize)
+    }
+  })
+
+  
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    fetchData(pageIndex, pageSize)
+  }, [fetchData, pageIndex, pageSize])
+
+  const handlePageSizeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newSize = Number(e.target.value)
+    setPageSize(newSize)
+  
+    setPageIndex(0)
+  }, [])
+
+  const handlePrevious = useCallback(() => {
+    setPageIndex(prev => Math.max(prev - 1, 0))
+  }, [])
+
+  const handleNext = useCallback(() => {
+    setPageIndex(prev => Math.min(prev + 1, totalPages - 1))
+  }, [totalPages])
 
   return (
-    <div className="space-y-4 p-6">
-      <h2 className="text-xl font-bold">Danh sách tài khoản</h2>
-      <ScrollArea h={450} scrollbarSize={6} scrollHideDelay={0}>
-        <Table striped withTableBorder withColumnBorders horizontalSpacing="md" verticalSpacing="xs" miw={700} layout="fixed">
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>Full Name</Table.Th>
-              <Table.Th>Username</Table.Th>
-              <Table.Th>Email</Table.Th>
-              <Table.Th>Phone Number</Table.Th>
-              <Table.Th>Gender</Table.Th>
-              <Table.Th>Role</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {users.length > 0 ? (
-              users.map((user) => (
-                <Table.Tr key={user.id}>
-                  <Table.Td>{user.fullName ?? "N/A"}</Table.Td>
-                  <Table.Td>{user.userName}</Table.Td>
-                  <Table.Td>{user.email}</Table.Td>
-                  <Table.Td>{user.phoneNumber}</Table.Td>
-                  <Table.Td>
-                    <Badge color={user.gender === 0 ? "blue" : user.gender === 1 ? "pink" : "gray"}>
-                      {user.gender === 0 ? "Nam" : user.gender === 1 ? "Nữ" : "Khác"}
-                    </Badge>
-                  </Table.Td>
-                  <Table.Td>
-                    <Badge color="green">{user.role}</Badge>
-                  </Table.Td>
-                </Table.Tr>
-              ))
-            ) : (
-              <Table.Tr>
-                <Table.Td colSpan={6} align="center">
-                  <Text fw={500} ta="center">Không có dữ liệu</Text>
-                </Table.Td>
-              </Table.Tr>
-            )}
-          </Table.Tbody>
-        </Table>
-      </ScrollArea>
-    </div>
-  );
-};
+    <div className="w-full space-y-4">
+      <div className="flex items-center justify-between py-4">
+        <div className="flex items-center space-x-2">
+          <AddManager onSuccess={() => {
+            
+            setPageIndex(0)
+          }} />
+          <Label htmlFor="pageSize" className="text-sm">Số hàng/trang:</Label>
+          <select
+            id="pageSize"
+            value={pageSize}
+            onChange={handlePageSizeChange}
+            className="border border-gray-300 rounded px-2 py-1 text-sm"
+          >
+            {[5, 10, 15, 20].map(size => (
+              <option key={size} value={size}>{size}</option>
+            ))}
+          </select>
+        </div>
+      </div>
 
-export default AccountPageManager;
+      {loading ? (
+        <div className="text-sm text-muted-foreground">Đang tải dữ liệu...</div>
+      ) : error ? (
+        <div className="text-red-500 p-4">Error: {error}</div>
+      ) : (
+        <>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                {table.getHeaderGroups().map(headerGroup => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map(header => (
+                      <TableHead key={header.id}>
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map(row => (
+                    <TableRow key={row.id}>
+                      {row.getVisibleCells().map(cell => (
+                        <TableCell key={cell.id}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={memoizedColumns.length} className="text-center">
+                      No results
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+
+          <div className="flex items-center justify-end space-x-2 py-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handlePrevious}
+              disabled={pageIndex === 0 || loading}
+            >
+              Previous
+            </Button>
+
+            <span className="text-sm text-muted-foreground">
+              Page {pageIndex + 1} of {totalPages}
+            </span>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleNext}
+              disabled={pageIndex >= totalPages - 1 || loading || !totalItems}
+            >
+              Next
+            </Button>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
+export default ManagerPage

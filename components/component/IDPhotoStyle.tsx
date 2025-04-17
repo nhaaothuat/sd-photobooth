@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button"
 import AxiosAPI from "@/configs/axios"
 import { Loader2 } from "lucide-react"
+import Image from "next/image"
 
 const ViewDetailPhotoStyle = ({ id }: { id: number }) => {
   const [photoStyle, setPhotoStyle] = useState<PhotoStyle | null>(null)
@@ -45,10 +46,16 @@ const ViewDetailPhotoStyle = ({ id }: { id: number }) => {
           <div className="space-y-2 text-sm">
             <p><strong>ID:</strong> {photoStyle.id}</p>
             <p><strong>Method Name:</strong> {photoStyle.name}</p>
+            <Image src={photoStyle.imageUrl} alt={photoStyle.name} width={200} height={200} />
             <p><strong>Description:</strong> {photoStyle.description}</p>
+            
             <p><strong>Description:</strong> {photoStyle.prompt}</p>
             <p><strong>Description:</strong> {photoStyle.negativePrompt}</p>
             <p><strong>Description:</strong> {photoStyle.numImagesPerGen}</p>
+            <p><strong>Description:</strong> {photoStyle.width}</p>
+            <p><strong>Description:</strong> {photoStyle.height}</p>
+         
+            
             <p><strong>Controlnets:</strong> {photoStyle.controlnets}</p>
             <p><strong>Is Active:</strong> {photoStyle.faceImage ? "Yes" : "No"}</p>
             <p><strong>Is Online:</strong> {photoStyle.backgroundRemover ? "Yes" : "No"}</p>

@@ -2,6 +2,7 @@
 
 import DeletePayment from "@/components/component/DeletePayment"
 import DeleteSticker from "@/components/component/DeleteSticker"
+import EditLevelMembership from "@/components/component/GPLevelMembership"
 import ViewDetailLevelMembership from "@/components/component/IDLevelMembership"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -47,6 +48,16 @@ export const columns = (
                accessorKey: "minOrder",
                header: () => <div className="text-center">Min Order</div>,
                cell: ({ row }) => <div className="text-center">{row.getValue("minOrder")}</div>
+          },
+          {
+               id: "edit",
+               header: () => <div className="text-center">Edit</div>,
+               cell: ({ row }) => {
+                    const id = row.original.id;
+                    return (
+                         <EditLevelMembership id={id} onUpdated={refetchData} />
+                    )
+               }
           },
           {
                id: "actions",

@@ -11,6 +11,7 @@ import { debounce } from 'lodash'
 import { toast } from 'react-toastify'
 import { Label } from '@/components/ui/label'
 import AddFrame from '@/components/component/AddFrame'
+import AddPhotoStyle from '@/components/component/AddPhotoStyle'
 
 const usePhotoStyleData = () => {
   const [data, setData] = useState<PhotoStyle[]>([])
@@ -30,7 +31,7 @@ const usePhotoStyleData = () => {
   const fetchData = useCallback(async (page: number, pageSize: number) => {
     try {
       setLoading(true)
-      const response = await AxiosAPI.get<PhotoStyle[]>("/api/PhotoStyle", {
+      const response = await AxiosAPI.get<PhotoStyle[]>("/api/PhotoStyle/dashboard", {
         params: { PageNumber: page, PageSize: pageSize }
       })
       setData(response.data || [])
@@ -177,11 +178,11 @@ const PhotoStyle = () => {
         <div className="flex items-center space-x-2">
           <div className='gap-5'>
             
-            {/* <AddFrame onSuccess={() => {
+            <AddPhotoStyle onAddSuccess={() => {
               fetchCount()
               handleSearch(searchTerm, 1, pageSize)
               setPageIndex(0)
-            }} /> */}
+            }} />
           </div>
           <Label htmlFor="pageSize" className="text-sm">Số hàng/trang:</Label>
           <select
