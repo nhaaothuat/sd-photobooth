@@ -7,8 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { toast } from 'react-toastify'
-import AddCustomer from '@/components/component/AddCustomer'
+
 import AddManager from '@/components/component/AddManager'
 
 interface ApiResponse {
@@ -26,10 +25,10 @@ const useCustomerData = () => {
     try {
       setLoading(true)
       const response = await AxiosAPI.get<ApiResponse>(
-        "https://sdphotobooth.azurewebsites.net/api/User/customer",
+        "/api/User/manager",
         {
           params: {
-            PageNumber: pageIndex + 1, // Convert to 1-based index for API
+            PageNumber: pageIndex + 1,
             PageSize: pageSize
           }
         }

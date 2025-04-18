@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import DeletePayment from "@/components/component/DeletePayment"
 import ViewDetailBooth from "@/components/component/IDBooth"
+import UpdateBooth from "@/components/component/GPBooth"
 
 const StatusCell = ({ value }: { value: boolean }) => (
   <div className="capitalize">{value ? "Active" : "Inactive"}</div>
@@ -57,6 +58,16 @@ export const columns = (
       accessorKey: "location.address",
       header: "Address",
       cell: ({ row }) => <div>{row.original.location.address}</div>,
+    },
+    {
+      id: "edit",
+      header: () => <div className="text-center">Edit</div>,
+      cell: ({ row }) => {
+        const id = row.original.id;
+        return (
+          <UpdateBooth id={id} onUpdateSuccess={refetchData} />
+        )
+      }
     },
     {
       id: "actions",

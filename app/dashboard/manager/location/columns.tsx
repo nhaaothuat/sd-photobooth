@@ -14,6 +14,7 @@ import {
 import DeletePayment from "@/components/component/DeletePayment"
 import ViewDetailBooth from "@/components/component/IDBooth"
 import ViewDetailLocation from "@/components/component/IDLocation"
+import UpdateLocation from "@/components/component/GPLocation"
 
 const StatusCell = ({ value }: { value: boolean }) => (
   <div className="capitalize">{value ? "Active" : "Inactive"}</div>
@@ -49,6 +50,17 @@ export const columns = (
       accessorKey: "createdAt",
       header: "Created At",
       cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />,
+    },
+
+    {
+      id: "edit",
+      header: () => <div className="text-center">Edit</div>,
+      cell: ({ row }) => {
+        const id = row.original.id;
+        return (
+          <UpdateLocation id={id} onUpdateSuccess={refetchData} />
+        )
+      }
     },
     
     {

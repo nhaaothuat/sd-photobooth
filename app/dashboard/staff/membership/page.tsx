@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label'
 // import AddFrame from './AddFrame'
 import { toast } from 'react-toastify'
 import AddLevelMembership from '@/components/component/AddLevelMembership'
+import GPUpgradeLevel from '@/components/component/GPUpgrade'
 
 const useMemberShipCardData = () => {
   const [data, setData] = useState<MembershipCard[]>([])
@@ -55,7 +56,7 @@ const useMemberShipCardData = () => {
 const LevelMemberShipPage = () => {
   const [pageSize, setPageSize] = useState(5)
   const [pageIndex, setPageIndex] = useState(0)
- 
+
   const {
     data,
     loading,
@@ -128,7 +129,7 @@ const LevelMemberShipPage = () => {
     <div className="w-full space-y-4">
       <div className="flex items-center justify-between py-4">
         <div className="flex items-center space-x-2">
-
+          <GPUpgradeLevel onUpdateSuccess={()=>refetchData()}/>
           <Label htmlFor="pageSize" className="text-sm">Số hàng/trang:</Label>
           <select
             id="pageSize"

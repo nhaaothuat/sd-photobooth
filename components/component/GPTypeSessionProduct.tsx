@@ -3,6 +3,7 @@ import {
   Modal,
   Button,
   TextInput,
+  NumberInput,
   Stack,
   Group,
   LoadingOverlay,
@@ -11,45 +12,48 @@ import { useDisclosure } from "@mantine/hooks";
 import { toast } from "react-toastify";
 import { CiEdit } from "react-icons/ci";
 import AxiosAPI from "@/configs/axios";
-import { Location } from "@/types/type";
+import { TypeSessionProduct } from "@/types/type";
 
-interface UpdateLocationProps {
+const UpdateTypeSessionProduct = ({
+  id,
+  onUpdateSuccess,
+}: {
   id: number;
   onUpdateSuccess: () => void;
-}
-
-const UpdateLocation = ({ id, onUpdateSuccess }: UpdateLocationProps) => {
+}) => {
   const [opened, { open, close }] = useDisclosure(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    locationName: "",
-    address: "",
+    name: "",
+    productId: "",
+   
   });
 
   useEffect(() => {
     if (!opened) return;
 
-    const fetchLocation = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const res = await AxiosAPI.get<Location>(`/api/Location/${id}`);
+        const res = await AxiosAPI.get<TypeSessionProduct>(`/api/TypeSessionProduct/${id}`);
         const data = res.data;
         setFormData({
-          locationName: data?.locationName || "",
-          address: data?.address || "",
+          name: data?.name || "",
+          productId: data?.productId || "",
+         
         });
       } catch (error) {
         console.error("Fetch error:", error);
-        toast.error("Không thể tải thông tin địa điểm");
+        toast.error("Không thể tải thông tin Type Session Product");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchLocation();
+    fetchData();
   }, [opened, id]);
 
-  const handleChange = (field: "locationName" | "address", value: string) => {
+  const handleChange = (field: keyof typeof formData, value: string | number) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
@@ -59,13 +63,13 @@ const UpdateLocation = ({ id, onUpdateSuccess }: UpdateLocationProps) => {
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      await AxiosAPI.put(`/api/Location/${id}`, formData);
-      toast.success("Cập nhật địa điểm thành công!");
+      await AxiosAPI.put(`/api/TypeSessionProduct/${id}`, formData);
+      toast.success("Cập nhật Type Session Product thành công!");
       close();
       onUpdateSuccess();
     } catch (error) {
       console.error("Update error:", error);
-      toast.error("Cập nhật địa điểm thất bại.");
+      toast.error("Cập nhật thất bại.");
     } finally {
       setLoading(false);
     }
@@ -77,21 +81,22 @@ const UpdateLocation = ({ id, onUpdateSuccess }: UpdateLocationProps) => {
         <CiEdit />
       </Button>
 
-      <Modal opened={opened} onClose={close} title="Chỉnh sửa Địa điểm" centered>
+      <Modal opened={opened} onClose={close} title="Chỉnh sửa Type Session Product" centered>
         <LoadingOverlay visible={loading} overlayProps={{ blur: 2 }} />
         <Stack gap="sm">
           <TextInput
-            label="Tên địa điểm"
-            value={formData.locationName}
-            onChange={(e) => handleChange("locationName", e.currentTarget.value)}
+            label="Tên"
+            value={formData.name}
+            onChange={(e) => handleChange("name", e.currentTarget.value)}
             required
           />
           <TextInput
-            label="Địa chỉ"
-            value={formData.address}
-            onChange={(e) => handleChange("address", e.currentTarget.value)}
+            label="Product ID"
+            value={formData.productId}
+            onChange={(e) => handleChange("productId", e.currentTarget.value)}
             required
           />
+         
           <Group justify="flex-end" mt="md">
             <Button variant="outline" onClick={close}>
               Hủy
@@ -106,4 +111,4 @@ const UpdateLocation = ({ id, onUpdateSuccess }: UpdateLocationProps) => {
   );
 };
 
-export default UpdateLocation;
+export default UpdateTypeSessionProduct;

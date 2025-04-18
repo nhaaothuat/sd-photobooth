@@ -54,10 +54,10 @@ const GPRoleUser: React.FC = () => {
                 <SelectValue placeholder="-- Chọn vai trò --" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="0">Admin</SelectItem>
+                {/* <SelectItem value="0">Admin</SelectItem> */}
                 <SelectItem value="1">Manager</SelectItem>
                 <SelectItem value="2">Staff</SelectItem>
-                <SelectItem value="3">Customer</SelectItem>
+                
               </SelectContent>
             </Select>
           </div>

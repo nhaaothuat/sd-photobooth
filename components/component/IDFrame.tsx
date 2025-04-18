@@ -15,6 +15,7 @@ const ViewDetailFrame = ({ id }: { id: number }) => {
     try {
       setLoading(true)
       const response = await AxiosAPI.get<Frame>(`/api/Frame/${id}`)
+      console.log(response.data)
       setFrame(response.data)
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu chi tiết", error)
@@ -27,7 +28,6 @@ const ViewDetailFrame = ({ id }: { id: number }) => {
   useEffect(() => {
     if (open) fetchDetail()
   }, [open])
-
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -48,11 +48,28 @@ const ViewDetailFrame = ({ id }: { id: number }) => {
             <p><strong>ID:</strong> {frame.id}</p>
             <p><strong>Method Name:</strong> {frame.name}</p>
             <Image src={frame.frameUrl} alt="frame url" width={100} height={100} />
-            {/* <p><strong>URL:</strong> {frame.frameUrl}</p> */}
             <p><strong>Style Name:</strong> {frame.frameStyleName}</p>
             <p><strong>Slot Count:</strong> {frame.slotCount}</p>
             <p><strong>For Mobile:</strong> {frame.forMobile ? "Yes" : "No"}</p>
             <p><strong>Created At:</strong> {new Date(frame.createdAt).toLocaleString()}</p>
+
+            {/* Kiểm tra điều kiện trước khi sử dụng .map */}
+            {frame.coordinates && frame.coordinates.length > 0 ? (
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {frame.coordinates.map((coordinate) => (
+                  <div key={coordinate.id} className="border p-4 rounded-lg shadow-lg">
+                    <p><strong>ID:</strong> {coordinate.id}</p>
+                    <p><strong>Frame ID:</strong> {coordinate.frameId}</p>
+                    <p><strong>X:</strong> {coordinate.x}</p>
+                    <p><strong>Y:</strong> {coordinate.y}</p>
+                    <p><strong>Width:</strong> {coordinate.width}</p>
+                    <p><strong>Height:</strong> {coordinate.height}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-sm text-red-500">Không có coordinate nào</div>
+            )}
           </div>
         ) : (
           <div className="text-sm text-red-500">Không thể tải dữ liệu chi tiết</div>
@@ -62,4 +79,4 @@ const ViewDetailFrame = ({ id }: { id: number }) => {
   )
 }
 
-export default ViewDetailFrame
+export default ViewDetailFrame;

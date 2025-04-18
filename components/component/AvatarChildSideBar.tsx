@@ -15,21 +15,21 @@ import { Menu, Text, Modal, ScrollArea } from '@mantine/core';
 // } from '@tabler/icons-react';
 import { useRouter } from "next/navigation";
 
-import ChildSideBar from './ChildSideBar';
+
 import Cookies from "js-cookie";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ChevronsUpDown } from 'lucide-react';
 import { SidebarMenuButton } from '../ui/sidebar';
 
-import { useDisclosure } from '@mantine/hooks';
+
 import AxiosAPI from '@/configs/axios';
 interface User {
      avatar: string | null;
 }
 
 const AvatarChildSideBar = () => {
-     const [opened, { open, close }] = useDisclosure(false);
+    
      const { data: session } = useSession();
      const router = useRouter();
      const [user, setUser] = useState<User | null>(null);
@@ -93,14 +93,7 @@ const AvatarChildSideBar = () => {
                               </div>
                          </Menu.Label>
                          <Menu.Divider />
-                         {/* <Menu.Item onClick={open} leftSection={<IconSettings size={14} />}>
-                              Settings
-                         </Menu.Item>
-
-
-
-
-                         <Menu.Divider /> */}
+                        
                          <Menu.Item className='font-sans font-light' onClick={handleLogout} leftSection={<CiLogout size={14} />}>
                               Log out
                          </Menu.Item>
@@ -111,10 +104,7 @@ const AvatarChildSideBar = () => {
 
                     </Menu.Dropdown>
                </Menu>
-               <Modal opened={opened} onClose={close} size="xl" fullScreen title="Settings" centered >
-                    <ChildSideBar />
-               </Modal>
-
+              
           </>
      )
 }

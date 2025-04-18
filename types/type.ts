@@ -3,6 +3,7 @@ export type Booth = {
   boothName: string;
   status: boolean;
   createdAt: string;
+  description:string
   // location: {
   //   locationName: string;
   //   address: string;
@@ -15,8 +16,8 @@ export type Coupon = {
   name: string
   description: string
   code: string
-  discount: number
-  discountPercent: number
+  discount: number | null
+  discountPercent: number | null
   startDate: string
   endDate: string
   maxUse: number
@@ -45,6 +46,7 @@ export type Frame = {
   createdById: string | null
   lastModifiedById: string | null
   frameStyleId: number
+  coordinates: Coordinate[]
 };
 
 export type FrameStyle = {
@@ -295,3 +297,12 @@ export type TypeSessionProduct = {
 export type PhotoHistory = {
   id: number
 }
+
+export type Coordinate = {
+  id: number;
+  frameId: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};

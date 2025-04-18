@@ -62,7 +62,7 @@ export const columns = (
           alt="Frame"
           width={80}
           height={80}
-          className="rounded-md"
+          className="rounded-md object-contain"
         />
       ),
     },
@@ -112,9 +112,7 @@ export const columns = (
                 <ViewDetailFrame id={id} />
               </DropdownMenuItem>
 
-              <DropdownMenuItem asChild>
-                <UpdateFrame id={id} onUpdated={refetchData} />
-              </DropdownMenuItem>
+
 
             </DropdownMenuContent>
           </DropdownMenu>

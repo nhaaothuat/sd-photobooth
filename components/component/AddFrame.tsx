@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -29,6 +29,16 @@ const frameSchema = z.object({
      frameFile: z
           .any()
           .refine((file) => file instanceof File, "Frame file is required"),
+     coordinateDTOs: z
+          .array(
+               z.object({
+                    x: z.number(),
+                    y: z.number(),
+                    width: z.number(),
+                    height: z.number(),
+               })
+          )
+          .min(1, "At least one coordinate is required"),
 });
 
 type FrameFormData = z.infer<typeof frameSchema>;
@@ -59,6 +69,7 @@ const AddFrame = ({ onSuccess }: { onSuccess: () => void }) => {
           handleSubmit,
           setValue,
           watch,
+          control,
           formState: { errors },
           reset,
      } = useForm<FrameFormData>({
@@ -69,7 +80,13 @@ const AddFrame = ({ onSuccess }: { onSuccess: () => void }) => {
                frameStyleId: "",
                slotCount: "",
                forMobile: false,
+               coordinateDTOs: [{ x: 0, y: 0, width: 0, height: 0 }],
           },
+     });
+
+     const { fields, append, remove } = useFieldArray({
+          control,
+          name: "coordinateDTOs",
      });
 
      const forMobile = watch("forMobile");
@@ -81,6 +98,13 @@ const AddFrame = ({ onSuccess }: { onSuccess: () => void }) => {
           formData.append("SlotCount", data.slotCount);
           formData.append("ForMobile", String(data.forMobile || false));
           formData.append("FrameFile", data.frameFile);
+
+          data.coordinateDTOs.forEach((c, i) => {
+               formData.append(`CoordinateDTOs[${i}].x`, c.x.toString());
+               formData.append(`CoordinateDTOs[${i}].y`, c.y.toString());
+               formData.append(`CoordinateDTOs[${i}].width`, c.width.toString());
+               formData.append(`CoordinateDTOs[${i}].height`, c.height.toString());
+          });
 
           try {
                setLoading(true);
@@ -104,18 +128,21 @@ const AddFrame = ({ onSuccess }: { onSuccess: () => void }) => {
      return (
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
                <DialogTrigger asChild>
-                    <Button variant="outline"><PlusCircle className="mr-2 h-4 w-4" /> Add Frame</Button>
+                    <Button variant="outline">
+                         <PlusCircle className="mr-2 h-4 w-4" /> Add Frame
+                    </Button>
                </DialogTrigger>
-               <DialogContent className="sm:max-w-[500px]">
+               <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
                     <DialogHeader>
                          <DialogTitle>Add Frame</DialogTitle>
                          <DialogDescription>Upload frame info and image</DialogDescription>
                     </DialogHeader>
+                    
                     <form onSubmit={handleSubmit(onSubmit)}>
                          <div className="grid gap-4">
                               <div className="flex flex-col space-y-1.5">
                                    <Label htmlFor="name">Name</Label>
-                                   <Input id="name" {...register("name")} />
+                                   <Input id="name" {...register("name" as const)} />
                                    {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
                               </div>
 
@@ -123,7 +150,7 @@ const AddFrame = ({ onSuccess }: { onSuccess: () => void }) => {
                                    <Label htmlFor="frameStyleId">Frame Style</Label>
                                    <select
                                         id="frameStyleId"
-                                        {...register("frameStyleId")}
+                                        {...register("frameStyleId" as const)}
                                         className="border border-input bg-background px-3 py-2 rounded-md text-sm"
                                         defaultValue=""
                                    >
@@ -143,18 +170,26 @@ const AddFrame = ({ onSuccess }: { onSuccess: () => void }) => {
 
                               <div className="flex flex-col space-y-1.5">
                                    <Label htmlFor="slotCount">Slot Count</Label>
-                                   <Input id="slotCount" type="number" {...register("slotCount")} />
-                                   {errors.slotCount && <p className="text-sm text-red-500">{errors.slotCount.message}</p>}
+                                   <Input id="slotCount" type="number" {...register("slotCount" as const)} />
+                                   {errors.slotCount && (
+                                        <p className="text-sm text-red-500">{errors.slotCount.message}</p>
+                                   )}
                               </div>
 
                               <div className="flex flex-col space-y-1.5">
                                    <Label htmlFor="frameFile">Frame File</Label>
-                                   <Input id="frameFile" type="file" accept="image/*"
+                                   <Input
+                                        id="frameFile"
+                                        type="file"
+                                        accept="image/*"
                                         onChange={(e) => {
                                              const file = e.target.files?.[0];
                                              if (file) setValue("frameFile", file);
-                                        }} />
-                                   {errors.frameFile && <p className="text-sm text-red-500">{errors.frameFile.message}</p>}
+                                        }}
+                                   />
+                                   {errors.frameFile && (
+                                        <p className="text-sm text-red-500">{errors.frameFile.message}</p>
+                                   )}
                               </div>
 
                               <div className="flex items-center space-x-4 rounded-md border p-4">
@@ -168,6 +203,66 @@ const AddFrame = ({ onSuccess }: { onSuccess: () => void }) => {
                                         checked={forMobile}
                                         onCheckedChange={(checked) => setValue("forMobile", checked)}
                                    />
+                              </div>
+
+                              <div className="grid gap-2">
+                                   <Label>Coordinates</Label>
+                                   {fields.map((field, index) => (
+                                        <div key={field.id} className="flex items-start gap-4 border p-3 rounded-md">
+                                             <div className="space-y-1">
+                                                  <Label htmlFor={`coordinate-${index}-x`}>X</Label>
+                                                  <Input
+                                                       id={`coordinate-${index}-x`}
+                                                       type="number"
+                                                       placeholder="x"
+                                                       {...register(`coordinateDTOs.${index}.x`, { valueAsNumber: true })}
+                                                  />
+                                             </div>
+                                             <div className="space-y-1">
+                                                  <Label htmlFor={`coordinate-${index}-y`}>Y</Label>
+                                                  <Input
+                                                       id={`coordinate-${index}-y`}
+                                                       type="number"
+                                                       placeholder="y"
+                                                       {...register(`coordinateDTOs.${index}.y`, { valueAsNumber: true })}
+                                                  />
+                                             </div>
+                                             <div className="space-y-1">
+                                                  <Label htmlFor={`coordinate-${index}-width`}>Width</Label>
+                                                  <Input
+                                                       id={`coordinate-${index}-width`}
+                                                       type="number"
+                                                       placeholder="width"
+                                                       {...register(`coordinateDTOs.${index}.width`, { valueAsNumber: true })}
+                                                  />
+                                             </div>
+                                             <div className="space-y-1">
+                                                  <Label htmlFor={`coordinate-${index}-height`}>Height</Label>
+                                                  <Input
+                                                       id={`coordinate-${index}-height`}
+                                                       type="number"
+                                                       placeholder="height"
+                                                       {...register(`coordinateDTOs.${index}.height`, { valueAsNumber: true })}
+                                                  />
+                                             </div>
+                                             <Button type="button" variant="destructive" onClick={() => remove(index)} className="mt-6">
+                                                  -
+                                             </Button>
+                                        </div>
+                                   ))}
+
+                                   <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => append({ x: 0, y: 0, width: 0, height: 0 })}
+                                   >
+                                        Add Coordinate
+                                   </Button>
+                                   {errors.coordinateDTOs && (
+                                        <p className="text-sm text-red-500">
+                                             {(errors.coordinateDTOs as any)?.message}
+                                        </p>
+                                   )}
                               </div>
                          </div>
 

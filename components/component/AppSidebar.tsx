@@ -102,7 +102,7 @@ const menuItems: Record<string, MenuItem[]> = {
     },
     { label: "Transaction", link: "/dashboard/manager/transaction", icon: FileText },
     {
-      label: "User", icon: Settings, subMenu: [{ label: "Test", link: "/dashboard/manager/user/test" },
+      label: "User", icon: Settings, subMenu: [{ label: "View Detail Customer", link: "/dashboard/manager/user/detailc" },
 
       { label: "Account (Customer)", link: "/dashboard/manager/user/account-customer" },
       { label: "Account (Staff)", link: "/dashboard/manager/user/account-staff" },
@@ -124,7 +124,7 @@ const menuItems: Record<string, MenuItem[]> = {
     { label: "Membership Card", link: "/dashboard/staff/membership", icon: CreditCard },
     { label: "Photo History", link: "/dashboard/staff/photo", icon: Users },
     {
-      label: "User", icon: Settings, subMenu: [{ label: "Test", link: "/dashboard/admin/user/test" },
+      label: "User", icon: Settings, subMenu: [{ label: "View Detail Customer", link: "/dashboard/staff/user/detailc" },
 
       { label: "Account (Customer)", link: "/dashboard/staff/user/account-customer" },
       ],

@@ -1,77 +1,154 @@
-import React, { useState } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import {
+  Modal,
+  Button,
+  TextInput,
+  Stack,
+  Group,
+  LoadingOverlay,
+  Checkbox,
+  Select,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { toast } from "react-toastify";
+import { CiEdit } from "react-icons/ci";
 import AxiosAPI from "@/configs/axios";
+import { Booth, Location } from "@/types/type";
 
-interface Booth {
-  id?: number;
-  boothName: string;
-  description: string;
-  status: boolean;
-  createdAt: string;
-  location: {
-    id: number;
-    locationName: string;
-    address: string;
-  };
-}
-
-const GPBooth: React.FC = () => {
-  const [boothId, setBoothId] = useState("");
-  const [booth, setBooth] = useState<Booth | null>(null);
+const UpdateBooth = ({
+  id,
+  onUpdateSuccess,
+}: {
+  id: number;
+  onUpdateSuccess: () => void;
+}) => {
+  const [opened, { open, close }] = useDisclosure(false);
   const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    boothName: "",
+    description: "",
+    status: true,
+    locationName: "",
+  });
+  const [locations, setLocations] = useState<Location[]>([]);
 
-  const fetchBooth = async () => {
-    if (!boothId) {
-      toast.error("Vui lòng nhập ID gian hàng");
-      return;
-    }
-    setLoading(true);
+  useEffect(() => {
+    if (!opened) return;
+
+    const fetchBoothAndLocations = async () => {
+      try {
+        setLoading(true);
+
+        const [boothRes, locationsRes] = await Promise.all([
+          AxiosAPI.get<Booth>(`/api/Booth/${id}`),
+          AxiosAPI.get<Location[]>(`api/Location`),
+        ]);
+
+        const booth = boothRes.data;
+        const allLocations = locationsRes.data as any;
+
+        const matchedLocation: Location | undefined = allLocations.find(
+          (loc: Location) => loc.id === booth?.location.id
+        );
+
+        setLocations(allLocations);
+        setFormData({
+          boothName: booth?.boothName || "",
+          description: booth?.description || "",
+          status: booth?.status ?? true,
+          locationName: matchedLocation?.locationName || "",
+        });
+      } catch (error) {
+        toast.error("Không thể tải thông tin Booth hoặc Location");
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBoothAndLocations();
+  }, [opened, id]);
+
+  const handleChange = (field: keyof typeof formData, value: string | boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleSubmit = async () => {
     try {
-      const response = await AxiosAPI.get<Booth>(`api/Booth/${boothId}`);
-      setBooth(response.data);
-    } catch (err) {
-      setBooth(null);
-      toast.error("Không tìm thấy gian hàng");
+      setLoading(true);
+      const selectedLocation = locations.find(loc => loc.locationName === formData.locationName);
+      if (!selectedLocation) {
+        toast.error("Vui lòng chọn địa điểm hợp lệ");
+        return;
+      }
+
+      const payload = {
+        boothName: formData.boothName,
+        description: formData.description,
+        status: formData.status,
+        locationId: selectedLocation.id,
+      };
+
+      await AxiosAPI.put(`/api/Booth/${id}`, payload);
+      toast.success("Cập nhật Booth thành công!");
+      close();
+      onUpdateSuccess();
+    } catch (error) {
+      console.error("Update error:", error);
+      toast.error("Cập nhật Booth thất bại.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="w-full max-w-md mx-auto space-y-4">
-      <div className="flex space-x-2">
-        <Input
-          placeholder="Nhập ID gian hàng"
-          value={boothId}
-          onChange={(e) => setBoothId(e.target.value)}
-        />
-        <Button onClick={fetchBooth} disabled={loading}>
-          {loading ? "Đang tìm..." : "Tìm kiếm"}
-        </Button>
-      </div>
-      {booth ? (
-        <Card className="shadow-none border p-4">
-          <CardHeader>
-            <CardTitle>Gian hàng: {booth.boothName}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p><strong>ID:</strong> {booth.id}</p>
-            <p><strong>Mô tả:</strong> {booth.description}</p>
-            <p><strong>Trạng thái:</strong> {booth.status ? "Hoạt động" : "Không hoạt động"}</p>
-            <p><strong>Ngày tạo:</strong> {new Date(booth.createdAt).toLocaleDateString()}</p>
-            <p><strong>Vị trí:</strong> {booth?.location?.locationName || "Không xác định"}</p>
-            <p><strong>Địa chỉ:</strong> {booth?.location?.address || "Không xác định"}</p>
-          </CardContent>
-        </Card>
-      ) : (
-        <p className="text-red-500">Dữ liệu gian hàng không hợp lệ.</p>
-      )}
+    <>
+      <Button variant="outline" onClick={open}>
+        <CiEdit />
+      </Button>
 
-    </div>
+      <Modal opened={opened} onClose={close} title="Chỉnh sửa Booth" centered>
+        <LoadingOverlay visible={loading} overlayProps={{ blur: 2 }} />
+        <Stack gap="sm">
+          <TextInput
+            label="Tên Booth"
+            value={formData.boothName}
+            onChange={(e) => handleChange("boothName", e.currentTarget.value)}
+            required
+          />
+          <TextInput
+            label="Mô tả"
+            value={formData.description}
+            onChange={(e) => handleChange("description", e.currentTarget.value)}
+          />
+          <Select
+            label="Địa điểm"
+            placeholder="Chọn địa điểm"
+            data={locations.map(loc => ({ value: loc.locationName, label: loc.locationName }))}
+            value={formData.locationName}
+            onChange={(value) => handleChange("locationName", value || "")}
+            required
+          />
+          <Checkbox
+            label="Kích hoạt"
+            checked={formData.status}
+            onChange={(e) => handleChange("status", e.currentTarget.checked)}
+          />
+          <Group justify="flex-end" mt="md">
+            <Button variant="outline" onClick={close}>
+              Hủy
+            </Button>
+            <Button onClick={handleSubmit} loading={loading}>
+              Cập nhật
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
+    </>
   );
 };
 
-export default GPBooth;
+export default UpdateBooth;

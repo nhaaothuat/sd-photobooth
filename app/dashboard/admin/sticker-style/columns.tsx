@@ -1,5 +1,6 @@
 import DeletePayment from "@/components/component/DeletePayment";
 import DeleteSticker from "@/components/component/DeleteSticker";
+import UpdateStickerStyle from "@/components/component/GPStickerStyle";
 import ViewDetailStickerStyle from "@/components/component/IDStickerStyle";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -43,6 +44,16 @@ export const columns = (
                header: "Last Modified",
                cell: ({ row }) => <DateCell value={row.getValue("lastModified")} />,
           },
+          {
+               id: "edit",
+               header: () => <div className="text-center">Edit</div>,
+               cell: ({ row }) => {
+                 const id = row.original.id;
+                 return (
+                   <UpdateStickerStyle id={id} onUpdateSuccess={refetchData} />
+                 )
+               }
+             },
           {
                id: "actions",
                enableHiding: false,

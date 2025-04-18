@@ -9,8 +9,7 @@ import {
 } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { Card, SimpleGrid, Text, Title, UnstyledButton, useMantineTheme } from '@mantine/core';
-import AddUser from '@/components/component/AddUser';
-import { Button } from "@/components/ui/button";
+
 import {
     Dialog,
     DialogContent,
@@ -25,10 +24,10 @@ import GPUserBan from '@/components/component/GPUserBan';
 // import GpFilter from '@/components/component/GpFilter';
 
 const mockdata = [
-    { title: 'Create', icon: IconCreditCard, color: 'violet', component: <AddUser /> },
-    // { title: 'Filter', icon: IconBuildingBank, color: 'indigo', component: <GpFilter /> },
+   
+
     { title: 'Update Status', icon: IconRepeat, color: 'blue', component: <GPUserBan /> },
-    { title: 'Get Detail', icon: IconReceiptRefund, color: 'green', component: <GPUser /> },
+  
     { title: 'Change Role', icon: IconReceipt, color: 'teal', component: <GPRoleUser /> },
 
     { title: 'Move Location', icon: IconReceipt, color: 'teal', component: <GPUserLocation /> },

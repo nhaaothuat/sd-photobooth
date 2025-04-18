@@ -14,6 +14,7 @@ import {
 import DeletePayment from "@/components/component/DeletePayment"
 import ViewDetailBooth from "@/components/component/IDBooth"
 import ViewDetailCoupon from "@/components/component/IDCoupon"
+import UpdateCoupon from "@/components/component/GPCoupon"
 
 const StatusCell = ({ value }: { value: boolean }) => (
   <div className="capitalize">{value ? "Active" : "Inactive"}</div>
@@ -70,7 +71,17 @@ export const columns = (
       cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />,
     },
    
-   
+    {
+      id: "edit",
+      header: () => <div className="text-center">Edit</div>,
+      cell: ({ row }) => {
+        const id = row.original.id;
+        return (
+         <UpdateCoupon couponId={id} onUpdateSuccess={refetchData}/>
+         
+        )
+      }
+    },
     {
       id: "actions",
       enableHiding: false,

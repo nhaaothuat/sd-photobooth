@@ -45,7 +45,7 @@ const ViewDetailBooth = ({ id }: { id: number }) => {
             <div className="space-y-2 text-sm">
               <p><strong>ID:</strong> {booth.id}</p>
               <p><strong>Method Name:</strong> {booth.boothName}</p>
-            
+              <p><strong>Method Name:</strong> {booth.description}</p>
               
               <p><strong>Style Name:</strong> {booth.location.locationName}</p>
               

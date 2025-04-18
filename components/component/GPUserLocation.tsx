@@ -56,7 +56,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
   try {
     // const url = `api/User/staff/move-location?email=${encodeURIComponent(email)}&locationId=${selectedLocation}`;
-    await AxiosAPI.post(`api/User/staff/move-location?email=${encodeURIComponent(email)}&locationId=${selectedLocation}`,{});
+    await AxiosAPI.post(`/api/User/staff/move-location?email=${encodeURIComponent(email)}&locationId=${selectedLocation}`,{});
     toast.success("Chuyển địa điểm thành công!");
   } catch (error) {
     console.error("Update Error:", error);

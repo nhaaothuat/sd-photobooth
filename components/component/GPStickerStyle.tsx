@@ -11,45 +11,46 @@ import { useDisclosure } from "@mantine/hooks";
 import { toast } from "react-toastify";
 import { CiEdit } from "react-icons/ci";
 import AxiosAPI from "@/configs/axios";
-import { Location } from "@/types/type";
+import { StickerStyle } from "@/types/type";
 
-interface UpdateLocationProps {
+const UpdateStickerStyle = ({
+  id,
+  onUpdateSuccess,
+}: {
   id: number;
   onUpdateSuccess: () => void;
-}
-
-const UpdateLocation = ({ id, onUpdateSuccess }: UpdateLocationProps) => {
+}) => {
   const [opened, { open, close }] = useDisclosure(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    locationName: "",
-    address: "",
+    stickerStyleName: "",
+    description: "",
   });
 
   useEffect(() => {
     if (!opened) return;
 
-    const fetchLocation = async () => {
+    const fetchStickerStyle = async () => {
       try {
         setLoading(true);
-        const res = await AxiosAPI.get<Location>(`/api/Location/${id}`);
+        const res = await AxiosAPI.get<StickerStyle>(`/api/StickerStyle/${id}`);
         const data = res.data;
         setFormData({
-          locationName: data?.locationName || "",
-          address: data?.address || "",
+          stickerStyleName: data?.stickerStyleName || "",
+          description: data?.description || "",
         });
       } catch (error) {
         console.error("Fetch error:", error);
-        toast.error("Không thể tải thông tin địa điểm");
+        toast.error("Không thể tải thông tin Sticker Style");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchLocation();
+    fetchStickerStyle();
   }, [opened, id]);
 
-  const handleChange = (field: "locationName" | "address", value: string) => {
+  const handleChange = (field: "stickerStyleName" | "description", value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
@@ -59,13 +60,13 @@ const UpdateLocation = ({ id, onUpdateSuccess }: UpdateLocationProps) => {
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      await AxiosAPI.put(`/api/Location/${id}`, formData);
-      toast.success("Cập nhật địa điểm thành công!");
+      await AxiosAPI.put(`/api/StickerStyle/${id}`, formData);
+      toast.success("Cập nhật Sticker Style thành công!");
       close();
       onUpdateSuccess();
     } catch (error) {
       console.error("Update error:", error);
-      toast.error("Cập nhật địa điểm thất bại.");
+      toast.error("Cập nhật thất bại.");
     } finally {
       setLoading(false);
     }
@@ -77,19 +78,19 @@ const UpdateLocation = ({ id, onUpdateSuccess }: UpdateLocationProps) => {
         <CiEdit />
       </Button>
 
-      <Modal opened={opened} onClose={close} title="Chỉnh sửa Địa điểm" centered>
+      <Modal opened={opened} onClose={close} title="Chỉnh sửa Sticker Style" centered>
         <LoadingOverlay visible={loading} overlayProps={{ blur: 2 }} />
         <Stack gap="sm">
           <TextInput
-            label="Tên địa điểm"
-            value={formData.locationName}
-            onChange={(e) => handleChange("locationName", e.currentTarget.value)}
+            label="Tên Sticker Style"
+            value={formData.stickerStyleName}
+            onChange={(e) => handleChange("stickerStyleName", e.currentTarget.value)}
             required
           />
           <TextInput
-            label="Địa chỉ"
-            value={formData.address}
-            onChange={(e) => handleChange("address", e.currentTarget.value)}
+            label="Mô tả"
+            value={formData.description}
+            onChange={(e) => handleChange("description", e.currentTarget.value)}
             required
           />
           <Group justify="flex-end" mt="md">
@@ -106,4 +107,4 @@ const UpdateLocation = ({ id, onUpdateSuccess }: UpdateLocationProps) => {
   );
 };
 
-export default UpdateLocation;
+export default UpdateStickerStyle;

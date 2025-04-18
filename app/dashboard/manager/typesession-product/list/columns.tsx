@@ -14,6 +14,7 @@ import {
 import DeletePayment from "@/components/component/DeletePayment"
 import ViewDetailBooth from "@/components/component/IDBooth"
 import ViewDetailTypeSessionProduct from "@/components/component/IDTypeSessionProduct"
+import UpdateTypeSessionProduct from "@/components/component/GPTypeSessionProduct"
 
 
 const DateCell = ({ value }: { value: string }) => {
@@ -62,6 +63,16 @@ export const columns = (
                header: "Created At",
                cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />,
           },
+          {
+               id: "edit",
+               header: () => <div className="text-center">Edit</div>,
+               cell: ({ row }) => {
+                 const id = row.original.id;
+                 return (
+                   <UpdateTypeSessionProduct id={id} onUpdateSuccess={refetchData} />
+                 )
+               }
+             },
           {
                id: "actions",
                enableHiding: false,
