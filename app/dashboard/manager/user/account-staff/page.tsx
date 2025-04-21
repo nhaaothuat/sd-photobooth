@@ -71,16 +71,6 @@ export default function AccountStaffPage() {
           title="Add Staff"
           triggerText="+ Add Staff"
           schema={staffSchema}
-          defaultValues={{
-            role: 2,
-            userName: "",
-            email: "",
-            phoneNumber: "",
-            password: "",
-            fullName: "",
-            gender: "2",
-            birthDate: "",
-          }}
           fields={[
             {
               type: "text",
@@ -112,9 +102,9 @@ export default function AccountStaffPage() {
               name: "gender",
               label: "Gender",
               options: [
-                { label: "Male", value: 0 },
-                { label: "Female", value: 1 },
-                { label: "Other", value: 2 },
+                { label: "Male", value: "0" },
+                { label: "Female", value: "1" },
+                { label: "Other", value: "2" },
               ],
             },
             {

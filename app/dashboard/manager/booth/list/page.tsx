@@ -40,7 +40,7 @@ const boothSchema = z.object({
   boothName: z.string().min(1, "Required"),
   locationId: z.string().min(1, "Required"),
   description: z.string().optional(),
-  status: z.boolean(),
+  status: z.boolean().default(true),
 });
 
 export default function BoothPage() {
@@ -97,12 +97,6 @@ export default function BoothPage() {
           description="Create new booth entry"
           triggerText="Add Booth"
           schema={boothSchema}
-          defaultValues={{
-            boothName: "",
-            locationId: "",
-            description: "",
-            status: true,
-          }}
           onSubmit={async (values) => {
             await AxiosAPI.post("/api/Booth", {
               ...values,

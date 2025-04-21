@@ -78,10 +78,6 @@ export default function LocationPage() {
           description="Create a new location"
           triggerText="Add Location"
           schema={locationSchema}
-          defaultValues={{
-            locationName: "",
-            address: "",
-          }}
           onSubmit={async (values) => {
             await AxiosAPI.post("/api/Location", values);
             refetch();

@@ -12,7 +12,6 @@ import dynamic from "next/dynamic";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
 import { couponSchema } from "@/types/schema/coupon";
 import { deleteCoupon, getCouponList } from "@/services/coupon";
-import { get } from "lodash";
 
 const CreateDialogForm = dynamic(
   () =>
@@ -81,34 +80,25 @@ export default function CouponPage() {
           triggerText="Add Coupon"
           schema={couponSchema as ZodType<CouponFormType>}
           fields={[
-            { name: "name", label: "Tên mã", type: "text" },
-            { name: "code", label: "Mã code", type: "text" },
-            { name: "description", label: "Mô tả", type: "text" },
-            { name: "discount", label: "Giảm giá", type: "number" },
-            { name: "discountPercent", label: "% Giảm giá", type: "number" },
-            { name: "maxUse", label: "Số lượng tối đa", type: "number" },
-            { name: "maxDiscount", label: "Giảm tối đa", type: "number" },
-            { name: "minOrder", label: "Đơn hàng tối thiểu", type: "number" },
-            { name: "startDate", label: "Từ ngày", type: "date" },
-            { name: "endDate", label: "Đến ngày", type: "date" },
-            { name: "isActive", label: "Kích hoạt", type: "switch" },
+            { name: "name", label: "Name", type: "text" },
+            { name: "code", label: "Code", type: "text" },
+            { name: "description", label: "Description", type: "text" },
+            { name: "discount", label: "Discount", type: "number" },
+            {
+              name: "discountPercent",
+              label: "Discount Percent(%)",
+              type: "number",
+            },
+            { name: "maxUse", label: "Max Use", type: "number" },
+            { name: "maxDiscount", label: "Max Discount", type: "number" },
+            { name: "minOrder", label: "Min Order", type: "number" },
+            { name: "startDate", label: "From", type: "date" },
+            { name: "endDate", label: "To", type: "date" },
+            { name: "isActive", label: "Is Active", type: "switch" },
           ]}
           onSubmit={async (values) => {
             await AxiosAPI.post("/api/Coupon", values);
             refetch();
-          }}
-          defaultValues={{
-            name: "",
-            description: "",
-            code: "",
-            discount: undefined,
-            discountPercent: undefined,
-            startDate: "",
-            endDate: "",
-            maxUse: undefined,
-            maxDiscount: undefined,
-            minOrder: undefined,
-            isActive: true,
           }}
         />
       }
