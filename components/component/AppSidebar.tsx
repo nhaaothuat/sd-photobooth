@@ -14,9 +14,16 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { Bot, Users, Settings, FileText, CreditCard, ChevronUp, ChevronDown } from "lucide-react";
+import {
+  Bot,
+  Users,
+  Settings,
+  FileText,
+  CreditCard,
+  ChevronUp,
+  ChevronDown,
+} from "lucide-react";
 import fpt from "@/assets/tech-x.png";
-
 
 type MenuItem = {
   label: string;
@@ -29,34 +36,52 @@ const menuItems: Record<string, MenuItem[]> = {
   "/dashboard/admin": [
     { label: "Admin Dashboard", link: "/dashboard/admin", icon: Bot },
     { label: "Payment Method", link: "/dashboard/admin/payment", icon: Users },
-    { label: "Level Membership", link: "/dashboard/admin/levelmembership", icon: Users },
-    // { label: "Frame", link: "/dashboard/admin/frame", icon: Bot },
+    {
+      label: "Level Membership",
+      link: "/dashboard/admin/levelmembership",
+      icon: Users,
+    },
+
     {
       label: "Frame",
       icon: FileText,
       subMenu: [
         { label: "List Frame", link: "/dashboard/admin/frame/list" },
         { label: "Get by Frame Style", link: "/dashboard/admin/frame/byframe" },
-
       ],
     },
     { label: "Frame Style", link: "/dashboard/admin/frame-style", icon: Bot },
-    // { label: "Sticker", link: "/dashboard/admin/sticker", icon: Bot },
+
     {
       label: "Sticker",
       icon: FileText,
       subMenu: [
         { label: "List Sticker", link: "/dashboard/admin/sticker/list" },
-        { label: "Get by Sticker Style", link: "/dashboard/admin/sticker/bysticker" },
-
+        {
+          label: "Get by Sticker Style",
+          link: "/dashboard/admin/sticker/bysticker",
+        },
       ],
     },
-    { label: "Sticker Style", link: "/dashboard/admin/sticker-style", icon: Bot },
+    {
+      label: "Sticker Style",
+      link: "/dashboard/admin/sticker-style",
+      icon: Bot,
+    },
     { label: "Type Session", link: "/dashboard/admin/type", icon: Settings },
     {
-      label: "User", icon: Settings, subMenu: [{ label: "Test", link: "/dashboard/admin/user/test" },
-      { label: "Account (Manager)", link: "/dashboard/admin/user/account-manager" },
-      { label: "Account (Staff)", link: "/dashboard/admin/user/account-staff" },
+      label: "User",
+      icon: Settings,
+      subMenu: [
+        { label: "Function", link: "/dashboard/admin/user/function" },
+        {
+          label: "Account (Manager)",
+          link: "/dashboard/admin/user/account-manager",
+        },
+        {
+          label: "Account (Staff)",
+          link: "/dashboard/admin/user/account-staff",
+        },
       ],
     },
     { label: "Photo Style", link: "/dashboard/admin/style", icon: Settings },
@@ -65,7 +90,6 @@ const menuItems: Record<string, MenuItem[]> = {
       icon: FileText,
       subMenu: [
         { label: "General", link: "/dashboard/admin/settings/general" },
-
       ],
     },
   ],
@@ -77,43 +101,80 @@ const menuItems: Record<string, MenuItem[]> = {
     {
       label: "Order",
       icon: FileText,
-      subMenu: [{ label: "List Order", link: "/dashboard/manager/order/get" },
-      { label: "Create Order", link: "/dashboard/manager/order/create" }
-      ],
+      link: "/dashboard/manager/order",
     },
-    // { label: "Booth", link: "/dashboard/manager/booth", icon: FileText },
+
     {
-      label: "Booth", icon: FileText, subMenu: [
-        { label: "Get Booth by Location", link: "/dashboard/manager/booth/bylocation" },
+      label: "Booth",
+      icon: FileText,
+      subMenu: [
+        {
+          label: "Get Booth by Location",
+          link: "/dashboard/manager/booth/bylocation",
+        },
         { label: "List Booth", link: "/dashboard/manager/booth/list" },
       ],
     },
     { label: "Session", link: "/dashboard/manager/session", icon: FileText },
-    { label: "Deposit Product", link: "/dashboard/manager/deposit-product", icon: FileText },
+    {
+      label: "Payment Method",
+      link: "/dashboard/manager/payment",
+      icon: FileText,
+    },
+    {
+      label: "Deposit Product",
+      link: "/dashboard/manager/deposit-product",
+      icon: FileText,
+    },
     // { label: "TypeSession Product", link: "/dashboard/manager/typesession-product", icon: FileText },
     {
       label: "TypeSession Product",
       icon: FileText,
-      subMenu: [{ label: "TypeSession Product List", link: "/dashboard/manager/typesession-product/list" },
-      { label: "Get by Coupon", link: "/dashboard/manager/typesession-product/bycoupon" },
-      { label: "Get by Type Session", link: "/dashboard/manager/typesession-product/bytype" },
-
+      subMenu: [
+        {
+          label: "TypeSession Product List",
+          link: "/dashboard/manager/typesession-product/list",
+        },
+        {
+          label: "Get by Coupon",
+          link: "/dashboard/manager/typesession-product/bycoupon",
+        },
+        {
+          label: "Get by Type Session",
+          link: "/dashboard/manager/typesession-product/bytype",
+        },
       ],
     },
-    { label: "Transaction", link: "/dashboard/manager/transaction", icon: FileText },
     {
-      label: "User", icon: Settings, subMenu: [{ label: "View Detail Customer", link: "/dashboard/manager/user/detailc" },
+      label: "Transaction",
+      link: "/dashboard/manager/transaction",
+      icon: FileText,
+    },
+    {
+      label: "User",
+      icon: Settings,
+      subMenu: [
+        {
+          label: "View Detail Customer",
+          link: "/dashboard/manager/user/detailc",
+        },
 
-      { label: "Account (Customer)", link: "/dashboard/manager/user/account-customer" },
-      { label: "Account (Staff)", link: "/dashboard/manager/user/account-staff" },
+        {
+          label: "Account (Customer)",
+          link: "/dashboard/manager/user/account-customer",
+        },
+        {
+          label: "Account (Staff)",
+          link: "/dashboard/manager/user/account-staff",
+        },
       ],
     },
     {
       label: "Settings",
       icon: FileText,
-      subMenu: [{ label: "General", link: "/dashboard/manager/settings/general" },
-      { label: "Profile", link: "/dashboard/manager/settings/profile" },
-
+      subMenu: [
+        { label: "General", link: "/dashboard/manager/settings/general" },
+        { label: "Profile", link: "/dashboard/manager/settings/profile" },
       ],
     },
   ],
@@ -121,19 +182,33 @@ const menuItems: Record<string, MenuItem[]> = {
     { label: "Staff Dashboard", link: "/dashboard/staff", icon: Bot },
     // { label: "Customer", link: "/dashboard/staff/customer", icon: Users },
     { label: "Session Code", link: "/dashboard/staff/session", icon: FileText },
-    { label: "Membership Card", link: "/dashboard/staff/membership", icon: CreditCard },
+    {
+      label: "Membership Card",
+      link: "/dashboard/staff/membership",
+      icon: CreditCard,
+    },
     { label: "Photo History", link: "/dashboard/staff/photo", icon: Users },
     {
-      label: "User", icon: Settings, subMenu: [{ label: "View Detail Customer", link: "/dashboard/staff/user/detailc" },
+      label: "User",
+      icon: Settings,
+      subMenu: [
+        {
+          label: "View Detail Customer",
+          link: "/dashboard/staff/user/detailc",
+        },
 
-      { label: "Account (Customer)", link: "/dashboard/staff/user/account-customer" },
+        {
+          label: "Account (Customer)",
+          link: "/dashboard/staff/user/account-customer",
+        },
       ],
     },
     {
       label: "Order",
       icon: FileText,
-      subMenu: [{ label: "List Order", link: "/dashboard/staff/order/get" },
-      { label: "Create Order", link: "/dashboard/staff/order/create" }
+      subMenu: [
+        { label: "List Order", link: "/dashboard/staff/order/get" },
+        { label: "Create Order", link: "/dashboard/staff/order/create" },
       ],
     },
   ],
@@ -141,7 +216,9 @@ const menuItems: Record<string, MenuItem[]> = {
 
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
-  const currentPath = Object.keys(menuItems).find((key) => pathname.startsWith(key));
+  const currentPath = Object.keys(menuItems).find((key) =>
+    pathname.startsWith(key)
+  );
   const items = menuItems[currentPath || "/dashboard/staff"] || [];
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
 
@@ -167,8 +244,11 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
               <div key={item.label}>
                 <SidebarMenuItem>
                   {item.link ? (
-                    <SidebarMenuButton asChild >
-                      <Link href={item.link} className="flex items-center font-sans font-medium gap-2 px-3 py-2 w-full">
+                    <SidebarMenuButton asChild>
+                      <Link
+                        href={item.link}
+                        className="flex items-center font-sans font-medium gap-2 px-3 py-2 w-full"
+                      >
                         {item.icon && <item.icon size={30} />}
                         {item.label}
                       </Link>
@@ -182,10 +262,14 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
                         {item.icon && <item.icon size={16} />}
                         {item.label}
                       </div>
-                      {item.subMenu && (openMenus[item.label] ? <ChevronUp size={20} /> : <ChevronDown size={20} />)}
+                      {item.subMenu &&
+                        (openMenus[item.label] ? (
+                          <ChevronUp size={20} />
+                        ) : (
+                          <ChevronDown size={20} />
+                        ))}
                     </button>
                   )}
-
                 </SidebarMenuItem>
 
                 {item.subMenu && openMenus[item.label] && (
@@ -193,18 +277,17 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
                     {item.subMenu.map((sub) => (
                       <SidebarMenuItem key={sub.label}>
                         <SidebarMenuButton asChild>
-                          <Link href={sub.link} className="flex items-center gap-2 font-sans font-semibold text-sm text-gray-600 px-3 py-2">
+                          <Link
+                            href={sub.link}
+                            className="flex items-center gap-2 font-sans font-semibold text-sm text-gray-600 px-3 py-2"
+                          >
                             {sub.label}
                           </Link>
                         </SidebarMenuButton>
-
                       </SidebarMenuItem>
-
                     ))}
-
                   </div>
                 )}
-
               </div>
             ))}
           </SidebarMenu>

@@ -1,3 +1,5 @@
+"use client";
+
 import { ReactNode } from "react";
 import { SharedTable } from "@/components/layouts/SharedTable";
 import { SearchInput } from "./SearchInput";

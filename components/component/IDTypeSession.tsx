@@ -49,11 +49,11 @@ const ViewDetailTypeSession = ({ id }: { id: number }) => {
             <p><strong>Method Name:</strong> {typeSession.name}</p>
             
             
-            <p><strong>Style Name:</strong> {typeSession.description}</p>
-            <p><strong>Slot Count:</strong> {typeSession.duration}</p>
-            <p><strong>Slot Count:</strong> {typeSession.price}</p>
-            <p><strong>Slot Count:</strong> {typeSession.ableTakenNumber}</p>
-            <p><strong>For Mobile:</strong> {typeSession.forMobile ? "Yes" : "No"}</p>
+            <p><strong>description:</strong> {typeSession.description}</p>
+            <p><strong>duration:</strong> {typeSession.duration}</p>
+            <p><strong>price:</strong> {typeSession.price}</p>
+            <p><strong>ableTakenNumber:</strong> {typeSession.ableTakenNumber}</p>
+            <p><strong>forMobile:</strong> {typeSession.forMobile ? "Yes" : "No"}</p>
             <p><strong>Created At:</strong> {new Date(typeSession.createdAt).toLocaleString()}</p>
           </div>
         ) : (

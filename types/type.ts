@@ -1,3 +1,5 @@
+import { NumberInputFactory } from "@mantine/core";
+
 export type Booth = {
   id: number;
   boothName: string;
@@ -102,6 +104,7 @@ export type Sticker = {
   name: string
   stickerUrl: string
   stickerStyleName: string
+  StickerStyleId: number
   createdAt: string
   lastModified: string
   createdById: number | null
@@ -306,3 +309,17 @@ export type Coordinate = {
   width: number;
   height: number;
 };
+
+export type Payment={
+  id: number;
+  code: number;
+  orderId: number | null;
+  depositId: number | null;
+  paymentMethodId: number;
+  status: number;
+  amount: number;
+  paymentMethodName: string;
+  orderCode: string | null;
+  createdAt: string; 
+  lastModified: string; 
+}

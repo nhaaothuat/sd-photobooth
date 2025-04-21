@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { DefaultValues, FieldValues, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { ZodType } from "zod";
 import { toast } from "react-toastify";
 
@@ -64,7 +64,7 @@ interface CreateDialogFormProps<T> {
   onSuccess?: () => void;
 }
 
-export function CreateDialogForm<T extends FieldValues>({
+const CreateDialogForm = <T extends FieldValues>({
   title,
   description,
   triggerText,
@@ -73,7 +73,7 @@ export function CreateDialogForm<T extends FieldValues>({
   fields,
   onSubmit,
   onSuccess,
-}: CreateDialogFormProps<T>) {
+}: CreateDialogFormProps<T>) => {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -231,4 +231,6 @@ export function CreateDialogForm<T extends FieldValues>({
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export const MemoizedCreateDialogForm = memo(CreateDialogForm);

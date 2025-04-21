@@ -1,17 +1,38 @@
 "use client";
 
 import { columns } from "./columns";
-import { CrudPageWrapper } from "@/components/layouts/SharedPage";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
-import { CreateDialogForm } from "@/components/layouts/CreateDialog";
 import { z } from "zod";
 import AxiosAPI from "@/configs/axios";
 import { usePaginatedQuery } from "@/hooks/usePaginatedQuery";
 import { Order, PaymentMethod, TypeSession } from "@/types/type";
 import { deleteOrder } from "@/services/order-service";
 import PaymentDialog from "@/components/layouts/PaymentDialog";
+import dynamic from "next/dynamic";
+
+const CreateDialogForm = dynamic(
+  () =>
+    import("@/components/layouts/CreateDialog").then(
+      (mod) => mod.MemoizedCreateDialogForm
+    ),
+  {
+    loading: () => <div>Loading...</div>,
+    ssr: false,
+  }
+);
+
+const CrudPageWrapper = dynamic(
+  () =>
+    import("@/components/layouts/SharedPage").then(
+      (mod) => mod.CrudPageWrapper
+    ),
+  {
+    loading: () => <div>Loading...</div>,
+    ssr: false,
+  }
+);
 
 const orderSchema = z.object({
   email: z.string().email("Invalid email address").min(1, "Email is required"),
@@ -93,7 +114,7 @@ export default function OrderPage() {
         search={search}
         onSearchChange={setSearch}
         createButton={
-          <CreateDialogForm<OrderFormType>
+          <CreateDialogForm
             title="Add Order"
             description="Create a new order entry"
             triggerText="Add Order"

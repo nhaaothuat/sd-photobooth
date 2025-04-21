@@ -11,7 +11,6 @@ import {
 
 import { ThemeProvider } from "@/providers/theme-provider";
 import { AppSidebar } from "@/components/component/AppSidebar";
-import { useState } from "react";
 
 const DashBoardLayout = ({ children }: { children: React.ReactNode }) => {
   return (

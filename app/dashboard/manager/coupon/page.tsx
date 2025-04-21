@@ -1,15 +1,36 @@
 "use client";
 
 import { columns } from "./columns";
-import { CrudPageWrapper } from "@/components/layouts/SharedPage";
 import { toast } from "react-toastify";
 import { useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
-import { CreateDialogForm } from "@/components/layouts/CreateDialog";
 import { z, ZodType } from "zod";
 import AxiosAPI from "@/configs/axios";
 import { usePaginatedQuery } from "@/hooks/usePaginatedQuery";
 import { Coupon } from "@/types/type";
+import dynamic from "next/dynamic";
+
+const CreateDialogForm = dynamic(
+  () =>
+    import("@/components/layouts/CreateDialog").then(
+      (mod) => mod.MemoizedCreateDialogForm
+    ),
+  {
+    loading: () => <div>Loading...</div>,
+    ssr: false,
+  }
+);
+
+const CrudPageWrapper = dynamic(
+  () =>
+    import("@/components/layouts/SharedPage").then(
+      (mod) => mod.CrudPageWrapper
+    ),
+  {
+    loading: () => <div>Loading...</div>,
+    ssr: false,
+  }
+);
 
 const couponSchema = z
   .object({
@@ -116,7 +137,7 @@ export default function CouponPage() {
       }}
       pageIndex={pageIndex}
       createButton={
-        <CreateDialogForm<CouponFormType>
+        <CreateDialogForm
           title="Add Coupon"
           description="Create new coupon entry"
           triggerText="Add Coupon"

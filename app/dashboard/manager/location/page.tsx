@@ -1,22 +1,41 @@
 "use client";
 
 import { toast } from "react-toastify";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
-import { CrudPageWrapper } from "@/components/layouts/SharedPage";
-import { CreateDialogForm } from "@/components/layouts/CreateDialog";
 import { z } from "zod";
 import AxiosAPI from "@/configs/axios";
 import { usePaginatedQuery } from "@/hooks/usePaginatedQuery";
 import { columns } from "./columns";
 import { Location } from "@/types/type";
+import dynamic from "next/dynamic";
+
+const CreateDialogForm = dynamic(
+  () =>
+    import("@/components/layouts/CreateDialog").then(
+      (mod) => mod.MemoizedCreateDialogForm
+    ),
+  {
+    loading: () => <div>Loading...</div>,
+    ssr: false,
+  }
+);
+
+const CrudPageWrapper = dynamic(
+  () =>
+    import("@/components/layouts/SharedPage").then(
+      (mod) => mod.CrudPageWrapper
+    ),
+  {
+    loading: () => <div>Loading...</div>,
+    ssr: false,
+  }
+);
 
 const locationSchema = z.object({
   locationName: z.string().min(1, "Required"),
   address: z.string().min(1, "Required"),
 });
-
-type LocationFormType = z.infer<typeof locationSchema>;
 
 export default function LocationPage() {
   const [search, setSearch] = useState("");
@@ -67,7 +86,7 @@ export default function LocationPage() {
       search={search}
       onSearchChange={setSearch}
       createButton={
-        <CreateDialogForm<LocationFormType>
+        <CreateDialogForm
           title="Add Location"
           description="Create a new location"
           triggerText="Add Location"

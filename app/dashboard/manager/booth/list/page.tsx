@@ -2,16 +2,37 @@
 
 import { deleteBooth } from "@/services/booth-service";
 import { columns } from "./columns";
-import { CrudPageWrapper } from "@/components/layouts/SharedPage";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
-import { CreateDialogForm } from "@/components/layouts/CreateDialog";
 import { z } from "zod";
 import AxiosAPI from "@/configs/axios";
 import { usePaginatedQuery } from "@/hooks/usePaginatedQuery";
 import { Booth } from "@/types/booth";
 import { Location } from "@/types/type";
+import dynamic from "next/dynamic";
+
+const CreateDialogForm = dynamic(
+  () =>
+    import("@/components/layouts/CreateDialog").then(
+      (mod) => mod.MemoizedCreateDialogForm
+    ),
+  {
+    loading: () => <div>Loading...</div>,
+    ssr: false,
+  }
+);
+
+const CrudPageWrapper = dynamic(
+  () =>
+    import("@/components/layouts/SharedPage").then(
+      (mod) => mod.CrudPageWrapper
+    ),
+  {
+    loading: () => <div>Loading...</div>,
+    ssr: false,
+  }
+);
 
 const boothSchema = z.object({
   boothName: z.string().min(1, "Required"),
@@ -19,8 +40,6 @@ const boothSchema = z.object({
   description: z.string().optional(),
   status: z.boolean(),
 });
-
-type BoothFormType = z.infer<typeof boothSchema>;
 
 export default function BoothPage() {
   const [search, setSearch] = useState("");
@@ -86,7 +105,7 @@ export default function BoothPage() {
       search={search}
       onSearchChange={setSearch}
       createButton={
-        <CreateDialogForm<BoothFormType>
+        <CreateDialogForm
           title="Add Booth"
           description="Create new booth entry"
           triggerText="Add Booth"
