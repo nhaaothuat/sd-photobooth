@@ -30,7 +30,3 @@ export const getStaffList = async (
     totalItems: res.data?.totalCount || 0,
   };
 };
-
-export const deleteBooth = async (id: number) => {
-  await axios.delete(`/booth/${id}`);
-};

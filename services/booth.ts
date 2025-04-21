@@ -24,5 +24,5 @@ export const getBoothList = async (
 
 export const deleteBooth = async (id: number) => {
   const res = await AxiosAPI.delete(`/api/Booth/${id}`);
-  if (res.status !== 200) throw new Error("Xóa thất bại");
+  if (res.status !== 200) throw new Error("Delete failed");
 };

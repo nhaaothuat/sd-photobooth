@@ -3,8 +3,11 @@ import { DepositProduct } from "@/types/type";
 import ViewDetailDepositProduct from "@/components/component/IDDepositProduct";
 import DeleteDepositProduct from "@/components/component/DeleteDepositProduct";
 import { Group } from "@mantine/core";
+import DeletePayment from "@/components/component/DeletePayment";
 
-export const columns = (refetch: () => void): ColumnDef<DepositProduct>[] => [
+export const columns = (
+  onDelete: (id: number) => Promise<void>
+): ColumnDef<DepositProduct>[] => [
   {
     accessorKey: "id",
     header: "ID",
@@ -39,7 +42,7 @@ export const columns = (refetch: () => void): ColumnDef<DepositProduct>[] => [
     cell: ({ row }) => (
       <Group>
         <ViewDetailDepositProduct id={row.original.id} />
-        <DeleteDepositProduct id={row.original.id} onDeleteSuccess={refetch} />
+        <DeletePayment id={row.original.id} onDelete={onDelete} />
       </Group>
     ),
   },

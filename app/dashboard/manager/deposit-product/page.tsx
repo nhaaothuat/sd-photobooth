@@ -10,7 +10,11 @@ import { columns } from "./columns";
 import AddDepositProduct from "@/components/component/AddDepositProduct";
 import ExportButton from "@/components/component/ButtonExport";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
-import { getDepositProduct } from "@/services/deposit-product";
+import {
+  deleteDepositProduct,
+  getDepositProduct,
+} from "@/services/deposit-product";
+import { toast } from "react-toastify";
 
 const CrudPageWrapper = dynamic(
   () =>
@@ -37,6 +41,18 @@ export default function DepositProductPage() {
       },
     });
 
+  const handleDelete = async (id: number) => {
+    try {
+      await deleteDepositProduct(id);
+      toast.success("Deposit product deleted successfully");
+      if (data?.length === 1 && pageIndex > 0) setPageIndex((prev) => prev - 1);
+      else refetch();
+    } catch (error) {
+      toast.error("Failed to delete deposit product");
+      console.error("Error deleting product:", error);
+    }
+  };
+
   return (
     <CrudPageWrapper
       isSearchable={false}
@@ -44,7 +60,7 @@ export default function DepositProductPage() {
       createButton={<AddDepositProduct onSuccess={refetch} />}
       rightSlot={<ExportButton />}
       data={data}
-      columns={columns(refetch)}
+      columns={columns(handleDelete)}
       isLoading={isLoading}
       pageCount={Math.ceil(totalItems / pageSize)}
       pageIndex={pageIndex}

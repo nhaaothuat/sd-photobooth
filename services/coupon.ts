@@ -23,5 +23,5 @@ export const getCouponList = async (
 
 export const deleteCoupon = async (id: number) => {
   const res = await AxiosAPI.delete(`/api/Coupon/${id}`);
-  if (res.status !== 200) throw new Error("Xóa thất bại");
+  if (res.status !== 200) throw new Error("Delete failed");
 };

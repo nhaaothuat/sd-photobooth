@@ -58,11 +58,11 @@ export default function CouponPage() {
   const handleDelete = async (id: number) => {
     try {
       await deleteCoupon(id);
-      toast.success("Đã xóa mã giảm giá thành công");
+      toast.success("Delete coupon successfully");
       if (data?.length === 1 && pageIndex > 0) setPageIndex((prev) => prev - 1);
       else refetch();
     } catch (error) {
-      toast.error("Xóa thất bại");
+      toast.error("Failed to delete coupon");
     }
   };
 

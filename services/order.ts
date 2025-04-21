@@ -23,5 +23,6 @@ export const getOrderList = async (
 };
 
 export const deleteOrder = async (id: number) => {
-  await axios.delete(`/api/Order/${id}`);
+  const res = await axios.delete(`/api/Order/${id}`);
+  if (res.status !== 200) throw new Error("Delete failed");
 };

@@ -21,5 +21,6 @@ export const getTypeSessionProductList = async (
 };
 
 export const deleteTypeSessionProduct = async (id: number) => {
-  await axios.delete(`/TypeSessionProduct/${id}`);
+  const res = await axios.delete(`/api/TypeSessionProduct/${id}`);
+  if (res.status !== 200) throw new Error("Delete failed");
 };

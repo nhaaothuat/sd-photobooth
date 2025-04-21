@@ -20,5 +20,5 @@ export const staffSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
   gender: z.enum(["0", "1", "2"]),
   birthDate: z.string().min(1, "Birth date is required"),
-  locationId: z.number().min(0, "Location is required"),
+  locationId: z.coerce.number().min(0, "Location is required"),
 });

@@ -21,3 +21,11 @@ export const getDepositProduct = async (
     totalItems: countRes.data ?? 0,
   };
 };
+
+export const deleteDepositProduct = async (id: number) => {
+  const response = await AxiosAPI.delete(`/api/DepositProduct/${id}`);
+
+  if (response.status !== 204) {
+    throw new Error("Delete failed");
+  }
+};

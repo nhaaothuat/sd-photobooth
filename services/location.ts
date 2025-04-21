@@ -23,6 +23,11 @@ export const getLocationList = async (
   };
 };
 
+export const getCountLocation = async (): Promise<number> => {
+  const res = await AxiosAPI.get<number>("/api/Location/count");
+  return res.data ?? 0;
+};
+
 export const getAllLocations = async (): Promise<Location[]> => {
   const res = await AxiosAPI.get<Location[]>("/api/Location");
   return res.data ?? [];
@@ -30,5 +35,5 @@ export const getAllLocations = async (): Promise<Location[]> => {
 
 export const deleteLocation = async (id: number) => {
   const res = await AxiosAPI.delete(`/api/Location/${id}`);
-  if (res.status !== 200) throw new Error("Xóa thất bại");
+  if (res.status !== 200) throw new Error("Delete failed");
 };

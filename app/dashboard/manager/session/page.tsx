@@ -6,9 +6,7 @@ import { useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { Session } from "@/types/type";
 import { usePaginatedQuery } from "@/hooks/usePaginatedQuery";
-import AxiosAPI from "@/configs/axios";
 import { useDebounce } from "@/hooks/useDebounce";
-import { get } from "lodash";
 import { getSession } from "@/services/session";
 
 const CrudPageWrapper = dynamic(
