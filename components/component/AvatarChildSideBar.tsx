@@ -5,14 +5,7 @@ import { signOut, useSession } from "next-auth/react";
 import { CiLogout } from "react-icons/ci";
 
 import { Menu, Text, Modal, ScrollArea } from '@mantine/core';
-// import {
-//      IconSettings,
-//      IconSearch,
-//      IconPhoto,
-//      IconMessageCircle,
-//      IconTrash,
-//      IconArrowsLeftRight,
-// } from '@tabler/icons-react';
+
 import { useRouter } from "next/navigation";
 
 
@@ -24,13 +17,16 @@ import { SidebarMenuButton } from '../ui/sidebar';
 
 
 import AxiosAPI from '@/configs/axios';
+import { IconSettings } from '@tabler/icons-react';
+import ChangePassword from './ChangePassword';
 interface User {
      avatar: string | null;
 }
 
 const AvatarChildSideBar = () => {
-    
+
      const { data: session } = useSession();
+     const [opened, setOpened] = useState(false);
      const router = useRouter();
      const [user, setUser] = useState<User | null>(null);
 
@@ -93,7 +89,13 @@ const AvatarChildSideBar = () => {
                               </div>
                          </Menu.Label>
                          <Menu.Divider />
-                        
+                         <Menu.Item
+                              leftSection={<IconSettings size={14} />}
+                              onClick={() => setOpened(true)} // 👈 Mở modal khi click item
+                         >
+                              Change Password
+                         </Menu.Item>
+                         <Menu.Divider />
                          <Menu.Item className='font-sans font-light' onClick={handleLogout} leftSection={<CiLogout size={14} />}>
                               Log out
                          </Menu.Item>
@@ -104,7 +106,15 @@ const AvatarChildSideBar = () => {
 
                     </Menu.Dropdown>
                </Menu>
-              
+
+               <Modal
+                    opened={opened}
+                    onClose={() => setOpened(false)}
+                    title="Settings"
+               >
+                    <ChangePassword />
+               </Modal>
+
           </>
      )
 }

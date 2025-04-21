@@ -30,7 +30,7 @@ const menuItems: Record<string, MenuItem[]> = {
     { label: "Admin Dashboard", link: "/dashboard/admin", icon: Bot },
     { label: "Payment Method", link: "/dashboard/admin/payment", icon: Users },
     { label: "Level Membership", link: "/dashboard/admin/levelmembership", icon: Users },
-    
+
     {
       label: "Frame",
       icon: FileText,
@@ -41,7 +41,7 @@ const menuItems: Record<string, MenuItem[]> = {
       ],
     },
     { label: "Frame Style", link: "/dashboard/admin/frame-style", icon: Bot },
-   
+
     {
       label: "Sticker",
       icon: FileText,
@@ -64,7 +64,7 @@ const menuItems: Record<string, MenuItem[]> = {
       label: "Settings",
       icon: FileText,
       subMenu: [
-        { label: "General", link: "/dashboard/admin/settings/general" },
+        { label: "Profile", link: "/dashboard/admin/settings/profile" },
 
       ],
     },
@@ -81,7 +81,7 @@ const menuItems: Record<string, MenuItem[]> = {
       { label: "Create Order", link: "/dashboard/manager/order/create" }
       ],
     },
-    
+
     {
       label: "Booth", icon: FileText, subMenu: [
         { label: "Get Booth by Location", link: "/dashboard/manager/booth/bylocation" },
@@ -112,8 +112,8 @@ const menuItems: Record<string, MenuItem[]> = {
     {
       label: "Settings",
       icon: FileText,
-      subMenu: [{ label: "General", link: "/dashboard/manager/settings/general" },
-      { label: "Profile", link: "/dashboard/manager/settings/profile" },
+      subMenu: [
+        { label: "Profile", link: "/dashboard/manager/settings/profile" },
 
       ],
     },
@@ -135,6 +135,14 @@ const menuItems: Record<string, MenuItem[]> = {
       icon: FileText,
       subMenu: [{ label: "List Order", link: "/dashboard/staff/order/get" },
       { label: "Create Order", link: "/dashboard/staff/order/create" }
+      ],
+    },
+    {
+      label: "Settings",
+      icon: FileText,
+      subMenu: [
+        { label: "Profile", link: "/dashboard/staff/settings/profile" },
+
       ],
     },
   ],

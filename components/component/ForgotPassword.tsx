@@ -13,7 +13,7 @@ import {
      TextInput,
      Title,
 } from '@mantine/core';
-import Link from 'next/link';
+
 import AxiosAPI from '@/configs/axios';
 import { toast } from 'react-toastify';
 const ForgotPassword = () => {
