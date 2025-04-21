@@ -1,270 +1,118 @@
-"use client"
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { columns } from "./columns"
-import { Location } from "@/types/type"
-import AxiosAPI from "@/configs/axios"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { debounce } from 'lodash'
-import { toast } from 'react-toastify'
-import { Label } from '@/components/ui/label'
-import AddBooth from '@/components/component/AddBooth'
-import AddLocation from '@/components/component/AddLocation'
+"use client";
 
-const useLocationData = () => {
-  const [data, setData] = useState<Location[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [totalItems, setTotalItems] = useState(0)
+import { toast } from "react-toastify";
+import { useState } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
+import { z } from "zod";
+import AxiosAPI from "@/configs/axios";
+import { usePaginatedQuery } from "@/hooks/usePaginatedQuery";
+import { columns } from "./columns";
+import { Location } from "@/types/type";
+import dynamic from "next/dynamic";
 
-  const fetchCount = useCallback(async () => {
-    try {
-      const response = await AxiosAPI.get<number>("/api/Location/count")
-      setTotalItems(response.data || 0)
-    } catch (err) {
-      console.error("Failed to fetch total count", err)
-    }
-  }, [])
-
-  const fetchData = useCallback(async (page: number, pageSize: number) => {
-    try {
-      setLoading(true)
-      const response = await AxiosAPI.get<Location[]>("/api/Location", {
-        params: { PageNumber: page, PageSize: pageSize }
-      })
-      setData(response.data || [])
-      setError(null)
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch data")
-      setData([])
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  const fetchByName = useCallback(async (name: string, page: number, pageSize: number) => {
-    try {
-      setLoading(true)
-      const response = await AxiosAPI.get<Location[]>(`/api/Booth/by-location/${name}`, {
-        params: { PageNumber: page, PageSize: pageSize }
-      })
-      setData(response.data || [])
-      setError(null)
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch by name")
-      setData([])
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  const handleSearch = useMemo(() =>
-    debounce((term: string, page: number, size: number) => {
-      if (term.trim() === "") {
-        fetchData(page, size)
-      } else {
-        fetchByName(term, page, size)
-      }
-    }, 500),
-    [fetchData, fetchByName]
-  )
-
-  useEffect(() => {
-    fetchCount()
-    return () => {
-      handleSearch.cancel()
-    }
-  }, [fetchCount, handleSearch])
-
-  
-  
-
-  return {
-    data,
-    loading,
-    error,
-    totalItems,
-    fetchCount,
-    handleSearch,
-    fetchData,
+const CreateDialogForm = dynamic(
+  () =>
+    import("@/components/layouts/CreateDialog").then(
+      (mod) => mod.MemoizedCreateDialogForm
+    ),
+  {
+    loading: () => <div>Loading...</div>,
+    ssr: false,
   }
-}
+);
 
+const CrudPageWrapper = dynamic(
+  () =>
+    import("@/components/layouts/SharedPage").then(
+      (mod) => mod.CrudPageWrapper
+    ),
+  {
+    loading: () => <div>Loading...</div>,
+    ssr: false,
+  }
+);
 
-const LocationPage = () => {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [pageSize, setPageSize] = useState(5)
-  const [pageIndex, setPageIndex] = useState(0)
+const locationSchema = z.object({
+  locationName: z.string().min(1, "Required"),
+  address: z.string().min(1, "Required"),
+});
 
-  const {
-    data,
-    loading,
-    error,
-    totalItems,
-    fetchCount,
-    handleSearch,
-    
-  } = useLocationData()
-  const refetchData = useCallback(() => {
-    handleSearch(searchTerm, pageIndex + 1, pageSize)
-  }, [handleSearch, searchTerm, pageIndex, pageSize])
-  const deleteFrame = useCallback(async (id: number) => {
-    try {
-      const res = await AxiosAPI.delete(`/api/Location/${id}`)
+export default function LocationPage() {
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 500);
 
-      if (res.status !== 200) throw new Error("Xóa thất bại")
+  const [pageSize, setPageSize] = useState(5);
+  const [pageIndex, setPageIndex] = useState(0);
 
-      toast.success("Đã xóa phương thức thanh toán thành công")
-      fetchCount()
-      if (data.length <= 1 && pageIndex > 0) {
-        setPageIndex(prev => prev - 1)
-      } else {
-        handleSearch(searchTerm, pageIndex + 1, pageSize)
-      }
-    } catch (error) {
-      toast.error("Xóa thất bại")
-      console.error(error)
-    }
-  }, [data.length, fetchCount, handleSearch, pageIndex, pageSize, searchTerm])
+  const { data, totalItems, isLoading, refetch } = usePaginatedQuery<Location>({
+    queryKey: "locations",
+    pageIndex,
+    pageSize,
+    search: debouncedSearch,
+    queryFn: async ({ page, size, search }) => {
+      const url = search?.trim()
+        ? `/api/Location/by-location/${search}`
+        : `/api/Location`;
+      const res = await AxiosAPI.get<Location[]>(url, {
+        params: { PageNumber: page, PageSize: size },
+      });
 
-  const memoizedColumns = useMemo(() => columns(deleteFrame,refetchData), [deleteFrame,refetchData])
-
-  const table = useReactTable({
-    data,
-    columns: memoizedColumns,
-    pageCount: Math.ceil(totalItems / pageSize),
-    state: {
-      pagination: {
-        pageIndex,
-        pageSize
-      }
+      const countRes = await AxiosAPI.get<number>("/api/Location/count");
+      return {
+        items: res.data ?? [],
+        totalItems: countRes.data ?? 0,
+      };
     },
-    manualPagination: true,
-    getCoreRowModel: getCoreRowModel(),
-    onPaginationChange: (updater) => {
-      const newPagination = typeof updater === "function"
-        ? updater({ pageIndex, pageSize })
-        : updater
-      setPageIndex(newPagination.pageIndex)
-      setPageSize(newPagination.pageSize)
+  });
+
+  const handleDelete = async (id: number) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this location?"
+    );
+    if (!confirmed) return;
+
+    try {
+      await AxiosAPI.delete(`/api/Location/${id}`);
+      toast.success("Location deleted successfully");
+      refetch();
+    } catch {
+      toast.error("Failed to delete location");
     }
-  })
-
-  useEffect(() => {
-    handleSearch(searchTerm, pageIndex + 1, pageSize)
-  }, [searchTerm, pageIndex, pageSize, handleSearch])
-
-  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value)
-    setPageIndex(0)
-  }, [])
-
-  const handlePageSizeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setPageSize(Number(e.target.value))
-    setPageIndex(0)
-  }, [])
+  };
 
   return (
-    <div className="w-full space-y-4">
-      <div className="flex items-center justify-between py-4">
-        <Input
-          placeholder="Tìm kiếm Payment Method"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          className="max-w-sm"
+    <CrudPageWrapper
+      title="Location Management"
+      search={search}
+      onSearchChange={setSearch}
+      createButton={
+        <CreateDialogForm
+          title="Add Location"
+          description="Create a new location"
+          triggerText="Add Location"
+          schema={locationSchema}
+          defaultValues={{
+            locationName: "",
+            address: "",
+          }}
+          onSubmit={async (values) => {
+            await AxiosAPI.post("/api/Location", values);
+            refetch();
+          }}
+          fields={[
+            { type: "text", name: "locationName", label: "Location Name" },
+            { type: "text", name: "address", label: "Address" },
+          ]}
         />
-
-        <div className="flex items-center space-x-2">
-          <div className='gap-5'>
-            
-            <AddLocation onAddSuccess={() => {
-              fetchCount()
-              handleSearch(searchTerm, 1, pageSize)
-              setPageIndex(0)
-            }} />
-          </div>
-          <Label htmlFor="pageSize" className="text-sm">Số hàng/trang:</Label>
-          <select
-            id="pageSize"
-            value={pageSize}
-            onChange={handlePageSizeChange}
-            className="border border-gray-300 rounded px-2 py-1 text-sm"
-          >
-            {[5, 10, 15, 20].map(size => (
-              <option key={size} value={size}>{size}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {loading ? (
-        <div className="text-sm text-muted-foreground">Đang tải dữ liệu...</div>
-      ) : error ? (
-        <div className="text-red-500 p-4">Error: {error}</div>
-      ) : (
-        <>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                {table.getHeaderGroups().map(headerGroup => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map(header => (
-                      <TableHead key={header.id}>
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map(row => (
-                    <TableRow key={row.id}>
-                      {row.getVisibleCells().map(cell => (
-                        <TableCell key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={memoizedColumns.length} className="text-center">
-                      No results
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-
-          <div className="flex items-center justify-end space-x-2 py-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPageIndex(prev => prev - 1)}
-              disabled={pageIndex === 0}
-            >
-              Previous
-            </Button>
-            <span className="text-sm text-muted-foreground">
-              Page {pageIndex + 1} of {table.getPageCount()}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPageIndex(prev => prev + 1)}
-              disabled={pageIndex + 1 >= table.getPageCount()}
-            >
-              Next
-            </Button>
-          </div>
-        </>
-      )}
-    </div>
-  )
+      }
+      data={data}
+      columns={columns(handleDelete, refetch)}
+      isLoading={isLoading}
+      pageCount={Math.ceil(totalItems / pageSize)}
+      pageIndex={pageIndex}
+      pageSize={pageSize}
+      onPageChange={setPageIndex}
+      onPageSizeChange={setPageSize}
+    />
+  );
 }
-
-export default LocationPage

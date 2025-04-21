@@ -1,40 +1,43 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from 'react'
-import AxiosAPI from '@/configs/axios'
-import { TypeSession, TypeSessionProduct } from '@/types/type'
-import { Badge, Card, Group, SimpleGrid, Text } from '@mantine/core'
+import { useEffect, useState } from "react";
+import AxiosAPI from "@/configs/axios";
+import { TypeSession, TypeSessionProduct } from "@/types/type";
+import { Card, Group, SimpleGrid, Text } from "@mantine/core";
 
 const ByCoupon = () => {
-  const [typeSessions, setTypeSessions] = useState<TypeSession[]>([])
-  const [selectedTypeId, setSelectedTypeId] = useState<number | null>(null)
-  const [couponCode, setCouponCode] = useState("")
-  const [result, setResult] = useState<TypeSessionProduct[]>([])
+  const [typeSessions, setTypeSessions] = useState<TypeSession[]>([]);
+  const [selectedTypeId, setSelectedTypeId] = useState<number | null>(null);
+  const [couponCode, setCouponCode] = useState("");
+  const [result, setResult] = useState<TypeSessionProduct[]>([]);
 
   useEffect(() => {
     const fetchTypeSessions = async () => {
       try {
-        const response = await AxiosAPI.get<TypeSession[]>("/api/TypeSession")
-        setTypeSessions(response.data || [])
+        const response = await AxiosAPI.get<TypeSession[]>("/api/TypeSession");
+        setTypeSessions(response.data || []);
       } catch (error) {
-        console.error("Lỗi khi lấy danh sách TypeSession:", error)
+        console.error("Lỗi khi lấy danh sách TypeSession:", error);
       }
-    }
+    };
 
-    fetchTypeSessions()
-  }, [])
+    fetchTypeSessions();
+  }, []);
 
   const handleFetch = async () => {
-    if (!couponCode || !selectedTypeId) return
+    if (!couponCode || !selectedTypeId) return;
     try {
       const response = await AxiosAPI.get<TypeSessionProduct[]>(
         `/api/TypeSessionProduct/coupon?coupon=${couponCode}&typeSessionId=${selectedTypeId}`
-      )
-      setResult(response.data || [])
+      );
+      setResult(response.data || []);
     } catch (error) {
-      console.error("Lỗi khi lấy dữ liệu TypeSessionProduct theo coupon và typeSessionId:", error)
+      console.error(
+        "Lỗi khi lấy dữ liệu TypeSessionProduct theo coupon và typeSessionId:",
+        error
+      );
     }
-  }
+  };
 
   return (
     <div className="p-4 max-w-4xl mx-auto space-y-4">
@@ -56,9 +59,13 @@ const ByCoupon = () => {
           onChange={(e) => setSelectedTypeId(parseInt(e.target.value))}
           defaultValue=""
         >
-          <option value="" disabled>-- Chọn một TypeSession --</option>
+          <option value="" disabled>
+            -- Chọn một TypeSession --
+          </option>
           {typeSessions.map((type) => (
-            <option key={type.id} value={type.id}>{type.name}</option>
+            <option key={type.id} value={type.id}>
+              {type.name}
+            </option>
           ))}
         </select>
       </div>
@@ -78,9 +85,15 @@ const ByCoupon = () => {
                 <Text fw={500}>ID: {item.id}</Text>
                 <Text fw={500}>{item.name}</Text>
               </Group>
-              <Text size="sm" c="dimmed">Product ID: {item.productId}</Text>
-              <Text size="sm" c="dimmed">Coupon ID: {item.couponId}</Text>
-              <Text size="sm" c="dimmed">TypeSession ID: {item.typeSessionId}</Text>
+              <Text size="sm" c="dimmed">
+                Product ID: {item.productId}
+              </Text>
+              <Text size="sm" c="dimmed">
+                Coupon ID: {item.couponId}
+              </Text>
+              <Text size="sm" c="dimmed">
+                TypeSession ID: {item.typeSessionId}
+              </Text>
               <Text size="xs" c="gray" mt="sm">
                 Tạo lúc: {new Date(item.createdAt).toLocaleString()}
               </Text>
@@ -89,7 +102,7 @@ const ByCoupon = () => {
         </SimpleGrid>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default ByCoupon
+export default ByCoupon;

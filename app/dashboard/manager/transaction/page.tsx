@@ -1,194 +1,54 @@
-"use client"
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { columns } from "./columns"
-import { Transaction } from "@/types/type"
-import AxiosAPI from "@/configs/axios"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { debounce } from 'lodash'
-import { toast } from 'react-toastify'
-import { Label } from '@/components/ui/label'
-import { DropdownMenu } from '@/components/ui/dropdown-menu'
-import AddSticker from '@/components/component/AddSticker'
+"use client";
 
+import { CrudPageWrapper } from "@/components/layouts/SharedPage";
+import { useDebounce } from "@/hooks/useDebounce";
+import { useState } from "react";
+import { usePaginatedQuery } from "@/hooks/usePaginatedQuery";
+import { Transaction } from "@/types/type";
+import AxiosAPI from "@/configs/axios";
+import { columns } from "./columns";
 
-const useTransactionData = () => {
-  const [data, setData] = useState<Transaction[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [totalItems, setTotalItems] = useState(0)
+export default function TransactionPage() {
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 500);
 
-  const fetchCount = useCallback(async () => {
-    try {
-      const response = await AxiosAPI.get<number>("/api/Transaction/count")
-      setTotalItems(response.data || 0)
-    } catch (err) {
-      console.error("Failed to fetch total count", err)
-    }
-  }, [])
+  const [pageSize, setPageSize] = useState(5);
+  const [pageIndex, setPageIndex] = useState(0);
 
-  const fetchData = useCallback(async (page: number, pageSize: number) => {
-    try {
-      setLoading(true)
-      const response = await AxiosAPI.get<Transaction[]>("/api/Transaction", {
-        params: { PageNumber: page, PageSize: pageSize }
-      })
-      setData(response.data || [])
-      setError(null)
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch data")
-      setData([])
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+  const { data, totalItems, isLoading, refetch } =
+    usePaginatedQuery<Transaction>({
+      queryKey: "transactions",
+      pageIndex,
+      pageSize,
+      search: debouncedSearch,
+      queryFn: async ({ page, size }) => {
+        const res = await AxiosAPI.get<Transaction[]>(`/api/Transaction`, {
+          params: { PageNumber: page, PageSize: size },
+        });
 
-  return {
-    data,
-    loading,
-    error,
-    totalItems,
-    fetchCount,
-    fetchData,
-  }
-}
+        const countRes = await AxiosAPI.get<number>("/api/Transaction/count");
 
-const TransactionPage = () => {
-  const [pageSize, setPageSize] = useState(5)
-  const [pageIndex, setPageIndex] = useState(0)
-
-  const {
-    data,
-    loading,
-    error,
-    totalItems,
-    fetchCount,
-    fetchData,
-  } = useTransactionData()
-
- 
-
-  const memoizedColumns = useMemo(() => columns(),
-    [ fetchData, pageIndex, pageSize])
-
-  const table = useReactTable({
-    data,
-    columns: memoizedColumns,
-    pageCount: Math.ceil(totalItems / pageSize),
-    state: {
-      pagination: {
-        pageIndex,
-        pageSize
-      }
-    },
-    manualPagination: true,
-    getCoreRowModel: getCoreRowModel(),
-    onPaginationChange: (updater) => {
-      const newPagination = typeof updater === "function"
-        ? updater({ pageIndex, pageSize })
-        : updater
-      setPageIndex(newPagination.pageIndex)
-      setPageSize(newPagination.pageSize)
-    }
-  })
-
-  useEffect(() => {
-    fetchData(pageIndex + 1, pageSize)
-    fetchCount()
-  }, [fetchData, fetchCount, pageIndex, pageSize])
-
-  const handlePageSizeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setPageSize(Number(e.target.value))
-    setPageIndex(0)
-  }, [])
+        return {
+          items: res.data ?? [],
+          totalItems: countRes.data ?? 0,
+        };
+      },
+    });
 
   return (
-    <div className="w-full space-y-4">
-      <div className="flex items-center justify-between py-4">
-        <div className="flex items-center space-x-2">
-          
-          <Label htmlFor="pageSize" className="text-sm">Số hàng/trang:</Label>
-          <select
-            id="pageSize"
-            value={pageSize}
-            onChange={handlePageSizeChange}
-            className="border border-gray-300 rounded px-2 py-1 text-sm"
-          >
-            {[5, 10, 15, 20].map(size => (
-              <option key={size} value={size}>{size}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {loading ? (
-        <div className="text-sm text-muted-foreground">Đang tải dữ liệu...</div>
-      ) : error ? (
-        <div className="text-red-500 p-4">Error: {error}</div>
-      ) : (
-        <>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                {table.getHeaderGroups().map(headerGroup => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map(header => (
-                      <TableHead key={header.id}>
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map(row => (
-                    <TableRow key={row.id}>
-                      {row.getVisibleCells().map(cell => (
-                        <TableCell key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={memoizedColumns.length} className="text-center">
-                      No results
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-
-          <div className="flex items-center justify-end space-x-2 py-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPageIndex(prev => prev - 1)}
-              disabled={pageIndex === 0}
-            >
-              Previous
-            </Button>
-            <span className="text-sm text-muted-foreground">
-              Page {pageIndex + 1} of {table.getPageCount()}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPageIndex(prev => prev + 1)}
-              disabled={pageIndex + 1 >= table.getPageCount()}
-            >
-              Next
-            </Button>
-          </div>
-        </>
-      )}
-    </div>
-  )
+    <CrudPageWrapper
+      title="Transaction Management"
+      search={search}
+      onSearchChange={setSearch}
+      createButton={null}
+      data={data}
+      columns={columns()}
+      isLoading={isLoading}
+      pageCount={totalItems}
+      pageIndex={pageIndex}
+      pageSize={pageSize}
+      onPageChange={setPageIndex}
+      onPageSizeChange={setPageSize}
+    />
+  );
 }
-
-export default TransactionPage

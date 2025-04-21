@@ -11,8 +11,20 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import AxiosAPI from "@/configs/axios";
 
 interface TypeSession {
@@ -44,7 +56,9 @@ const Order = () => {
     paymentMethodId: 0,
   });
   const [typeSessions, setTypeSessions] = React.useState<TypeSession[]>([]);
-  const [paymentMethods, setPaymentMethods] = React.useState<PaymentMethod[]>([]);
+  const [paymentMethods, setPaymentMethods] = React.useState<PaymentMethod[]>(
+    []
+  );
   const [paymentLink, setPaymentLink] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
@@ -105,17 +119,31 @@ const Order = () => {
       <Card className="w-[400px]">
         <CardHeader>
           <CardTitle>Order Form</CardTitle>
-          <CardDescription>Fill in the details below to place an order.</CardDescription>
+          <CardDescription>
+            Fill in the details below to place an order.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="grid gap-4">
             <div className="flex flex-col space-y-1.5">
               <Label>Email</Label>
-              <Input name="email" value={formData.email} onChange={handleChange} placeholder="Enter your email" required />
+              <Input
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter your email"
+                required
+              />
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label>Phone</Label>
-              <Input name="phone" value={formData.phone} onChange={handleChange} placeholder="Enter your phone number" required />
+              <Input
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="Enter your phone number"
+                required
+              />
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label>Type Session</Label>
@@ -148,7 +176,9 @@ const Order = () => {
               </Select>
             </div>
             <CardFooter className="flex justify-between">
-              <Button variant="outline" type="button">Cancel</Button>
+              <Button variant="outline" type="button">
+                Cancel
+              </Button>
               <Button type="submit" disabled={loading}>
                 {loading ? "Processing..." : "Submit"}
               </Button>
@@ -163,10 +193,18 @@ const Order = () => {
             <DialogTitle>Payment Page</DialogTitle>
           </DialogHeader>
           <div className="w-full h-[600px] border rounded-md overflow-hidden">
-            {paymentLink && <iframe src={paymentLink} className="w-full h-full" title="Payment Page"></iframe>}
+            {paymentLink && (
+              <iframe
+                src={paymentLink}
+                className="w-full h-full"
+                title="Payment Page"
+              ></iframe>
+            )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Close</Button>
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+              Close
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

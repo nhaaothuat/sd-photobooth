@@ -1,114 +1,123 @@
-"use client"
+"use client";
 
-import DeletePayment from "@/components/component/DeletePayment"
-import DeleteSticker from "@/components/component/DeleteSticker"
-import EditMembershipCard from "@/components/component/GPMembershipCard"
-import ViewDetailMembershipCard from "@/components/component/IDMemberShipCard"
-import ViewDetailPhotoStyle from "@/components/component/IDPhotoStyle"
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { MembershipCard } from "@/types/type"
-import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal } from "lucide-react"
-import Image from "next/image"
+import EditMembershipCard from "@/components/component/GPMembershipCard";
+import ViewDetailMembershipCard from "@/components/component/IDMemberShipCard";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { MembershipCard } from "@/types/type";
+import { ColumnDef } from "@tanstack/react-table";
+import { MoreHorizontal } from "lucide-react";
 
 export const columns = (
-     // onDelete: (id: number) => Promise<void>,
-     refetchData: () => void,
+  // onDelete: (id: number) => Promise<void>,
+  refetchData: () => void
 ): ColumnDef<MembershipCard>[] => [
-          {
-               accessorKey: "id",
-               header: () => <div className="text-center">ID</div>,
-               cell: ({ row }) => <div className="text-center">{row.getValue("id")}</div>
-          },
-          {
-               accessorKey: "name",
-               header: () => <div className="text-center">Name</div>,
-               cell: ({ row }) => <div className="text-center">{row.getValue("name")}</div>
-          },
-          {
-               accessorKey: "description",
-               header: () => <div className="text-center">Description</div>,
-               cell: ({ row }) => <div className="text-center">{row.getValue("description")}</div>
-          },
-          {
-               accessorKey: "customer.fullName",
-               header: () => <div className="text-center">customer name</div>,
-               cell: ({ row }) => {
-                    const name = row.original.customer.fullName;
-                    return <div className="text-center">{name || "No Name"}</div>;
-               }
-          },
-          {
-               accessorKey: "customer.email",
-               header: () => <div className="text-center">customer name</div>,
-               cell: ({ row }) => {
-                    const email = row.original.customer.email;
-                    return <div className="text-center">{email || "No Name"}</div>;
-               }
-          },
-          {
-               accessorKey: "points",
-               header: () => <div className="text-center">Points</div>,
-               cell: ({ row }) => <div className="text-center">{row.getValue("points")}</div>
-          },
+  {
+    accessorKey: "id",
+    header: () => <div className="text-center">ID</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("id")}</div>,
+  },
+  {
+    accessorKey: "name",
+    header: () => <div className="text-center">Name</div>,
+    cell: ({ row }) => (
+      <div className="text-center">{row.getValue("name")}</div>
+    ),
+  },
+  {
+    accessorKey: "description",
+    header: () => <div className="text-center">Description</div>,
+    cell: ({ row }) => (
+      <div className="text-center">{row.getValue("description")}</div>
+    ),
+  },
+  {
+    accessorKey: "customer.fullName",
+    header: () => <div className="text-center">customer name</div>,
+    cell: ({ row }) => {
+      const name = row.original.customer.fullName;
+      return <div className="text-center">{name || "No Name"}</div>;
+    },
+  },
+  {
+    accessorKey: "customer.email",
+    header: () => <div className="text-center">customer name</div>,
+    cell: ({ row }) => {
+      const email = row.original.customer.email;
+      return <div className="text-center">{email || "No Name"}</div>;
+    },
+  },
+  {
+    accessorKey: "points",
+    header: () => <div className="text-center">Points</div>,
+    cell: ({ row }) => (
+      <div className="text-center">{row.getValue("points")}</div>
+    ),
+  },
 
-          {
-               accessorKey: "levelMemberShip",
-               header: () => <div className="text-center">levelMemberShip</div>,
-               cell: ({ row }) => {
-                    const name = row.original.levelMemberShip.name;
-                    return <div className="text-center">{name || "No Name"}</div>;
-               }
-          },
+  {
+    accessorKey: "levelMemberShip",
+    header: () => <div className="text-center">levelMemberShip</div>,
+    cell: ({ row }) => {
+      const name = row.original.levelMemberShip.name;
+      return <div className="text-center">{name || "No Name"}</div>;
+    },
+  },
 
-          {
-               accessorKey: "isActive",
-               header: () => <div className="text-center">Is Active</div>,
-               cell: ({ row }) => <div className="text-center">{row.getValue("isActive") ? "Yes" : "No"}</div>
-          },
-          {
-               id:"edit",
-               header: () => <div className="text-center">Edit</div>,
-               cell: ({row}) => {
-                    const id = row.original.id;
-                    return(
-                         <EditMembershipCard id={id} onUpdated={refetchData} />
-                    )
-               }
-          },
-         
-          {
-               id: "actions",
-               enableHiding: false,
-               cell: ({ row }) => {
-                    const id = row.original.id;
-                    const sticker = row.original;
-                    return (
-                         <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                   <Button variant="ghost" className="h-8 w-8 p-0">
+  {
+    accessorKey: "isActive",
+    header: () => <div className="text-center">Is Active</div>,
+    cell: ({ row }) => (
+      <div className="text-center">
+        {row.getValue("isActive") ? "Yes" : "No"}
+      </div>
+    ),
+  },
+  {
+    id: "edit",
+    header: () => <div className="text-center">Edit</div>,
+    cell: ({ row }) => {
+      const id = row.original.id;
+      return <EditMembershipCard id={id} onUpdated={refetchData} />;
+    },
+  },
 
-                                        <MoreHorizontal />
-                                   </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="center">
-                                   <DropdownMenuLabel>Actions</DropdownMenuLabel>
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const id = row.original.id;
+      const sticker = row.original;
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="center">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-                                   <DropdownMenuSeparator />
-                                   {/* <DropdownMenuItem asChild>
+            <DropdownMenuSeparator />
+            {/* <DropdownMenuItem asChild>
                                         <DeletePayment id={id} onDelete={onDelete} />
                                    </DropdownMenuItem>
 
                                    */}
 
-                                   <DropdownMenuItem asChild>
-                                        <ViewDetailMembershipCard id={id} />
-                                   </DropdownMenuItem>
-
-                              </DropdownMenuContent>
-                         </DropdownMenu>
-                    );
-               }
-          }
-     ]
+            <DropdownMenuItem asChild>
+              <ViewDetailMembershipCard id={id} />
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
+  },
+];

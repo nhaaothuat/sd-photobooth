@@ -1,7 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GalleryVerticalEnd } from "lucide-react";
@@ -43,10 +49,10 @@ const ResetPasswordPage = () => {
         token,
         newPassword: password,
       });
-      console.log(res)
+      console.log(res);
       if (res.status === 200) {
         toast.success("Password updated successfully!");
-        router.replace("/"); 
+        router.replace("/");
       } else {
         toast.error("Failed to update password.");
       }

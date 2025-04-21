@@ -11,8 +11,6 @@ import {
 
 import { ThemeProvider } from "@/providers/theme-provider";
 import { AppSidebar } from "@/components/component/AppSidebar";
-import { useState } from "react";
-
 
 const DashBoardLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -35,11 +33,7 @@ const DashBoardLayout = ({ children }: { children: React.ReactNode }) => {
               <Navbar />
             </div>
           </header>
-          <div className="flex flex-1 flex-col gap-4 p-4">
-            {children}
-
-          
-          </div>
+          <div className="flex flex-1 flex-col gap-4 p-4">{children}</div>
         </SidebarInset>
       </SidebarProvider>
     </ThemeProvider>

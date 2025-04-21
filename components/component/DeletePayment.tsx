@@ -45,7 +45,8 @@ const DeletePayment: React.FC<DeletePaymentProps> = ({ id, onDelete }) => {
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently remove this payment method.
+            This action cannot be undone. This will permanently remove this
+            payment method.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

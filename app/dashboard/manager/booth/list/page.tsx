@@ -1,269 +1,157 @@
-"use client"
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { columns } from "./columns"
-import { Booth } from "@/types/type"
-import AxiosAPI from "@/configs/axios"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { debounce } from 'lodash'
-import { toast } from 'react-toastify'
-import { Label } from '@/components/ui/label'
-import AddBooth from '@/components/component/AddBooth'
+"use client";
 
-const useFrameData = () => {
-  const [data, setData] = useState<Booth[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [totalItems, setTotalItems] = useState(0)
+import { deleteBooth } from "@/services/booth-service";
+import { columns } from "./columns";
+import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
+import { z } from "zod";
+import AxiosAPI from "@/configs/axios";
+import { usePaginatedQuery } from "@/hooks/usePaginatedQuery";
+import { Booth } from "@/types/booth";
+import { Location } from "@/types/type";
+import dynamic from "next/dynamic";
 
-  const fetchCount = useCallback(async () => {
-    try {
-      const response = await AxiosAPI.get<number>("/api/Booth/count")
-      setTotalItems(response.data || 0)
-    } catch (err) {
-      console.error("Failed to fetch total count", err)
-    }
-  }, [])
-
-  const fetchData = useCallback(async (page: number, pageSize: number) => {
-    try {
-      setLoading(true)
-      const response = await AxiosAPI.get<Booth[]>("/api/Booth", {
-        params: { PageNumber: page, PageSize: pageSize }
-      })
-      setData(response.data || [])
-      setError(null)
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch data")
-      setData([])
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  const fetchByName = useCallback(async (name: string, page: number, pageSize: number) => {
-    try {
-      setLoading(true)
-      const response = await AxiosAPI.get<Booth[]>(`/api/Booth/by-name/${name}`, {
-        params: { PageNumber: page, PageSize: pageSize }
-      })
-      setData(response.data || [])
-      setError(null)
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch by name")
-      setData([])
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  const handleSearch = useMemo(() =>
-    debounce((term: string, page: number, size: number) => {
-      if (term.trim() === "") {
-        fetchData(page, size)
-      } else {
-        fetchByName(term, page, size)
-      }
-    }, 500),
-    [fetchData, fetchByName]
-  )
-
-  useEffect(() => {
-    fetchCount()
-    return () => {
-      handleSearch.cancel()
-    }
-  }, [fetchCount, handleSearch])
-
-  
-  
-
-  return {
-    data,
-    loading,
-    error,
-    totalItems,
-    fetchCount,
-    handleSearch,
-    fetchData,
+const CreateDialogForm = dynamic(
+  () =>
+    import("@/components/layouts/CreateDialog").then(
+      (mod) => mod.MemoizedCreateDialogForm
+    ),
+  {
+    loading: () => <div>Loading...</div>,
+    ssr: false,
   }
-}
+);
 
+const CrudPageWrapper = dynamic(
+  () =>
+    import("@/components/layouts/SharedPage").then(
+      (mod) => mod.CrudPageWrapper
+    ),
+  {
+    loading: () => <div>Loading...</div>,
+    ssr: false,
+  }
+);
 
-const FramePage = () => {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [pageSize, setPageSize] = useState(5)
-  const [pageIndex, setPageIndex] = useState(0)
+const boothSchema = z.object({
+  boothName: z.string().min(1, "Required"),
+  locationId: z.string().min(1, "Required"),
+  description: z.string().optional(),
+  status: z.boolean(),
+});
 
-  const {
-    data,
-    loading,
-    error,
-    totalItems,
-    fetchCount,
-    handleSearch,
-    
-  } = useFrameData()
-  const refetchData = useCallback(() => {
-    handleSearch(searchTerm, pageIndex + 1, pageSize)
-  }, [handleSearch, searchTerm, pageIndex, pageSize])
-  const deleteFrame = useCallback(async (id: number) => {
-    try {
-      const res = await AxiosAPI.delete(`/api/Booth/${id}`)
+export default function BoothPage() {
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 500);
 
-      if (res.status !== 200) throw new Error("Xóa thất bại")
-
-      toast.success("Đã xóa phương thức thanh toán thành công")
-      fetchCount()
-      if (data.length <= 1 && pageIndex > 0) {
-        setPageIndex(prev => prev - 1)
-      } else {
-        handleSearch(searchTerm, pageIndex + 1, pageSize)
-      }
-    } catch (error) {
-      toast.error("Xóa thất bại")
-      console.error(error)
-    }
-  }, [data.length, fetchCount, handleSearch, pageIndex, pageSize, searchTerm])
-
-  const memoizedColumns = useMemo(() => columns(deleteFrame,refetchData), [deleteFrame,refetchData])
-
-  const table = useReactTable({
-    data,
-    columns: memoizedColumns,
-    pageCount: Math.ceil(totalItems / pageSize),
-    state: {
-      pagination: {
-        pageIndex,
-        pageSize
-      }
-    },
-    manualPagination: true,
-    getCoreRowModel: getCoreRowModel(),
-    onPaginationChange: (updater) => {
-      const newPagination = typeof updater === "function"
-        ? updater({ pageIndex, pageSize })
-        : updater
-      setPageIndex(newPagination.pageIndex)
-      setPageSize(newPagination.pageSize)
-    }
-  })
+  const [pageSize, setPageSize] = useState(5);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [locations, setLocations] = useState<Location[]>([]);
 
   useEffect(() => {
-    handleSearch(searchTerm, pageIndex + 1, pageSize)
-  }, [searchTerm, pageIndex, pageSize, handleSearch])
+    const fetchLocations = async () => {
+      try {
+        const res = await AxiosAPI.get<Location[]>("/api/Location");
+        setLocations(res.data ?? []);
+      } catch (error) {
+        console.error("Failed to fetch locations", error);
+        toast.error("Failed to load locations");
+      }
+    };
 
-  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value)
-    setPageIndex(0)
-  }, [])
+    fetchLocations();
+  }, []);
 
-  const handlePageSizeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setPageSize(Number(e.target.value))
-    setPageIndex(0)
-  }, [])
+  const { data, totalItems, isLoading, refetch } = usePaginatedQuery<Booth>({
+    queryKey: "booths",
+    pageIndex,
+    pageSize,
+    search: debouncedSearch,
+    queryFn: async ({ page, size, search }) => {
+      const url = search?.trim()
+        ? `/api/Booth/by-name/${search}`
+        : `/api/Booth`;
+      const res = await AxiosAPI.get<Booth[]>(url, {
+        params: { PageNumber: page, PageSize: size },
+      });
+
+      const countRes = await AxiosAPI.get<number>("/api/Booth/count");
+      return {
+        items: res.data ?? [],
+        totalItems: countRes.data ?? 0,
+      };
+    },
+  });
+
+  const handleDelete = async (id: number) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this booth?"
+    );
+    if (!confirmed) return;
+
+    try {
+      await deleteBooth(id);
+      toast.success("Booth deleted successfully");
+      refetch();
+    } catch {
+      toast.error("Failed to delete booth");
+    }
+  };
 
   return (
-    <div className="w-full space-y-4">
-      <div className="flex items-center justify-between py-4">
-        <Input
-          placeholder="Tìm kiếm Payment Method"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          className="max-w-sm"
+    <CrudPageWrapper
+      title="Booth Management"
+      search={search}
+      onSearchChange={setSearch}
+      createButton={
+        <CreateDialogForm
+          title="Add Booth"
+          description="Create new booth entry"
+          triggerText="Add Booth"
+          schema={boothSchema}
+          defaultValues={{
+            boothName: "",
+            locationId: "",
+            description: "",
+            status: true,
+          }}
+          onSubmit={async (values) => {
+            await AxiosAPI.post("/api/Booth", {
+              ...values,
+              locationId: Number(values.locationId),
+            });
+            refetch();
+          }}
+          fields={[
+            { type: "text", name: "boothName", label: "Booth Name" },
+            {
+              type: "select",
+              name: "locationId",
+              label: "Location",
+              options: locations.map((l) => ({
+                label: l.locationName,
+                value: l.id,
+              })),
+            },
+            { type: "text", name: "description", label: "Description" },
+            {
+              type: "switch",
+              name: "status",
+              label: "Status",
+              description: "Enable or disable this booth",
+            },
+          ]}
         />
-
-        <div className="flex items-center space-x-2">
-          <div className='gap-5'>
-            
-            <AddBooth onSuccess={() => {
-              fetchCount()
-              handleSearch(searchTerm, 1, pageSize)
-              setPageIndex(0)
-            }} />
-          </div>
-          <Label htmlFor="pageSize" className="text-sm">Số hàng/trang:</Label>
-          <select
-            id="pageSize"
-            value={pageSize}
-            onChange={handlePageSizeChange}
-            className="border border-gray-300 rounded px-2 py-1 text-sm"
-          >
-            {[5, 10, 15, 20].map(size => (
-              <option key={size} value={size}>{size}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {loading ? (
-        <div className="text-sm text-muted-foreground">Đang tải dữ liệu...</div>
-      ) : error ? (
-        <div className="text-red-500 p-4">Error: {error}</div>
-      ) : (
-        <>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                {table.getHeaderGroups().map(headerGroup => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map(header => (
-                      <TableHead key={header.id}>
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map(row => (
-                    <TableRow key={row.id}>
-                      {row.getVisibleCells().map(cell => (
-                        <TableCell key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={memoizedColumns.length} className="text-center">
-                      No results
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-
-          <div className="flex items-center justify-end space-x-2 py-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPageIndex(prev => prev - 1)}
-              disabled={pageIndex === 0}
-            >
-              Previous
-            </Button>
-            <span className="text-sm text-muted-foreground">
-              Page {pageIndex + 1} of {table.getPageCount()}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPageIndex(prev => prev + 1)}
-              disabled={pageIndex + 1 >= table.getPageCount()}
-            >
-              Next
-            </Button>
-          </div>
-        </>
-      )}
-    </div>
-  )
+      }
+      data={data}
+      columns={columns(handleDelete, refetch)}
+      isLoading={isLoading}
+      pageCount={Math.ceil(totalItems / pageSize)}
+      pageIndex={pageIndex}
+      pageSize={pageSize}
+      onPageChange={setPageIndex}
+      onPageSizeChange={setPageSize}
+    />
+  );
 }
-
-export default FramePage

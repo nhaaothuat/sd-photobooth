@@ -26,7 +26,10 @@ const levelMembershipSchema = z.object({
   description: z.string().optional(),
   point: z.coerce.number().min(0, "Điểm phải là số không âm"),
   isActive: z.boolean(),
-  discountPercent: z.coerce.number().min(0).max(100, "Phần trăm giảm giá từ 0 đến 100"),
+  discountPercent: z.coerce
+    .number()
+    .min(0)
+    .max(100, "Phần trăm giảm giá từ 0 đến 100"),
   maxDiscount: z.coerce.number().min(0),
   minOrder: z.coerce.number().min(0),
 });
@@ -89,7 +92,9 @@ const AddLevelMembership = ({ onSuccess }: { onSuccess?: () => void }) => {
           <div>
             <Label htmlFor="name">Tên</Label>
             <Input id="name" {...register("name")} />
-            {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+            {errors.name && (
+              <p className="text-red-500 text-sm">{errors.name.message}</p>
+            )}
           </div>
 
           <div>
@@ -99,8 +104,15 @@ const AddLevelMembership = ({ onSuccess }: { onSuccess?: () => void }) => {
 
           <div>
             <Label htmlFor="point">Điểm</Label>
-            <Input type="number" min="0" id="point" {...register("point", { valueAsNumber: true })} />
-            {errors.point && <p className="text-red-500 text-sm">{errors.point.message}</p>}
+            <Input
+              type="number"
+              min="0"
+              id="point"
+              {...register("point", { valueAsNumber: true })}
+            />
+            {errors.point && (
+              <p className="text-red-500 text-sm">{errors.point.message}</p>
+            )}
           </div>
 
           <div>
@@ -121,20 +133,38 @@ const AddLevelMembership = ({ onSuccess }: { onSuccess?: () => void }) => {
               )}
             />
             {errors.discountPercent && (
-              <p className="text-red-500 text-sm">{errors.discountPercent.message}</p>
+              <p className="text-red-500 text-sm">
+                {errors.discountPercent.message}
+              </p>
             )}
           </div>
 
           <div>
             <Label htmlFor="maxDiscount">Giảm giá tối đa</Label>
-            <Input type="number" min="0" id="maxDiscount" {...register("maxDiscount", { valueAsNumber: true })} />
-            {errors.maxDiscount && <p className="text-red-500 text-sm">{errors.maxDiscount.message}</p>}
+            <Input
+              type="number"
+              min="0"
+              id="maxDiscount"
+              {...register("maxDiscount", { valueAsNumber: true })}
+            />
+            {errors.maxDiscount && (
+              <p className="text-red-500 text-sm">
+                {errors.maxDiscount.message}
+              </p>
+            )}
           </div>
 
           <div>
             <Label htmlFor="minOrder">Đơn hàng tối thiểu</Label>
-            <Input type="number" min="0" id="minOrder" {...register("minOrder", { valueAsNumber: true })} />
-            {errors.minOrder && <p className="text-red-500 text-sm">{errors.minOrder.message}</p>}
+            <Input
+              type="number"
+              min="0"
+              id="minOrder"
+              {...register("minOrder", { valueAsNumber: true })}
+            />
+            {errors.minOrder && (
+              <p className="text-red-500 text-sm">{errors.minOrder.message}</p>
+            )}
           </div>
 
           <div className="flex items-center justify-between rounded-md border p-4">
@@ -143,7 +173,10 @@ const AddLevelMembership = ({ onSuccess }: { onSuccess?: () => void }) => {
               name="isActive"
               control={control}
               render={({ field }) => (
-                <Switch checked={field.value} onCheckedChange={field.onChange} />
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
               )}
             />
           </div>

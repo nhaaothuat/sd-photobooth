@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import {  Geist_Mono , Outfit} from "next/font/google";
+import { Geist_Mono, Outfit } from "next/font/google";
 import "./globals.css";
 import "@mantine/core/styles.css";
 import "@mantine/charts/styles.css";
@@ -13,7 +13,7 @@ import { getLocale, getMessages } from "next-intl/server";
 import { SessionProvider } from "next-auth/react";
 import AuthWrapper from "@/hocs/auth-wrapper";
 import { ToastContainer } from "react-toastify";
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import Providers from "@/providers/providers";
 
 const geistSans = Outfit({
   variable: "--font-outfit",
@@ -24,7 +24,6 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-
 
 export const metadata: Metadata = {
   title: "AI PhotoBooth Dashboard",
@@ -58,17 +57,18 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NextIntlClientProvider messages={messages}>
-          <MantineProvider withCssVariables={false}>
-            <SessionProvider>
-              <AuthWrapper>
-                 {children}
-                <ToastContainer />
-                <SpeedInsights />
-              </AuthWrapper>
-            </SessionProvider>
-          </MantineProvider>
-        </NextIntlClientProvider>
+        <Providers>
+          <NextIntlClientProvider messages={messages}>
+            <MantineProvider withCssVariables={false}>
+              <SessionProvider>
+                <AuthWrapper>
+                  {children}
+                  <ToastContainer />
+                </AuthWrapper>
+              </SessionProvider>
+            </MantineProvider>
+          </NextIntlClientProvider>
+        </Providers>
       </body>
     </html>
   );

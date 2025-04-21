@@ -1,23 +1,16 @@
-"use client"
+"use client";
 import ChartCard from "@/components/component/ChartCard";
-import DashboardCard from "@/components/component/DashboardCard";
-
 
 import React from "react";
 
 const AdminPage = () => {
-  
-    return (
-      <>
-      
+  return (
+    <>
+      {/* <DashboardCard /> */}
 
-        {/* <DashboardCard /> */}
-
-        <ChartCard />
-      </>
-    );
-  
-
+      <ChartCard />
+    </>
+  );
 };
 
 export default AdminPage;
