@@ -49,11 +49,11 @@ const ViewDetailPhotoStyle = ({ id }: { id: number }) => {
             <Image src={photoStyle.imageUrl} alt={photoStyle.name} width={200} height={200} />
             <p><strong>Description:</strong> {photoStyle.description}</p>
             
-            <p><strong>Description:</strong> {photoStyle.prompt}</p>
-            <p><strong>Description:</strong> {photoStyle.negativePrompt}</p>
-            <p><strong>Description:</strong> {photoStyle.numImagesPerGen}</p>
-            <p><strong>Description:</strong> {photoStyle.width}</p>
-            <p><strong>Description:</strong> {photoStyle.height}</p>
+            <p><strong>prompt:</strong> {photoStyle.prompt}</p>
+            <p><strong>negativePrompt:</strong> {photoStyle.negativePrompt}</p>
+            <p><strong>numImagesPerGen:</strong> {photoStyle.numImagesPerGen}</p>
+            <p><strong>width:</strong> {photoStyle.width}</p>
+            <p><strong>height:</strong> {photoStyle.height}</p>
          
             
             <p><strong>Controlnets:</strong> {photoStyle.controlnets}</p>
