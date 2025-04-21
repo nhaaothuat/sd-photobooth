@@ -136,7 +136,7 @@ const Order = () => {
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label>Coupon</Label>
-              <Input name="email" value={formData.coupon} onChange={handleChange} placeholder="Enter coupon" required />
+              <Input name="email" value={formData.coupon} onChange={handleChange} placeholder="Enter coupon"  />
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label>Payment Method</Label>
