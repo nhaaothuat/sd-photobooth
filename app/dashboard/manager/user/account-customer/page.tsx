@@ -7,8 +7,8 @@ import { usePaginatedQuery } from "@/hooks/usePaginatedQuery";
 import { User } from "@/types/type";
 import dynamic from "next/dynamic";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
-import { getCustomerList } from "@/services/user-service";
-import { customerSchema } from "@/types/schema";
+import { getCustomerList } from "@/services/user";
+import { customerSchema } from "@/types/schema/user";
 
 const CreateDialogForm = dynamic(
   () =>

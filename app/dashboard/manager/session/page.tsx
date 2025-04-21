@@ -8,6 +8,8 @@ import { Session } from "@/types/type";
 import { usePaginatedQuery } from "@/hooks/usePaginatedQuery";
 import AxiosAPI from "@/configs/axios";
 import { useDebounce } from "@/hooks/useDebounce";
+import { get } from "lodash";
+import { getSession } from "@/services/session";
 
 const CrudPageWrapper = dynamic(
   () =>
@@ -33,18 +35,7 @@ const SessionPage = () => {
     pageSize,
     search: debouncedSearch,
     queryFn: async ({ page, size, search }) => {
-      const url = search?.trim()
-        ? `/api/Session/by-code/${search}`
-        : `/api/Session`;
-      const res = await AxiosAPI.get<Session[]>(url, {
-        params: { PageNumber: page, PageSize: size },
-      });
-
-      const countRes = await AxiosAPI.get<number>("/api/Session/count");
-      return {
-        items: res.data ?? [],
-        totalItems: countRes.data ?? 0,
-      };
+      return await getSession(page, size, search);
     },
   });
 

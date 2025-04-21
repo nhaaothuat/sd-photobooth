@@ -7,9 +7,10 @@ import { usePaginatedQuery } from "@/hooks/usePaginatedQuery";
 import { User, Location } from "@/types/type";
 import dynamic from "next/dynamic";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
-import { getStaffList } from "@/services/user-service";
-import { staffSchema } from "@/types/schema";
+import { getStaffList } from "@/services/user";
+import { staffSchema } from "@/types/schema/user";
 import { toast } from "react-toastify";
+import { getAllLocations } from "@/services/location";
 
 const CreateDialogForm = dynamic(
   () =>
@@ -50,8 +51,8 @@ export default function AccountStaffPage() {
   useEffect(() => {
     const fetchLocations = async () => {
       try {
-        const res = await AxiosAPI.get<Location[]>("/api/Location");
-        setLocations(res.data ?? []);
+        const res = await getAllLocations();
+        setLocations(res);
       } catch (error) {
         console.error("Failed to fetch locations", error);
         toast.error("Failed to load locations");

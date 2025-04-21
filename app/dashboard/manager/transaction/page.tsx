@@ -4,10 +4,10 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { useState } from "react";
 import { usePaginatedQuery } from "@/hooks/usePaginatedQuery";
 import { Transaction } from "@/types/type";
-import AxiosAPI from "@/configs/axios";
 import { columns } from "./columns";
 import dynamic from "next/dynamic";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
+import { getTransaction } from "@/services/transaction";
 
 const CrudPageWrapper = dynamic(
   () =>
@@ -33,16 +33,7 @@ export default function TransactionPage() {
     pageSize,
     search: debouncedSearch,
     queryFn: async ({ page, size }) => {
-      const res = await AxiosAPI.get<Transaction[]>(`/api/Transaction`, {
-        params: { PageNumber: page, PageSize: size },
-      });
-
-      const countRes = await AxiosAPI.get<number>("/api/Transaction/count");
-
-      return {
-        items: res.data ?? [],
-        totalItems: countRes.data ?? 0,
-      };
+      return await getTransaction(page, size);
     },
   });
 

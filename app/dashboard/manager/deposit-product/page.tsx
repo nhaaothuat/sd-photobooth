@@ -10,6 +10,7 @@ import { columns } from "./columns";
 import AddDepositProduct from "@/components/component/AddDepositProduct";
 import ExportButton from "@/components/component/ButtonExport";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
+import { getDepositProduct } from "@/services/deposit-product";
 
 const CrudPageWrapper = dynamic(
   () =>
@@ -32,20 +33,7 @@ export default function DepositProductPage() {
       pageIndex,
       pageSize,
       queryFn: async ({ page, size }) => {
-        const [res, countRes] = await Promise.all([
-          AxiosAPI.get<DepositProduct[]>("/api/DepositProduct", {
-            params: {
-              PageNumber: page,
-              PageSize: size,
-            },
-          }),
-          AxiosAPI.get<number>("/api/DepositProduct/count"),
-        ]);
-
-        return {
-          items: res.data ?? [],
-          totalItems: countRes.data ?? 0,
-        };
+        return await getDepositProduct(page, size);
       },
     });
 

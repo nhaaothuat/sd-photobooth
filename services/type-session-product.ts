@@ -7,14 +7,13 @@ export const getTypeSessionProductList = async (
   page: number,
   size: number
 ): Promise<PaginatedResponse<TypeSessionProduct>> => {
-  const res = await AxiosAPI.get<TypeSessionProduct[]>(
-    "/api/TypeSessionProduct",
-    {
+  const [res, countRes] = await Promise.all([
+    AxiosAPI.get<TypeSessionProduct[]>("/api/TypeSessionProduct", {
       params: { PageNumber: page, PageSize: size },
-    }
-  );
+    }),
+    AxiosAPI.get<number>("/api/TypeSessionProduct/count"),
+  ]);
 
-  const countRes = await AxiosAPI.get<number>("/api/TypeSessionProduct/count");
   return {
     items: res.data ?? [],
     totalItems: countRes.data ?? 0,

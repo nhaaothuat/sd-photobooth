@@ -8,7 +8,7 @@ import { z } from "zod";
 import AxiosAPI from "@/configs/axios";
 import { usePaginatedQuery } from "@/hooks/usePaginatedQuery";
 import { Order, PaymentMethod, TypeSession } from "@/types/type";
-import { deleteOrder } from "@/services/order-service";
+import { deleteOrder, getOrderList } from "@/services/order";
 import PaymentDialog from "@/components/layouts/PaymentDialog";
 import dynamic from "next/dynamic";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
@@ -78,31 +78,16 @@ export default function OrderPage() {
     pageSize,
     search: debouncedSearch,
     queryFn: async ({ page, size, search }) => {
-      const url = search?.trim()
-        ? `/api/Order/by-name/${search}`
-        : `/api/Order`;
-      const res = await AxiosAPI.get<Order[]>(url, {
-        params: { PageNumber: page, PageSize: size },
-      });
-
-      const countRes = await AxiosAPI.get<number>("/api/Order/count");
-      return {
-        items: res.data ?? [],
-        totalItems: countRes.data ?? 0,
-      };
+      return await getOrderList(page, size, search);
     },
   });
 
   const handleDelete = async (id: number) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this order?"
-    );
-    if (!confirmed) return;
-
     try {
       await deleteOrder(id);
       toast.success("Order deleted successfully");
-      refetch();
+      if (data?.length === 1 && pageIndex > 0) setPageIndex((prev) => prev - 1);
+      else refetch();
     } catch {
       toast.error("Failed to delete order");
     }

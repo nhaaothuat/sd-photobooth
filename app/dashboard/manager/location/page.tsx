@@ -10,6 +10,7 @@ import { columns } from "./columns";
 import { Location } from "@/types/type";
 import dynamic from "next/dynamic";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
+import { deleteLocation, getLocationList } from "@/services/location";
 
 const CreateDialogForm = dynamic(
   () =>
@@ -51,31 +52,16 @@ export default function LocationPage() {
     pageSize,
     search: debouncedSearch,
     queryFn: async ({ page, size, search }) => {
-      const url = search?.trim()
-        ? `/api/Location/by-location/${search}`
-        : `/api/Location`;
-      const res = await AxiosAPI.get<Location[]>(url, {
-        params: { PageNumber: page, PageSize: size },
-      });
-
-      const countRes = await AxiosAPI.get<number>("/api/Location/count");
-      return {
-        items: res.data ?? [],
-        totalItems: countRes.data ?? 0,
-      };
+      return await getLocationList(page, size, search);
     },
   });
 
   const handleDelete = async (id: number) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this location?"
-    );
-    if (!confirmed) return;
-
     try {
-      await AxiosAPI.delete(`/api/Location/${id}`);
+      await deleteLocation(id);
       toast.success("Location deleted successfully");
-      refetch();
+      if (data?.length === 1 && pageIndex > 0) setPageIndex((prev) => prev - 1);
+      else refetch();
     } catch {
       toast.error("Failed to delete location");
     }

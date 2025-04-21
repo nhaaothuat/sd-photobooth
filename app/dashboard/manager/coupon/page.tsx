@@ -10,6 +10,9 @@ import { usePaginatedQuery } from "@/hooks/usePaginatedQuery";
 import { Coupon } from "@/types/type";
 import dynamic from "next/dynamic";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
+import { couponSchema } from "@/types/schema/coupon";
+import { deleteCoupon, getCouponList } from "@/services/coupon";
+import { get } from "lodash";
 
 const CreateDialogForm = dynamic(
   () =>
@@ -33,55 +36,6 @@ const CrudPageWrapper = dynamic(
   }
 );
 
-const couponSchema = z
-  .object({
-    name: z.string().min(1, "Name is required").max(100),
-    description: z.string().max(500).optional(),
-    code: z.string().min(1, "Code is required").max(50),
-    discount: z.coerce.number().min(0).optional(),
-    discountPercent: z.coerce.number().min(0).max(100).optional(),
-    startDate: z.string().min(1, "Start date is required"),
-    endDate: z.string().min(1, "End date is required"),
-    maxUse: z.coerce.number().min(1).optional(),
-    maxDiscount: z.coerce.number().min(0).optional(),
-    minOrder: z.coerce.number().min(0).optional(),
-    isActive: z.boolean().default(true),
-  })
-  .superRefine((data, ctx) => {
-    const hasDiscount = (data.discount ?? 0) > 0;
-    const hasDiscountPercent = (data.discountPercent ?? 0) > 0;
-
-    if (!hasDiscount && !hasDiscountPercent) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message:
-          "Phải nhập một trong hai: 'Discount' hoặc 'DiscountPercent' với giá trị lớn hơn 0",
-        path: ["discount"],
-      });
-    }
-
-    if (hasDiscount && hasDiscountPercent) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message:
-          "Chỉ được nhập một trong hai: 'Discount' hoặc 'DiscountPercent'",
-        path: ["discount"],
-      });
-    }
-
-    if (
-      hasDiscountPercent &&
-      data.discountPercent &&
-      (data.discountPercent < 0 || data.discountPercent > 100)
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "DiscountPercent phải từ 0 đến 100",
-        path: ["discountPercent"],
-      });
-    }
-  });
-
 type CouponFormType = z.infer<typeof couponSchema>;
 
 export default function CouponPage() {
@@ -97,24 +51,13 @@ export default function CouponPage() {
     pageSize,
     search: debouncedSearch,
     queryFn: async ({ page, size, search }) => {
-      const url = search?.trim()
-        ? `/api/Coupon/search/${search}`
-        : "/api/Coupon";
-      const res = await AxiosAPI.get<Coupon[]>(url, {
-        params: { PageNumber: page, PageSize: size },
-      });
-
-      const countRes = await AxiosAPI.get<number>("/api/Coupon/count");
-      return {
-        items: res.data ?? [],
-        totalItems: countRes.data ?? 0,
-      };
+      return await getCouponList(page, size, search);
     },
   });
 
   const handleDelete = async (id: number) => {
     try {
-      await AxiosAPI.delete(`/api/Coupon/${id}`);
+      await deleteCoupon(id);
       toast.success("Đã xóa mã giảm giá thành công");
       if (data?.length === 1 && pageIndex > 0) setPageIndex((prev) => prev - 1);
       else refetch();
@@ -140,7 +83,12 @@ export default function CouponPage() {
           fields={[
             { name: "name", label: "Tên mã", type: "text" },
             { name: "code", label: "Mã code", type: "text" },
+            { name: "description", label: "Mô tả", type: "text" },
+            { name: "discount", label: "Giảm giá", type: "number" },
             { name: "discountPercent", label: "% Giảm giá", type: "number" },
+            { name: "maxUse", label: "Số lượng tối đa", type: "number" },
+            { name: "maxDiscount", label: "Giảm tối đa", type: "number" },
+            { name: "minOrder", label: "Đơn hàng tối thiểu", type: "number" },
             { name: "startDate", label: "Từ ngày", type: "date" },
             { name: "endDate", label: "Đến ngày", type: "date" },
             { name: "isActive", label: "Kích hoạt", type: "switch" },

@@ -11,7 +11,7 @@ import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
 import {
   deleteTypeSessionProduct,
   getTypeSessionProductList,
-} from "@/services/type-session-product-service";
+} from "@/services/type-session-product";
 
 const CrudPageWrapper = dynamic(
   () =>
@@ -43,15 +43,11 @@ export default function TypeSessionProductPage() {
     });
 
   const handleDelete = async (id: number) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this Type Session Product?"
-    );
-    if (!confirmed) return;
-
     try {
       await deleteTypeSessionProduct(id);
       toast.success("Type Session Product deleted successfully");
-      refetch();
+      if (data?.length === 1 && pageIndex > 0) setPageIndex((prev) => prev - 1);
+      else refetch();
     } catch {
       toast.error("Failed to delete Type Session Product");
     }

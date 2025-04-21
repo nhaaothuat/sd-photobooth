@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteBooth } from "@/services/booth-service";
+import { deleteBooth, getBoothList } from "@/services/booth";
 import { columns } from "./columns";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
@@ -12,6 +12,7 @@ import { Booth } from "@/types/booth";
 import { Location } from "@/types/type";
 import dynamic from "next/dynamic";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
+import { getAllLocations } from "@/services/location";
 
 const CreateDialogForm = dynamic(
   () =>
@@ -53,8 +54,8 @@ export default function BoothPage() {
   useEffect(() => {
     const fetchLocations = async () => {
       try {
-        const res = await AxiosAPI.get<Location[]>("/api/Location");
-        setLocations(res.data ?? []);
+        const res = await getAllLocations();
+        setLocations(res);
       } catch (error) {
         console.error("Failed to fetch locations", error);
         toast.error("Failed to load locations");
@@ -70,31 +71,16 @@ export default function BoothPage() {
     pageSize,
     search: debouncedSearch,
     queryFn: async ({ page, size, search }) => {
-      const url = search?.trim()
-        ? `/api/Booth/by-name/${search}`
-        : `/api/Booth`;
-      const res = await AxiosAPI.get<Booth[]>(url, {
-        params: { PageNumber: page, PageSize: size },
-      });
-
-      const countRes = await AxiosAPI.get<number>("/api/Booth/count");
-      return {
-        items: res.data ?? [],
-        totalItems: countRes.data ?? 0,
-      };
+      return getBoothList(page, size, search);
     },
   });
 
   const handleDelete = async (id: number) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this booth?"
-    );
-    if (!confirmed) return;
-
     try {
       await deleteBooth(id);
       toast.success("Booth deleted successfully");
-      refetch();
+      if (data?.length === 1 && pageIndex > 0) setPageIndex((prev) => prev - 1);
+      else refetch();
     } catch {
       toast.error("Failed to delete booth");
     }
