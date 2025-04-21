@@ -48,7 +48,7 @@ const UpdateBooth = ({
         const allLocations = locationsRes.data as any;
 
         const matchedLocation: Location | undefined = allLocations.find(
-          (loc: Location) => loc.id === booth?.location.id
+          (loc: Location) => loc.id === booth?.location?.id
         );
 
         setLocations(allLocations);
@@ -69,8 +69,11 @@ const UpdateBooth = ({
     fetchBoothAndLocations();
   }, [opened, id]);
 
-  const handleChange = (field: keyof typeof formData, value: string | boolean) => {
-    setFormData(prev => ({
+  const handleChange = (
+    field: keyof typeof formData,
+    value: string | boolean
+  ) => {
+    setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
@@ -79,7 +82,9 @@ const UpdateBooth = ({
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      const selectedLocation = locations.find(loc => loc.locationName === formData.locationName);
+      const selectedLocation = locations.find(
+        (loc) => loc.locationName === formData.locationName
+      );
       if (!selectedLocation) {
         toast.error("Vui lòng chọn địa điểm hợp lệ");
         return;
@@ -127,7 +132,10 @@ const UpdateBooth = ({
           <Select
             label="Địa điểm"
             placeholder="Chọn địa điểm"
-            data={locations.map(loc => ({ value: loc.locationName, label: loc.locationName }))}
+            data={locations.map((loc) => ({
+              value: loc.locationName,
+              label: loc.locationName,
+            }))}
             value={formData.locationName}
             onChange={(value) => handleChange("locationName", value || "")}
             required
