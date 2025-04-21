@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -20,46 +20,54 @@ import AxiosAPI from "@/configs/axios";
 import { toast } from "react-toastify";
 import { DialogFooter } from "@/components/ui/dialog";
 
-const couponSchema = z.object({
-  name: z.string().min(1, "Name is required").max(100),
-  description: z.string().max(500).optional(),
-  code: z.string().min(1, "Code is required").max(50),
-  discount: z.coerce.number().min(0).optional(),
-  discountPercent: z.coerce.number().min(0).max(100).optional(),
-  startDate: z.string().min(1, "Start date is required"),
-  endDate: z.string().min(1, "End date is required"),
-  maxUse: z.coerce.number().min(1).optional(),
-  maxDiscount: z.coerce.number().min(0).optional(),
-  minOrder: z.coerce.number().min(0).optional(),
-  isActive: z.boolean().default(true),
-}).superRefine((data, ctx) => {
-  const hasDiscount = (data.discount ?? 0) > 0;
-  const hasDiscountPercent = (data.discountPercent ?? 0) > 0;
+const couponSchema = z
+  .object({
+    name: z.string().min(1, "Name is required").max(100),
+    description: z.string().max(500).optional(),
+    code: z.string().min(1, "Code is required").max(50),
+    discount: z.coerce.number().min(0).optional(),
+    discountPercent: z.coerce.number().min(0).max(100).optional(),
+    startDate: z.string().min(1, "Start date is required"),
+    endDate: z.string().min(1, "End date is required"),
+    maxUse: z.coerce.number().min(1).optional(),
+    maxDiscount: z.coerce.number().min(0).optional(),
+    minOrder: z.coerce.number().min(0).optional(),
+    isActive: z.boolean().default(true),
+  })
+  .superRefine((data, ctx) => {
+    const hasDiscount = (data.discount ?? 0) > 0;
+    const hasDiscountPercent = (data.discountPercent ?? 0) > 0;
 
-  if (!hasDiscount && !hasDiscountPercent) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Phải nhập một trong hai: 'Discount' hoặc 'DiscountPercent' với giá trị lớn hơn 0",
-      path: ["discount"]
-    });
-  }
+    if (!hasDiscount && !hasDiscountPercent) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          "Phải nhập một trong hai: 'Discount' hoặc 'DiscountPercent' với giá trị lớn hơn 0",
+        path: ["discount"],
+      });
+    }
 
-  if (hasDiscount && hasDiscountPercent) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Chỉ được nhập một trong hai: 'Discount' hoặc 'DiscountPercent'",
-      path: ["discount"]
-    });
-  }
+    if (hasDiscount && hasDiscountPercent) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          "Chỉ được nhập một trong hai: 'Discount' hoặc 'DiscountPercent'",
+        path: ["discount"],
+      });
+    }
 
-  if (hasDiscountPercent && data.discountPercent && (data.discountPercent < 0 || data.discountPercent > 100)) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "DiscountPercent phải từ 0 đến 100",
-      path: ["discountPercent"]
-    });
-  }
-});
+    if (
+      hasDiscountPercent &&
+      data.discountPercent &&
+      (data.discountPercent < 0 || data.discountPercent > 100)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "DiscountPercent phải từ 0 đến 100",
+        path: ["discountPercent"],
+      });
+    }
+  });
 
 interface AddCouponProps {
   onAddSuccess: () => void;
@@ -105,11 +113,13 @@ const AddCoupon: React.FC<AddCouponProps> = ({ onAddSuccess }) => {
       const payload = {
         ...values,
         discount: values.discount ? Number(values.discount) : null,
-        discountPercent: values.discountPercent ? Number(values.discountPercent) / 100 : null,
+        discountPercent: values.discountPercent
+          ? Number(values.discountPercent) / 100
+          : null,
       };
 
       const response = await AxiosAPI.post("/api/Coupon", payload);
-      
+
       if (response.status >= 200 && response.status < 300) {
         toast.success("Coupon created successfully!");
         reset();
@@ -119,31 +129,36 @@ const AddCoupon: React.FC<AddCouponProps> = ({ onAddSuccess }) => {
         throw new Error(response.statusText);
       }
     } catch (err: any) {
-      const errorMessage = err.response?.data || err.message || "Failed to create coupon";
-      toast.error(typeof errorMessage === 'string' ? errorMessage : "An error occurred");
+      const errorMessage =
+        err.response?.data || err.message || "Failed to create coupon";
+      toast.error(
+        typeof errorMessage === "string" ? errorMessage : "An error occurred"
+      );
       console.error("Create coupon error:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDiscountChange = (e: React.ChangeEvent<HTMLInputElement>, field: 'discount' | 'discountPercent') => {
+  const handleDiscountChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: "discount" | "discountPercent"
+  ) => {
     const value = e.target.value;
-    if (value === '') {
+    if (value === "") {
       setValue(field, undefined);
       return;
     }
-    
+
     const numValue = Number(value);
     if (isNaN(numValue)) return;
-    
+
     setValue(field, numValue as any);
-    
-    
-    if (field === 'discount' && numValue > 0) {
-      setValue('discountPercent', undefined);
-    } else if (field === 'discountPercent' && numValue > 0) {
-      setValue('discount', undefined);
+
+    if (field === "discount" && numValue > 0) {
+      setValue("discountPercent", undefined);
+    } else if (field === "discountPercent" && numValue > 0) {
+      setValue("discount", undefined);
     }
   };
 
@@ -159,7 +174,11 @@ const AddCoupon: React.FC<AddCouponProps> = ({ onAddSuccess }) => {
             Create a new coupon with discount or discount percentage
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-4"
+          noValidate
+        >
           <div className="grid gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
@@ -168,7 +187,11 @@ const AddCoupon: React.FC<AddCouponProps> = ({ onAddSuccess }) => {
                 {...register("name")}
                 placeholder="Coupon name"
               />
-              {errors.name && <p className="text-red-500 text-sm">{errors.name.message as string}</p>}
+              {errors.name && (
+                <p className="text-red-500 text-sm">
+                  {errors.name.message as string}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -178,7 +201,11 @@ const AddCoupon: React.FC<AddCouponProps> = ({ onAddSuccess }) => {
                 {...register("code")}
                 placeholder="Unique coupon code"
               />
-              {errors.code && <p className="text-red-500 text-sm">{errors.code.message as string}</p>}
+              {errors.code && (
+                <p className="text-red-500 text-sm">
+                  {errors.code.message as string}
+                </p>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -188,8 +215,8 @@ const AddCoupon: React.FC<AddCouponProps> = ({ onAddSuccess }) => {
                   id="discount"
                   type="number"
                   min="0"
-                  value={watchDiscount ?? ''}
-                  onChange={(e) => handleDiscountChange(e, 'discount')}
+                  value={watchDiscount ?? ""}
+                  onChange={(e) => handleDiscountChange(e, "discount")}
                   disabled={(watchDiscountPercent ?? 0) > 0}
                   placeholder="0.00"
                 />
@@ -201,8 +228,8 @@ const AddCoupon: React.FC<AddCouponProps> = ({ onAddSuccess }) => {
                   type="number"
                   min="0"
                   max="100"
-                  value={watchDiscountPercent ?? ''}
-                  onChange={(e) => handleDiscountChange(e, 'discountPercent')}
+                  value={watchDiscountPercent ?? ""}
+                  onChange={(e) => handleDiscountChange(e, "discountPercent")}
                   disabled={(watchDiscount ?? 0) > 0}
                   placeholder="0-100%"
                 />
@@ -217,21 +244,21 @@ const AddCoupon: React.FC<AddCouponProps> = ({ onAddSuccess }) => {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="startDate">Start Date</Label>
-                <Input
-                  id="startDate"
-                  type="date"
-                  {...register("startDate")}
-                />
-                {errors.startDate && <p className="text-red-500 text-sm">{errors.startDate.message as string}</p>}
+                <Input id="startDate" type="date" {...register("startDate")} />
+                {errors.startDate && (
+                  <p className="text-red-500 text-sm">
+                    {errors.startDate.message as string}
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="endDate">End Date</Label>
-                <Input
-                  id="endDate"
-                  type="date"
-                  {...register("endDate")}
-                />
-                {errors.endDate && <p className="text-red-500 text-sm">{errors.endDate.message as string}</p>}
+                <Input id="endDate" type="date" {...register("endDate")} />
+                {errors.endDate && (
+                  <p className="text-red-500 text-sm">
+                    {errors.endDate.message as string}
+                  </p>
+                )}
               </div>
             </div>
 

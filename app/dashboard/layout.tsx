@@ -13,9 +13,7 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import { AppSidebar } from "@/components/component/AppSidebar";
 import { useState } from "react";
 
-
 const DashBoardLayout = ({ children }: { children: React.ReactNode }) => {
-  const [isTriggered, setIsTriggered] = useState(false);
   return (
     <ThemeProvider
       attribute="class"
@@ -36,11 +34,7 @@ const DashBoardLayout = ({ children }: { children: React.ReactNode }) => {
               <Navbar />
             </div>
           </header>
-          <div className="flex flex-1 flex-col gap-4 p-4">
-            {children}
-
-          
-          </div>
+          <div className="flex flex-1 flex-col gap-4 p-4">{children}</div>
         </SidebarInset>
       </SidebarProvider>
     </ThemeProvider>

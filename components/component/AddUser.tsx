@@ -2,14 +2,16 @@
 
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "react-toastify";
 import AxiosAPI from "@/configs/axios";
 import { LocationResponseDTO } from "@/types/user";
@@ -36,7 +38,7 @@ const AddUser = () => {
       try {
         const response = await AxiosAPI.get("api/Location");
         if (response.status === 200) {
-          setLocations(response.data as unknown as LocationResponseDTO[] );
+          setLocations(response.data as unknown as LocationResponseDTO[]);
         }
       } catch (error) {
         toast.error("Failed to fetch locations");
@@ -74,7 +76,6 @@ const AddUser = () => {
           birthDate: "",
           locationId: 0,
         });
-
       } else {
         throw new Error("Failed to create user");
       }
@@ -91,41 +92,81 @@ const AddUser = () => {
         <form onSubmit={handleSubmit} className="grid gap-4">
           <div className="flex flex-col space-y-1.5">
             <Label>Role</Label>
-            <Select onValueChange={(value) => handleSelectChange("role", parseInt(value))} defaultValue={formData.role.toString()}>
+            <Select
+              onValueChange={(value) =>
+                handleSelectChange("role", parseInt(value))
+              }
+              defaultValue={formData.role.toString()}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select Role" />
               </SelectTrigger>
               <SelectContent>
-               
                 <SelectItem value="1">Manager</SelectItem>
                 <SelectItem value="2">Staff</SelectItem>
-                
               </SelectContent>
             </Select>
           </div>
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="userName">Username</Label>
-            <Input id="userName" name="userName" value={formData.userName} onChange={handleChange} required />
+            <Input
+              id="userName"
+              name="userName"
+              value={formData.userName}
+              onChange={handleChange}
+              required
+            />
           </div>
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" name="email" value={formData.email} onChange={handleChange} required />
+            <Input
+              id="email"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
           </div>
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="phoneNumber">Phone Number</Label>
-            <Input id="phoneNumber" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} required />
+            <Input
+              id="phoneNumber"
+              name="phoneNumber"
+              value={formData.phoneNumber}
+              onChange={handleChange}
+              required
+            />
           </div>
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" name="password" value={formData.password} onChange={handleChange} required />
+            <Input
+              id="password"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
           </div>
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="fullName">Full Name</Label>
-            <Input id="fullName" name="fullName" value={formData.fullName} onChange={handleChange} required />
+            <Input
+              id="fullName"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
+              required
+            />
           </div>
           <div className="flex flex-col space-y-1.5">
             <Label>Gender</Label>
-            <Select onValueChange={(value) => handleSelectChange("gender", parseInt(value))} defaultValue={formData.gender.toString()}>
+            <Select
+              onValueChange={(value) =>
+                handleSelectChange("gender", parseInt(value))
+              }
+              defaultValue={formData.gender.toString()}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select Gender" />
               </SelectTrigger>
@@ -138,11 +179,23 @@ const AddUser = () => {
           </div>
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="birthDate">Birth Date</Label>
-            <Input id="birthDate" type="date" name="birthDate" value={formData.birthDate} onChange={handleChange} required />
+            <Input
+              id="birthDate"
+              type="date"
+              name="birthDate"
+              value={formData.birthDate}
+              onChange={handleChange}
+              required
+            />
           </div>
           <div className="flex flex-col space-y-1.5">
             <Label>Location</Label>
-            <Select onValueChange={(value) => handleSelectChange("locationId", parseInt(value))} defaultValue={formData.locationId.toString()}>
+            <Select
+              onValueChange={(value) =>
+                handleSelectChange("locationId", parseInt(value))
+              }
+              defaultValue={formData.locationId.toString()}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select Location" />
               </SelectTrigger>

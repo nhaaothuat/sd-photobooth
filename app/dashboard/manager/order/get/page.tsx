@@ -1,208 +1,182 @@
-"use client"
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { columns } from "./columns"
-import { Order} from "@/types/type"
-import AxiosAPI from "@/configs/axios"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-// import AddFrame from './AddFrame'
-import { toast } from 'react-toastify'
+"use client";
 
+import { columns } from "./columns";
+import { CrudPageWrapper } from "@/components/layouts/SharedPage";
+import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
+import { CreateDialogForm } from "@/components/layouts/CreateDialog";
+import { z } from "zod";
+import AxiosAPI from "@/configs/axios";
+import { usePaginatedQuery } from "@/hooks/usePaginatedQuery";
+import { Order, PaymentMethod, TypeSession } from "@/types/type";
+import { deleteOrder } from "@/services/order-service";
+import PaymentDialog from "@/components/layouts/PaymentDialog";
 
-const useOrderData = () => {
-  const [data, setData] = useState<Order[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [totalItems, setTotalItems] = useState(0)
+const orderSchema = z.object({
+  email: z.string().email("Invalid email address").min(1, "Email is required"),
+  phone: z.string().min(1, "Phone number is required"),
+  typeSessionId: z.coerce.number().min(1, "Session type is required"),
+  paymentMethodId: z.coerce.number().min(1, "Payment method is required"),
+  coupon: z.string().optional(),
+});
 
-  const fetchCount = useCallback(async () => {
-    try {
-      const response = await AxiosAPI.get<number>("/api/Order/count")
-      setTotalItems(response.data || 0)
-    } catch (err) {
-      console.error("Failed to fetch total count", err)
-    }
-  }, [])
+type OrderFormType = z.infer<typeof orderSchema>;
 
-  const fetchData = useCallback(async (page: number, pageSize: number) => {
-    try {
-      setLoading(true)
-      const response = await AxiosAPI.get<Order[]>("/api/Order", {
-        params: { PageNumber: page, PageSize: pageSize }
-      })
-      setData(response.data || [])
-      setError(null)
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch data")
-      setData([])
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+export default function OrderPage() {
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 500);
 
-  return {
-    data,
-    loading,
-    error,
-    totalItems,
-    fetchCount,
-    fetchData,
-  }
-}
-
-const LevelMemberShipPage = () => {
-  const [pageSize, setPageSize] = useState(5)
-  const [pageIndex, setPageIndex] = useState(0)
-
-  const {
-    data,
-    loading,
-    error,
-    totalItems,
-    fetchCount,
-    fetchData,
-  } = useOrderData()
-
-  const deleteFrame = useCallback(async (id: number) => {
-    try {
-      const res = await AxiosAPI.delete(`/api/Order/${id}`)
-
-      if (res.status !== 200) throw new Error("Xóa thất bại")
-
-      toast.success("Đã xóa phương thức thanh toán thành công")
-      fetchCount()
-      if (data.length <= 1 && pageIndex > 0) {
-        setPageIndex(prev => prev - 1)
-      } else {
-        fetchData(pageIndex + 1, pageSize)
-      }
-    } catch (error) {
-      toast.error("Xóa thất bại")
-      console.error(error)
-    }
-  }, [data.length, fetchCount, fetchData, pageIndex, pageSize])
-
-  const memoizedColumns = useMemo(() => columns(deleteFrame, () => fetchData(pageIndex + 1, pageSize)),
-    [deleteFrame, fetchData, pageIndex, pageSize])
-
-  const table = useReactTable({
-    data,
-    columns: memoizedColumns,
-    pageCount: Math.ceil(totalItems / pageSize),
-    state: {
-      pagination: {
-        pageIndex,
-        pageSize
-      }
-    },
-    manualPagination: true,
-    getCoreRowModel: getCoreRowModel(),
-    onPaginationChange: (updater) => {
-      const newPagination = typeof updater === "function"
-        ? updater({ pageIndex, pageSize })
-        : updater
-      setPageIndex(newPagination.pageIndex)
-      setPageSize(newPagination.pageSize)
-    }
-  })
+  const [pageSize, setPageSize] = useState(5);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [typeSessions, setTypeSessions] = useState<TypeSession[]>([]);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
+  const [paymentLink, setPaymentLink] = useState<string | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
-    fetchData(pageIndex + 1, pageSize)
-    fetchCount()
-  }, [fetchData, fetchCount, pageIndex, pageSize])
+    const fetchData = async () => {
+      try {
+        const [typeSessionRes, paymentMethodRes] = await Promise.all([
+          AxiosAPI.get("/api/TypeSession"),
+          AxiosAPI.get("/api/PaymentMethod/all/web"),
+        ]);
+        setTypeSessions(typeSessionRes.data as TypeSession[]);
+        setPaymentMethods(paymentMethodRes.data as PaymentMethod[]);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
-  const handlePageSizeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setPageSize(Number(e.target.value))
-    setPageIndex(0)
-  }, [])
+  const { data, totalItems, isLoading, refetch } = usePaginatedQuery<Order>({
+    queryKey: "orders",
+    pageIndex,
+    pageSize,
+    search: debouncedSearch,
+    queryFn: async ({ page, size, search }) => {
+      const url = search?.trim()
+        ? `/api/Order/by-name/${search}`
+        : `/api/Order`;
+      const res = await AxiosAPI.get<Order[]>(url, {
+        params: { PageNumber: page, PageSize: size },
+      });
+
+      const countRes = await AxiosAPI.get<number>("/api/Order/count");
+      return {
+        items: res.data ?? [],
+        totalItems: countRes.data ?? 0,
+      };
+    },
+  });
+
+  const handleDelete = async (id: number) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this order?"
+    );
+    if (!confirmed) return;
+
+    try {
+      await deleteOrder(id);
+      toast.success("Order deleted successfully");
+      refetch();
+    } catch {
+      toast.error("Failed to delete order");
+    }
+  };
 
   return (
-    <div className="w-full space-y-4">
-      <div className="flex items-center justify-between py-4">
-        <div className="flex items-center space-x-2">
-          
-          <Label htmlFor="pageSize" className="text-sm">Số hàng/trang:</Label>
-          <select
-            id="pageSize"
-            value={pageSize}
-            onChange={handlePageSizeChange}
-            className="border border-gray-300 rounded px-2 py-1 text-sm"
-          >
-            {[5, 10, 15, 20].map(size => (
-              <option key={size} value={size}>{size}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {loading ? (
-        <div className="text-sm text-muted-foreground">Đang tải dữ liệu...</div>
-      ) : error ? (
-        <div className="text-red-500 p-4">Error: {error}</div>
-      ) : (
-        <>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                {table.getHeaderGroups().map(headerGroup => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map(header => (
-                      <TableHead key={header.id}>
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map(row => (
-                    <TableRow key={row.id}>
-                      {row.getVisibleCells().map(cell => (
-                        <TableCell key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={memoizedColumns.length} className="text-center">
-                      No results
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-
-          <div className="flex items-center justify-end space-x-2 py-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPageIndex(prev => prev - 1)}
-              disabled={pageIndex === 0}
-            >
-              Previous
-            </Button>
-            <span className="text-sm text-muted-foreground">
-              Page {pageIndex + 1} of {table.getPageCount()}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPageIndex(prev => prev + 1)}
-              disabled={pageIndex + 1 >= table.getPageCount()}
-            >
-              Next
-            </Button>
-          </div>
-        </>
-      )}
-    </div>
-  )
+    <>
+      <CrudPageWrapper
+        title="Order Management"
+        search={search}
+        onSearchChange={setSearch}
+        createButton={
+          <CreateDialogForm<OrderFormType>
+            title="Add Order"
+            description="Create a new order entry"
+            triggerText="Add Order"
+            schema={orderSchema}
+            defaultValues={{
+              email: "",
+              phone: "",
+              typeSessionId: 0,
+              paymentMethodId: 0,
+              coupon: "",
+            }}
+            onSubmit={async (values) => {
+              try {
+                const response = await AxiosAPI.post("api/Order/dashboard", {
+                  ...values,
+                });
+                const data = response.data as unknown as OrderResponse;
+                if (data.paymentLink) {
+                  setPaymentLink(data.paymentLink);
+                  setIsDialogOpen(true);
+                } else {
+                  console.error("No payment link received.");
+                }
+              } catch (error) {
+                toast.error(
+                  "Error creating order: " + error || "Unknown error"
+                );
+              }
+            }}
+            fields={[
+              {
+                type: "text",
+                name: "email",
+                label: "Email",
+                placeholder: "Enter your email",
+              },
+              {
+                type: "text",
+                name: "phone",
+                label: "Phone",
+                placeholder: "Enter your phone number",
+              },
+              {
+                type: "select",
+                name: "typeSessionId",
+                label: "Session Type",
+                options: typeSessions.map((session) => ({
+                  value: session.id,
+                  label: session.name,
+                })),
+              },
+              {
+                type: "text",
+                name: "coupon",
+                label: "Coupon",
+                placeholder: "Enter coupon code (optional)",
+              },
+              {
+                type: "select",
+                name: "paymentMethodId",
+                label: "Payment Method",
+                options: paymentMethods.map((method) => ({
+                  value: method.id,
+                  label: method.methodName,
+                })),
+              },
+            ]}
+          />
+        }
+        data={data}
+        columns={columns(handleDelete, refetch)}
+        isLoading={isLoading}
+        pageCount={Math.ceil(totalItems / pageSize)}
+        pageIndex={pageIndex}
+        pageSize={pageSize}
+        onPageChange={setPageIndex}
+        onPageSizeChange={setPageSize}
+      />
+      <PaymentDialog
+        open={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        paymentLink={paymentLink}
+      />
+    </>
+  );
 }
-
-export default LevelMemberShipPage

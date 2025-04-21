@@ -1,49 +1,45 @@
-'use client'
-import React, { useEffect, useState } from 'react'
-import AxiosAPI from '@/configs/axios'
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select"
-import { StickerStyle, Sticker } from '@/types/type'
-import { Indicator, SimpleGrid } from '@mantine/core'
-import Image from 'next/image'
+"use client";
+import React, { useEffect, useState } from "react";
+import AxiosAPI from "@/configs/axios";
+import { StickerStyle, Sticker } from "@/types/type";
+import { Indicator, SimpleGrid } from "@mantine/core";
+import Image from "next/image";
 const BySticker = () => {
-  const [stickerStyles, setStickerStyles] = useState<StickerStyle[]>([])
-  const [selectedStyleId, setSelectedStyleId] = useState<number | null>(null)
-  const [stickers, setStickers] = useState<Sticker[]>([])
-  
+  const [stickerStyles, setStickerStyles] = useState<StickerStyle[]>([]);
+  const [selectedStyleId, setSelectedStyleId] = useState<number | null>(null);
+  const [stickers, setStickers] = useState<Sticker[]>([]);
+
   useEffect(() => {
     const fetchStyles = async () => {
       try {
-        const response = await AxiosAPI.get<StickerStyle[]>("/api/StickerStyle/all")
-        setStickerStyles(response.data || [])
+        const response = await AxiosAPI.get<StickerStyle[]>(
+          "/api/StickerStyle/all"
+        );
+        setStickerStyles(response.data || []);
       } catch (error) {
-        console.error("Lỗi khi lấy danh sách sticker style:", error)
+        console.error("Lỗi khi lấy danh sách sticker style:", error);
       }
-    }
+    };
 
-    fetchStyles()
-  }, [])
+    fetchStyles();
+  }, []);
 
   // Fetch sticker by style when selectedStyleId changes
   useEffect(() => {
     const fetchStickersByStyle = async () => {
-      if (!selectedStyleId) return
+      if (!selectedStyleId) return;
       try {
-        const response = await AxiosAPI.get<Sticker[]>(`/api/Sticker/by-style/${selectedStyleId}`)
-        setStickers(response.data || []  )
-       
+        const response = await AxiosAPI.get<Sticker[]>(
+          `/api/Sticker/by-style/${selectedStyleId}`
+        );
+        setStickers(response.data || []);
       } catch (error) {
-        console.error("Lỗi khi lấy sticker theo style:", error)
+        console.error("Lỗi khi lấy sticker theo style:", error);
       }
-    }
+    };
 
-    fetchStickersByStyle()
-  }, [selectedStyleId])
+    fetchStickersByStyle();
+  }, [selectedStyleId]);
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
@@ -53,7 +49,9 @@ const BySticker = () => {
         onChange={(e) => setSelectedStyleId(parseInt(e.target.value))}
         defaultValue=""
       >
-        <option value="" disabled>-- Chọn một style --</option>
+        <option value="" disabled>
+          -- Chọn một style --
+        </option>
         {stickerStyles.length > 0 ? (
           stickerStyles.map((style) => (
             <option key={style.id} value={style.id}>
@@ -61,7 +59,9 @@ const BySticker = () => {
             </option>
           ))
         ) : (
-          <option value="" disabled>Không có dữ liệu</option>
+          <option value="" disabled>
+            Không có dữ liệu
+          </option>
         )}
       </select>
 
@@ -88,7 +88,7 @@ const BySticker = () => {
         <p className="text-gray-500">Không có sticker nào cho style này</p>
       ) : null}
     </div>
-  )
-}
+  );
+};
 
-export default BySticker
+export default BySticker;

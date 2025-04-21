@@ -88,7 +88,11 @@ const AddDepositProduct = ({ onSuccess }: { onSuccess?: () => void }) => {
                 <Label htmlFor={id} className="text-right">
                   {label}
                 </Label>
-                <Input id={id} className="col-span-3" {...register(id as keyof DepositProductFormData)} />
+                <Input
+                  id={id}
+                  className="col-span-3"
+                  {...register(id as keyof DepositProductFormData)}
+                />
                 {errors[id as keyof DepositProductFormData] && (
                   <p className="col-span-4 text-right text-sm text-red-500">
                     {errors[id as keyof DepositProductFormData]?.message}

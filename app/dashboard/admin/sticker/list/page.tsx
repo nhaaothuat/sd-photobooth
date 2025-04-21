@@ -1,49 +1,56 @@
-"use client"
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { columns } from "./columns"
-import { Sticker } from "@/types/type"
-import AxiosAPI from "@/configs/axios"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { debounce } from 'lodash'
-import { toast } from 'react-toastify'
-import { Label } from '@/components/ui/label'
-import { DropdownMenu } from '@/components/ui/dropdown-menu'
-import AddSticker from '@/components/component/AddSticker'
-
+"use client";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { columns } from "./columns";
+import { Sticker } from "@/types/type";
+import AxiosAPI from "@/configs/axios";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { Button } from "@/components/ui/button";
+import { toast } from "react-toastify";
+import { Label } from "@/components/ui/label";
+import AddSticker from "@/components/component/AddSticker";
 
 const useStickerData = () => {
-  const [data, setData] = useState<Sticker[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [totalItems, setTotalItems] = useState(0)
+  const [data, setData] = useState<Sticker[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [totalItems, setTotalItems] = useState(0);
 
   const fetchCount = useCallback(async () => {
     try {
-      const response = await AxiosAPI.get<number>("/api/Sticker/count")
-      setTotalItems(response.data || 0)
+      const response = await AxiosAPI.get<number>("/api/Sticker/count");
+      setTotalItems(response.data || 0);
     } catch (err) {
-      console.error("Failed to fetch total count", err)
+      console.error("Failed to fetch total count", err);
     }
-  }, [])
+  }, []);
 
   const fetchData = useCallback(async (page: number, pageSize: number) => {
     try {
-      setLoading(true)
+      setLoading(true);
       const response = await AxiosAPI.get<Sticker[]>("/api/Sticker/all", {
-        params: { PageNumber: page, PageSize: pageSize }
-      })
-      setData(response.data || [])
-      setError(null)
+        params: { PageNumber: page, PageSize: pageSize },
+      });
+      setData(response.data || []);
+      setError(null);
     } catch (err: any) {
-      setError(err.message || "Failed to fetch data")
-      setData([])
+      setError(err.message || "Failed to fetch data");
+      setData([]);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [])
+  }, []);
 
   return {
     data,
@@ -52,43 +59,42 @@ const useStickerData = () => {
     totalItems,
     fetchCount,
     fetchData,
-  }
-}
+  };
+};
 
 const StickerPage = () => {
-  const [pageSize, setPageSize] = useState(5)
-  const [pageIndex, setPageIndex] = useState(0)
+  const [pageSize, setPageSize] = useState(5);
+  const [pageIndex, setPageIndex] = useState(0);
 
-  const {
-    data,
-    loading,
-    error,
-    totalItems,
-    fetchCount,
-    fetchData,
-  } = useStickerData()
+  const { data, loading, error, totalItems, fetchCount, fetchData } =
+    useStickerData();
 
-  const deleteFrame = useCallback(async (id: number) => {
-    try {
-      const res = await AxiosAPI.delete(`/api/Sticker/${id}`)
+  const deleteFrame = useCallback(
+    async (id: number) => {
+      try {
+        const res = await AxiosAPI.delete(`/api/Sticker/${id}`);
 
-      if (res.status !== 200) throw new Error("Xóa thất bại")
+        if (res.status !== 200) throw new Error("Xóa thất bại");
 
-      toast.success("Đã xóa phương thức thanh toán thành công")
-      fetchCount()
-      if (data.length <= 1 && pageIndex > 0) {
-        setPageIndex(prev => prev - 1)
-      } else {
-        fetchData(pageIndex + 1, pageSize)
+        toast.success("Đã xóa phương thức thanh toán thành công");
+        fetchCount();
+        if (data.length <= 1 && pageIndex > 0) {
+          setPageIndex((prev) => prev - 1);
+        } else {
+          fetchData(pageIndex + 1, pageSize);
+        }
+      } catch (error) {
+        toast.error("Xóa thất bại");
+        console.error(error);
       }
-    } catch (error) {
-      toast.error("Xóa thất bại")
-      console.error(error)
-    }
-  }, [data.length, fetchCount, fetchData, pageIndex, pageSize])
+    },
+    [data.length, fetchCount, fetchData, pageIndex, pageSize]
+  );
 
-  const memoizedColumns = useMemo(() => columns(deleteFrame, () => fetchData(pageIndex + 1, pageSize)),
-    [deleteFrame, fetchData, pageIndex, pageSize])
+  const memoizedColumns = useMemo(
+    () => columns(deleteFrame, () => fetchData(pageIndex + 1, pageSize)),
+    [deleteFrame, fetchData, pageIndex, pageSize]
+  );
 
   const table = useReactTable({
     data,
@@ -97,48 +103,58 @@ const StickerPage = () => {
     state: {
       pagination: {
         pageIndex,
-        pageSize
-      }
+        pageSize,
+      },
     },
     manualPagination: true,
     getCoreRowModel: getCoreRowModel(),
     onPaginationChange: (updater) => {
-      const newPagination = typeof updater === "function"
-        ? updater({ pageIndex, pageSize })
-        : updater
-      setPageIndex(newPagination.pageIndex)
-      setPageSize(newPagination.pageSize)
-    }
-  })
+      const newPagination =
+        typeof updater === "function"
+          ? updater({ pageIndex, pageSize })
+          : updater;
+      setPageIndex(newPagination.pageIndex);
+      setPageSize(newPagination.pageSize);
+    },
+  });
 
   useEffect(() => {
-    fetchData(pageIndex + 1, pageSize)
-    fetchCount()
-  }, [fetchData, fetchCount, pageIndex, pageSize])
+    fetchData(pageIndex + 1, pageSize);
+    fetchCount();
+  }, [fetchData, fetchCount, pageIndex, pageSize]);
 
-  const handlePageSizeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setPageSize(Number(e.target.value))
-    setPageIndex(0)
-  }, [])
+  const handlePageSizeChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setPageSize(Number(e.target.value));
+      setPageIndex(0);
+    },
+    []
+  );
 
   return (
     <div className="w-full space-y-4">
       <div className="flex items-center justify-between py-4">
         <div className="flex items-center space-x-2">
-          <AddSticker onAddSuccess={() => {
-            fetchCount()
-            
-            setPageIndex(0)
-          }} />
-          <Label htmlFor="pageSize" className="text-sm">Số hàng/trang:</Label>
+          <AddSticker
+            onAddSuccess={() => {
+              fetchCount();
+
+              setPageIndex(0);
+            }}
+          />
+          <Label htmlFor="pageSize" className="text-sm">
+            Số hàng/trang:
+          </Label>
           <select
             id="pageSize"
             value={pageSize}
             onChange={handlePageSizeChange}
             className="border border-gray-300 rounded px-2 py-1 text-sm"
           >
-            {[5, 10, 15, 20].map(size => (
-              <option key={size} value={size}>{size}</option>
+            {[5, 10, 15, 20].map((size) => (
+              <option key={size} value={size}>
+                {size}
+              </option>
             ))}
           </select>
         </div>
@@ -153,11 +169,14 @@ const StickerPage = () => {
           <div className="rounded-md border">
             <Table>
               <TableHeader>
-                {table.getHeaderGroups().map(headerGroup => (
+                {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map(header => (
+                    {headerGroup.headers.map((header) => (
                       <TableHead key={header.id}>
-                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                       </TableHead>
                     ))}
                   </TableRow>
@@ -165,18 +184,24 @@ const StickerPage = () => {
               </TableHeader>
               <TableBody>
                 {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map(row => (
+                  table.getRowModel().rows.map((row) => (
                     <TableRow key={row.id}>
-                      {row.getVisibleCells().map(cell => (
+                      {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
                         </TableCell>
                       ))}
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={memoizedColumns.length} className="text-center">
+                    <TableCell
+                      colSpan={memoizedColumns.length}
+                      className="text-center"
+                    >
                       No results
                     </TableCell>
                   </TableRow>
@@ -189,7 +214,7 @@ const StickerPage = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setPageIndex(prev => prev - 1)}
+              onClick={() => setPageIndex((prev) => prev - 1)}
               disabled={pageIndex === 0}
             >
               Previous
@@ -200,7 +225,7 @@ const StickerPage = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setPageIndex(prev => prev + 1)}
+              onClick={() => setPageIndex((prev) => prev + 1)}
               disabled={pageIndex + 1 >= table.getPageCount()}
             >
               Next
@@ -209,7 +234,7 @@ const StickerPage = () => {
         </>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default StickerPage
+export default StickerPage;

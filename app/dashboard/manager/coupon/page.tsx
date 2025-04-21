@@ -1,270 +1,158 @@
-"use client"
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { columns } from "./columns"
-import { Coupon } from "@/types/type"
-import AxiosAPI from "@/configs/axios"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { debounce } from 'lodash'
-import { toast } from 'react-toastify'
-import { Label } from '@/components/ui/label'
-import AddBooth from '@/components/component/AddBooth'
-import AddCoupon from '@/components/component/AddCoupon'
+"use client";
 
-const useCouponData = () => {
-  const [data, setData] = useState<Coupon[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [totalItems, setTotalItems] = useState(0)
+import { columns } from "./columns";
+import { CrudPageWrapper } from "@/components/layouts/SharedPage";
+import { toast } from "react-toastify";
+import { useState } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
+import { CreateDialogForm } from "@/components/layouts/CreateDialog";
+import { z, ZodType } from "zod";
+import AxiosAPI from "@/configs/axios";
+import { usePaginatedQuery } from "@/hooks/usePaginatedQuery";
+import { Coupon } from "@/types/type";
 
-  const fetchCount = useCallback(async () => {
-    try {
-      const response = await AxiosAPI.get<number>("/api/Coupon/count")
-      setTotalItems(response.data || 0)
-    } catch (err) {
-      console.error("Failed to fetch total count", err)
-    }
-  }, [])
-
-  const fetchData = useCallback(async (page: number, pageSize: number) => {
-    try {
-      setLoading(true)
-      const response = await AxiosAPI.get<Coupon[]>("/api/Coupon", {
-        params: { PageNumber: page, PageSize: pageSize }
-      })
-      setData(response.data || [])
-      setError(null)
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch data")
-      setData([])
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  const fetchByName = useCallback(async (name: string, page: number, pageSize: number) => {
-    try {
-      setLoading(true)
-      const response = await AxiosAPI.get<Coupon[]>(`/api/Booth/search/${name}`, {
-        params: { PageNumber: page, PageSize: pageSize }
-      })
-      setData(response.data || [])
-      setError(null)
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch by name")
-      setData([])
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  const handleSearch = useMemo(() =>
-    debounce((term: string, page: number, size: number) => {
-      if (term.trim() === "") {
-        fetchData(page, size)
-      } else {
-        fetchByName(term, page, size)
-      }
-    }, 500),
-    [fetchData, fetchByName]
-  )
-
-  useEffect(() => {
-    fetchCount()
-    return () => {
-      handleSearch.cancel()
-    }
-  }, [fetchCount, handleSearch])
-
-  
-  
-
-  return {
-    data,
-    loading,
-    error,
-    totalItems,
-    fetchCount,
-    handleSearch,
-    fetchData,
-  }
-}
-
-
-const CouponPage = () => {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [pageSize, setPageSize] = useState(5)
-  const [pageIndex, setPageIndex] = useState(0)
-
-  const {
-    data,
-    loading,
-    error,
-    totalItems,
-    fetchCount,
-    handleSearch,
-    
-  } = useCouponData()
-  const refetchData = useCallback(() => {
-    handleSearch(searchTerm, pageIndex + 1, pageSize)
-  }, [handleSearch, searchTerm, pageIndex, pageSize])
-  const deleteFrame = useCallback(async (id: number) => {
-    try {
-      const res = await AxiosAPI.delete(`/api/Coupon/${id}`)
-
-      if (res.status !== 200) throw new Error("Xóa thất bại")
-
-      toast.success("Đã xóa phương thức thanh toán thành công")
-      fetchCount()
-      if (data.length <= 1 && pageIndex > 0) {
-        setPageIndex(prev => prev - 1)
-      } else {
-        handleSearch(searchTerm, pageIndex + 1, pageSize)
-      }
-    } catch (error) {
-      toast.error("Xóa thất bại")
-      console.error(error)
-    }
-  }, [data.length, fetchCount, handleSearch, pageIndex, pageSize, searchTerm])
-
-  const memoizedColumns = useMemo(() => columns(deleteFrame,refetchData), [deleteFrame,refetchData])
-
-  const table = useReactTable({
-    data,
-    columns: memoizedColumns,
-    pageCount: Math.ceil(totalItems / pageSize),
-    state: {
-      pagination: {
-        pageIndex,
-        pageSize
-      }
-    },
-    manualPagination: true,
-    getCoreRowModel: getCoreRowModel(),
-    onPaginationChange: (updater) => {
-      const newPagination = typeof updater === "function"
-        ? updater({ pageIndex, pageSize })
-        : updater
-      setPageIndex(newPagination.pageIndex)
-      setPageSize(newPagination.pageSize)
-    }
+const couponSchema = z
+  .object({
+    name: z.string().min(1, "Name is required").max(100),
+    description: z.string().max(500).optional(),
+    code: z.string().min(1, "Code is required").max(50),
+    discount: z.coerce.number().min(0).optional(),
+    discountPercent: z.coerce.number().min(0).max(100).optional(),
+    startDate: z.string().min(1, "Start date is required"),
+    endDate: z.string().min(1, "End date is required"),
+    maxUse: z.coerce.number().min(1).optional(),
+    maxDiscount: z.coerce.number().min(0).optional(),
+    minOrder: z.coerce.number().min(0).optional(),
+    isActive: z.boolean().default(true),
   })
+  .superRefine((data, ctx) => {
+    const hasDiscount = (data.discount ?? 0) > 0;
+    const hasDiscountPercent = (data.discountPercent ?? 0) > 0;
 
-  useEffect(() => {
-    handleSearch(searchTerm, pageIndex + 1, pageSize)
-  }, [searchTerm, pageIndex, pageSize, handleSearch])
+    if (!hasDiscount && !hasDiscountPercent) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          "Phải nhập một trong hai: 'Discount' hoặc 'DiscountPercent' với giá trị lớn hơn 0",
+        path: ["discount"],
+      });
+    }
 
-  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value)
-    setPageIndex(0)
-  }, [])
+    if (hasDiscount && hasDiscountPercent) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          "Chỉ được nhập một trong hai: 'Discount' hoặc 'DiscountPercent'",
+        path: ["discount"],
+      });
+    }
 
-  const handlePageSizeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setPageSize(Number(e.target.value))
-    setPageIndex(0)
-  }, [])
+    if (
+      hasDiscountPercent &&
+      data.discountPercent &&
+      (data.discountPercent < 0 || data.discountPercent > 100)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "DiscountPercent phải từ 0 đến 100",
+        path: ["discountPercent"],
+      });
+    }
+  });
+
+type CouponFormType = z.infer<typeof couponSchema>;
+
+export default function CouponPage() {
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 500);
+
+  const [pageSize, setPageSize] = useState(5);
+  const [pageIndex, setPageIndex] = useState(0);
+
+  const { data, totalItems, isLoading, refetch } = usePaginatedQuery<Coupon>({
+    queryKey: "coupons",
+    pageIndex,
+    pageSize,
+    search: debouncedSearch,
+    queryFn: async ({ page, size, search }) => {
+      const url = search?.trim()
+        ? `/api/Coupon/search/${search}`
+        : "/api/Coupon";
+      const res = await AxiosAPI.get<Coupon[]>(url, {
+        params: { PageNumber: page, PageSize: size },
+      });
+
+      const countRes = await AxiosAPI.get<number>("/api/Coupon/count");
+      return {
+        items: res.data ?? [],
+        totalItems: countRes.data ?? 0,
+      };
+    },
+  });
+
+  const handleDelete = async (id: number) => {
+    try {
+      await AxiosAPI.delete(`/api/Coupon/${id}`);
+      toast.success("Đã xóa mã giảm giá thành công");
+      if (data?.length === 1 && pageIndex > 0) setPageIndex((prev) => prev - 1);
+      else refetch();
+    } catch (error) {
+      toast.error("Xóa thất bại");
+    }
+  };
 
   return (
-    <div className="w-full space-y-4">
-      <div className="flex items-center justify-between py-4">
-        <Input
-          placeholder="Tìm kiếm Payment Method"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          className="max-w-sm"
+    <CrudPageWrapper
+      title="Danh sách mã giảm giá"
+      search={search}
+      onSearchChange={(val) => {
+        setSearch(val);
+        setPageIndex(0);
+      }}
+      pageSize={pageSize}
+      onPageSizeChange={(val) => {
+        setPageSize(val);
+        setPageIndex(0);
+      }}
+      pageIndex={pageIndex}
+      createButton={
+        <CreateDialogForm<CouponFormType>
+          title="Add Coupon"
+          description="Create new coupon entry"
+          triggerText="Add Coupon"
+          schema={couponSchema as ZodType<CouponFormType>}
+          fields={[
+            { name: "name", label: "Tên mã", type: "text" },
+            { name: "code", label: "Mã code", type: "text" },
+            { name: "discountPercent", label: "% Giảm giá", type: "number" },
+            { name: "startDate", label: "Từ ngày", type: "date" },
+            { name: "endDate", label: "Đến ngày", type: "date" },
+            { name: "isActive", label: "Kích hoạt", type: "switch" },
+          ]}
+          onSubmit={async (values) => {
+            await AxiosAPI.post("/api/Coupon", values);
+            refetch();
+          }}
+          defaultValues={{
+            name: "",
+            description: "",
+            code: "",
+            discount: undefined,
+            discountPercent: undefined,
+            startDate: "",
+            endDate: "",
+            maxUse: undefined,
+            maxDiscount: undefined,
+            minOrder: undefined,
+            isActive: true,
+          }}
         />
-
-        <div className="flex items-center space-x-2">
-          <div className='gap-5'>
-            
-            <AddCoupon onAddSuccess={() => {
-              fetchCount()
-              handleSearch(searchTerm, 1, pageSize)
-              setPageIndex(0)
-            }} />
-          </div>
-          <Label htmlFor="pageSize" className="text-sm">Số hàng/trang:</Label>
-          <select
-            id="pageSize"
-            value={pageSize}
-            onChange={handlePageSizeChange}
-            className="border border-gray-300 rounded px-2 py-1 text-sm"
-          >
-            {[5, 10, 15, 20].map(size => (
-              <option key={size} value={size}>{size}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {loading ? (
-        <div className="text-sm text-muted-foreground">Đang tải dữ liệu...</div>
-      ) : error ? (
-        <div className="text-red-500 p-4">Error: {error}</div>
-      ) : (
-        <>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                {table.getHeaderGroups().map(headerGroup => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map(header => (
-                      <TableHead key={header.id}>
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map(row => (
-                    <TableRow key={row.id}>
-                      {row.getVisibleCells().map(cell => (
-                        <TableCell key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={memoizedColumns.length} className="text-center">
-                      No results
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-
-          <div className="flex items-center justify-end space-x-2 py-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPageIndex(prev => prev - 1)}
-              disabled={pageIndex === 0}
-            >
-              Previous
-            </Button>
-            <span className="text-sm text-muted-foreground">
-              Page {pageIndex + 1} of {table.getPageCount()}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPageIndex(prev => prev + 1)}
-              disabled={pageIndex + 1 >= table.getPageCount()}
-            >
-              Next
-            </Button>
-          </div>
-        </>
-      )}
-    </div>
-  )
+      }
+      data={data ?? []}
+      columns={columns(handleDelete, refetch)}
+      isLoading={isLoading}
+      pageCount={Math.ceil(totalItems / pageSize)}
+      onPageChange={setPageIndex}
+    />
+  );
 }
-
-export default CouponPage
