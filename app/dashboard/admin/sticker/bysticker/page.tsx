@@ -67,7 +67,7 @@ const BySticker = () => {
 
       {stickers.length > 0 ? (
         <div>
-          <h2 className="text-lg font-semibold mb-4">Danh sách Sticker</h2>
+          <h2 className="text-lg font-semibold mb-4">Sticker Management</h2>
           <SimpleGrid cols={6} spacing="lg" verticalSpacing="sm">
             {stickers.map((sticker) => (
               <div key={sticker.id} className="flex flex-col items-center">

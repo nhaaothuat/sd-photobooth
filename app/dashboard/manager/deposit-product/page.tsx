@@ -1,83 +1,68 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { ScrollArea, Table, Group } from "@mantine/core";
-import AxiosAPI from "@/configs/axios";
+import { useState } from "react";
+import dynamic from "next/dynamic";
+import { useDebounce } from "@/hooks/useDebounce";
+import { usePaginatedQuery } from "@/hooks/usePaginatedQuery";
 import { DepositProduct } from "@/types/type";
+import AxiosAPI from "@/configs/axios";
+import { columns } from "./columns";
 import AddDepositProduct from "@/components/component/AddDepositProduct";
-import ViewDetailDepositProduct from "@/components/component/IDDepositProduct";
-import DeleteDepositProduct from "@/components/component/DeleteDepositProduct";
 import ExportButton from "@/components/component/ButtonExport";
+import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
 
-const DepositProductPage = () => {
-  const [data, setData] = useState<DepositProduct[]>([]);
-  const [scrolled, setScrolled] = useState(false);
+const CrudPageWrapper = dynamic(
+  () =>
+    import("@/components/layouts/SharedPage").then(
+      (mod) => mod.MemoizedCrudPage
+    ),
+  {
+    loading: () => <LoadingSkeleton />,
+    ssr: false,
+  }
+);
 
-  const fetchData = useCallback(async () => {
-    try {
-      const res = await AxiosAPI.get("/api/DepositProduct");
-      setData(res.data as any);
-    } catch (err) {
-      console.error("Fetch failed:", err);
-    }
-  }, []);
+export default function DepositProductPage() {
+  const [pageSize, setPageSize] = useState(5);
+  const [pageIndex, setPageIndex] = useState(0);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  const { data, totalItems, isLoading, refetch } =
+    usePaginatedQuery<DepositProduct>({
+      queryKey: "deposit-products",
+      pageIndex,
+      pageSize,
+      queryFn: async ({ page, size }) => {
+        const [res, countRes] = await Promise.all([
+          AxiosAPI.get<DepositProduct[]>("/api/DepositProduct", {
+            params: {
+              PageNumber: page,
+              PageSize: size,
+            },
+          }),
+          AxiosAPI.get<number>("/api/DepositProduct/count"),
+        ]);
 
-  const rows = data.map((row) => (
-    <Table.Tr key={row.id}>
-      <Table.Td>{row.id}</Table.Td>
-      <Table.Td>{row.name}</Table.Td>
-      <Table.Td>{row.description}</Table.Td>
-      <Table.Td>{row.productId}</Table.Td>
-      <Table.Td>{row.amountAdd}</Table.Td>
-      <Table.Td>{row.price}</Table.Td>
-      <Table.Td>{row.createdAt}</Table.Td>
-      <Table.Td>
-        <Group>
-          <ViewDetailDepositProduct id={row.id} />
-          <DeleteDepositProduct id={row.id} onDeleteSuccess={fetchData} />
-        </Group>
-      </Table.Td>
-    </Table.Tr>
-  ));
+        return {
+          items: res.data ?? [],
+          totalItems: countRes.data ?? 0,
+        };
+      },
+    });
 
   return (
-    <>
-      <div>
-        <ExportButton />
-        <AddDepositProduct onSuccess={fetchData} />
-      </div>
-      <ScrollArea
-        h={300}
-        onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
-        className="rounded-md border border-gray-200"
-      >
-        <Table miw={700}>
-          <Table.Thead
-            className={`
-            sticky top-0 z-10 bg-white transition-shadow
-            ${scrolled ? "shadow-sm" : ""}
-          `}
-          >
-            <Table.Tr>
-              <Table.Th>ID</Table.Th>
-              <Table.Th>Name</Table.Th>
-              <Table.Th>description</Table.Th>
-              <Table.Th>productId</Table.Th>
-              <Table.Th>amountAdd</Table.Th>
-              <Table.Th>price</Table.Th>
-              <Table.Th>createdAt</Table.Th>
-              <Table.Th>Action</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>{rows}</Table.Tbody>
-        </Table>
-      </ScrollArea>
-    </>
+    <CrudPageWrapper
+      isSearchable={false}
+      title="Deposit Product Management"
+      createButton={<AddDepositProduct onSuccess={refetch} />}
+      rightSlot={<ExportButton />}
+      data={data}
+      columns={columns(refetch)}
+      isLoading={isLoading}
+      pageCount={totalItems}
+      pageIndex={pageIndex}
+      pageSize={pageSize}
+      onPageChange={setPageIndex}
+      onPageSizeChange={setPageSize}
+    />
   );
-};
-
-export default DepositProductPage;
+}

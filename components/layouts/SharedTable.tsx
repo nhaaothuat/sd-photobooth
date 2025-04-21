@@ -100,19 +100,21 @@ export function SharedTable<TData>({
           )}
         </TableBody>
       </Table>
-      <div className="flex items-center justify-between px-4 py-2">
+      <div className="flex items-center justify-end space-x-2 py-4">
         <Button
           variant="outline"
+          size="sm"
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
           Previous
         </Button>
-        <span>
+        <span className="text-sm text-muted-foreground">
           Page {pageIndex + 1} of {pageCount}
         </span>
         <Button
           variant="outline"
+          size="sm"
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >

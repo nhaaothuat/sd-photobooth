@@ -36,7 +36,11 @@ const menuItems: Record<string, MenuItem[]> = {
   "/dashboard/admin": [
     { label: "Admin Dashboard", link: "/dashboard/admin", icon: Bot },
     { label: "Payment Method", link: "/dashboard/admin/payment", icon: Users },
-    { label: "Level Membership", link: "/dashboard/admin/levelmembership", icon: Users },
+    {
+      label: "Level Membership",
+      link: "/dashboard/admin/levelmembership",
+      icon: Users,
+    },
 
     {
       label: "Frame",
@@ -86,7 +90,6 @@ const menuItems: Record<string, MenuItem[]> = {
       icon: FileText,
       subMenu: [
         { label: "Profile", link: "/dashboard/admin/settings/profile" },
-
       ],
     },
   ],
@@ -212,7 +215,6 @@ const menuItems: Record<string, MenuItem[]> = {
       icon: FileText,
       subMenu: [
         { label: "Profile", link: "/dashboard/staff/settings/profile" },
-
       ],
     },
   ],
@@ -251,7 +253,11 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
                     <SidebarMenuButton asChild>
                       <Link
                         href={item.link}
-                        className="flex items-center font-sans font-medium gap-2 px-3 py-2 w-full"
+                        className={`flex items-center font-sans font-medium gap-2 px-3 py-2 w-full rounded-md transition-colors ${
+                          pathname === item.link
+                            ? "bg-gray-100 text-primary font-semibold"
+                            : "hover:bg-gray-50"
+                        }`}
                       >
                         {item.icon && <item.icon size={30} />}
                         {item.label}
@@ -283,7 +289,11 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
                         <SidebarMenuButton asChild>
                           <Link
                             href={sub.link}
-                            className="flex items-center gap-2 font-sans font-semibold text-sm text-gray-600 px-3 py-2"
+                            className={`flex items-center gap-2 font-sans font-semibold text-sm px-3 py-2 rounded-md transition-colors ${
+                              pathname === sub.link
+                                ? "bg-gray-100 text-primary"
+                                : "text-gray-600 hover:bg-gray-50"
+                            }`}
                           >
                             {sub.label}
                           </Link>

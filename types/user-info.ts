@@ -4,3 +4,8 @@ export interface UserInfo {
   role: string;
   exp: number;
 }
+
+export interface CustomerResponse {
+  data: User[];
+  totalCount: number;
+}

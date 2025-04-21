@@ -33,7 +33,6 @@ const AddUser = () => {
   const [locations, setLocations] = useState<LocationResponseDTO[]>([]);
 
   useEffect(() => {
-    // Fetch danh sách locations
     const fetchLocations = async () => {
       try {
         const response = await AxiosAPI.get("api/Location");

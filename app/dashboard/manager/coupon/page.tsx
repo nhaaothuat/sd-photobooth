@@ -125,18 +125,12 @@ export default function CouponPage() {
 
   return (
     <CrudPageWrapper
-      title="Danh sách mã giảm giá"
+      title="Coupon Management"
       search={search}
       onSearchChange={(val) => {
         setSearch(val);
         setPageIndex(0);
       }}
-      pageSize={pageSize}
-      onPageSizeChange={(val) => {
-        setPageSize(val);
-        setPageIndex(0);
-      }}
-      pageIndex={pageIndex}
       createButton={
         <CreateDialogForm
           title="Add Coupon"
@@ -175,6 +169,9 @@ export default function CouponPage() {
       isLoading={isLoading}
       pageCount={Math.ceil(totalItems / pageSize)}
       onPageChange={setPageIndex}
+      pageIndex={pageIndex}
+      pageSize={pageSize}
+      onPageSizeChange={setPageSize}
     />
   );
 }

@@ -86,19 +86,6 @@ const AddStaff = ({ onSuccess }: { onSuccess: () => void }) => {
     }
   };
 
-  useEffect(() => {
-    const fetchLocations = async () => {
-      try {
-        const response = await AxiosAPI.get("/api/Location");
-        setLocations(response.data as any);
-      } catch (error) {
-        toast.error("Failed to fetch locations");
-      }
-    };
-
-    fetchLocations();
-  }, []);
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
