@@ -13,6 +13,7 @@ import { getLocale, getMessages } from "next-intl/server";
 import { SessionProvider } from "next-auth/react";
 import AuthWrapper from "@/hocs/auth-wrapper";
 import { ToastContainer } from "react-toastify";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const geistSans = Outfit({
   variable: "--font-outfit",
@@ -63,6 +64,7 @@ export default async function RootLayout({
               <AuthWrapper>
                  {children}
                 <ToastContainer />
+                <SpeedInsights />
               </AuthWrapper>
             </SessionProvider>
           </MantineProvider>

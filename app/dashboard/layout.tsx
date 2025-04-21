@@ -15,7 +15,6 @@ import { useState } from "react";
 
 
 const DashBoardLayout = ({ children }: { children: React.ReactNode }) => {
-  const [isTriggered, setIsTriggered] = useState(false);
   return (
     <ThemeProvider
       attribute="class"
