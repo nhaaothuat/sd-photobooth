@@ -46,7 +46,7 @@ const UpdateSticker = ({
           fetchStyles();
      }, [open]);
 
-     // Fetch sticker info
+
      useEffect(() => {
           if (!open) return;
 
@@ -55,9 +55,13 @@ const UpdateSticker = ({
                     setLoading(true);
                     const res = await AxiosAPI.get<Sticker>(`/api/Sticker/${id}`);
                     const data = res.data;
+                    const matchedStyle = styles.find(style =>
+                         style.stickerStyleName === data?.stickerStyleName
+                    );
+
                     setForm({
                          name: data?.name || "",
-                         stickerStyleId: data?.stickerStyleName || "",
+                         stickerStyleId: matchedStyle?.id.toString() || "", // Đảm bảo là string của number
                     });
                } catch (err) {
                     toast.error("Lỗi khi lấy thông tin Sticker");
@@ -120,14 +124,13 @@ const UpdateSticker = ({
                               <div className="flex flex-col space-y-1.5">
                                    <Label>Kiểu Sticker</Label>
                                    <select
-                                        className="border rounded px-3 py-2"
                                         value={form.stickerStyleId}
                                         onChange={(e) => setForm({ ...form, stickerStyleId: e.target.value })}
                                    >
                                         <option value="">Chọn kiểu</option>
                                         {styles.map((style) => (
-                                             <option key={style.id} value={style.id}>
-                                                  {style.stickerStyleName}
+                                             <option key={style.id} value={style.id}> {/* value phải là id (number) */}
+                                                  {style.stickerStyleName} {/* Chỉ hiển thị tên */}
                                              </option>
                                         ))}
                                    </select>
