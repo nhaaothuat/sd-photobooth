@@ -1,11 +1,9 @@
-"use client";
-
-import { ReactNode } from "react";
+import React, { JSX, ReactNode } from "react";
 import { SharedTable } from "@/components/layouts/SharedTable";
 import { SearchInput } from "./SearchInput";
 import { PageSizeSelector } from "./PageSizeSelector";
 
-interface CrudPageWrapperProps<T> {
+export interface CrudPageWrapperProps<T> {
   title?: string;
   search: string;
   onSearchChange: (value: string) => void;
@@ -20,7 +18,7 @@ interface CrudPageWrapperProps<T> {
   onPageSizeChange: (size: number) => void;
 }
 
-export function CrudPageWrapper<TData>({
+function CrudPageWrapper<T>({
   title,
   search,
   onSearchChange,
@@ -33,7 +31,7 @@ export function CrudPageWrapper<TData>({
   pageSize,
   onPageChange,
   onPageSizeChange,
-}: CrudPageWrapperProps<TData>) {
+}: CrudPageWrapperProps<T>) {
   return (
     <div className="space-y-4">
       {title && <h2 className="text-2xl font-semibold">{title}</h2>}
@@ -61,3 +59,7 @@ export function CrudPageWrapper<TData>({
     </div>
   );
 }
+
+export const MemoizedCrudPage = React.memo(CrudPageWrapper) as <T>(
+  props: CrudPageWrapperProps<T>
+) => JSX.Element;

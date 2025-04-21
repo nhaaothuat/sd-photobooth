@@ -11,6 +11,7 @@ import { Order, PaymentMethod, TypeSession } from "@/types/type";
 import { deleteOrder } from "@/services/order-service";
 import PaymentDialog from "@/components/layouts/PaymentDialog";
 import dynamic from "next/dynamic";
+import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
 
 const CreateDialogForm = dynamic(
   () =>
@@ -18,7 +19,7 @@ const CreateDialogForm = dynamic(
       (mod) => mod.MemoizedCreateDialogForm
     ),
   {
-    loading: () => <div>Loading...</div>,
+    loading: () => <LoadingSkeleton />,
     ssr: false,
   }
 );
@@ -26,10 +27,10 @@ const CreateDialogForm = dynamic(
 const CrudPageWrapper = dynamic(
   () =>
     import("@/components/layouts/SharedPage").then(
-      (mod) => mod.CrudPageWrapper
+      (mod) => mod.MemoizedCrudPage
     ),
   {
-    loading: () => <div>Loading...</div>,
+    loading: () => <LoadingSkeleton />,
     ssr: false,
   }
 );

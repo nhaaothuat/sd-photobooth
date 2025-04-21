@@ -9,6 +9,7 @@ import AxiosAPI from "@/configs/axios";
 import { usePaginatedQuery } from "@/hooks/usePaginatedQuery";
 import { Coupon } from "@/types/type";
 import dynamic from "next/dynamic";
+import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
 
 const CreateDialogForm = dynamic(
   () =>
@@ -16,7 +17,7 @@ const CreateDialogForm = dynamic(
       (mod) => mod.MemoizedCreateDialogForm
     ),
   {
-    loading: () => <div>Loading...</div>,
+    loading: () => <LoadingSkeleton />,
     ssr: false,
   }
 );
@@ -24,10 +25,10 @@ const CreateDialogForm = dynamic(
 const CrudPageWrapper = dynamic(
   () =>
     import("@/components/layouts/SharedPage").then(
-      (mod) => mod.CrudPageWrapper
+      (mod) => mod.MemoizedCrudPage
     ),
   {
-    loading: () => <div>Loading...</div>,
+    loading: () => <LoadingSkeleton />,
     ssr: false,
   }
 );
