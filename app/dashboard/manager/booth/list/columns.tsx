@@ -51,7 +51,7 @@ export const columns = (
   {
     accessorKey: "location.locationName",
     header: "Location Name",
-    cell: ({ row }) => <div>{row.original.location.locationName}</div>,
+    cell: ({ row }) => <div>{row.original.location.locationName ?? "N/A"}</div>,
   },
   {
     accessorKey: "location.address",

@@ -55,7 +55,10 @@ export default function BoothPage() {
     const fetchLocations = async () => {
       try {
         const res = await getAllLocations();
-        setLocations(res);
+        const validLocations = res.filter(
+          (l): l is Location => !!l?.locationName && !!l?.id
+        );
+        setLocations(validLocations);
       } catch (error) {
         console.error("Failed to fetch locations", error);
         toast.error("Failed to load locations");
@@ -110,10 +113,12 @@ export default function BoothPage() {
               type: "select",
               name: "locationId",
               label: "Location",
-              options: locations.map((l) => ({
-                label: l.locationName,
-                value: l.id,
-              })),
+              options: locations
+                .filter((l) => l && l.locationName)
+                .map((l) => ({
+                  label: l.locationName,
+                  value: l.id,
+                })),
             },
             { type: "text", name: "description", label: "Description" },
             {
