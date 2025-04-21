@@ -30,7 +30,7 @@ const menuItems: Record<string, MenuItem[]> = {
     { label: "Admin Dashboard", link: "/dashboard/admin", icon: Bot },
     { label: "Payment Method", link: "/dashboard/admin/payment", icon: Users },
     { label: "Level Membership", link: "/dashboard/admin/levelmembership", icon: Users },
-    // { label: "Frame", link: "/dashboard/admin/frame", icon: Bot },
+    
     {
       label: "Frame",
       icon: FileText,
@@ -41,7 +41,7 @@ const menuItems: Record<string, MenuItem[]> = {
       ],
     },
     { label: "Frame Style", link: "/dashboard/admin/frame-style", icon: Bot },
-    // { label: "Sticker", link: "/dashboard/admin/sticker", icon: Bot },
+   
     {
       label: "Sticker",
       icon: FileText,
@@ -89,6 +89,7 @@ const menuItems: Record<string, MenuItem[]> = {
       ],
     },
     { label: "Session", link: "/dashboard/manager/session", icon: FileText },
+    { label: "Payment", link: "/dashboard/manager/payment", icon: FileText },
     { label: "Deposit Product", link: "/dashboard/manager/deposit-product", icon: FileText },
     // { label: "TypeSession Product", link: "/dashboard/manager/typesession-product", icon: FileText },
     {

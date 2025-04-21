@@ -53,6 +53,11 @@ export const columns = (
      header: "Order ID",
      cell: ({ row }) => <div>{row.getValue("orderId")}</div>,
    },
+   {
+    accessorKey: "depositId",
+    header: "Deposit ID",
+    cell: ({ row }) => <div>{row.getValue("depositId")}</div>,
+  },
     
     
     {
