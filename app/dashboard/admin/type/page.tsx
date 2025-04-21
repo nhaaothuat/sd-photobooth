@@ -109,7 +109,7 @@ const TypeSessionPage = () => {
   const refetchData = useCallback(() => {
     handleSearch(searchTerm, pageIndex + 1, pageSize)
   }, [handleSearch, searchTerm, pageIndex, pageSize])
-  const deleteFrame = useCallback(async (id: number) => {
+  const deleteTypeSession = useCallback(async (id: number) => {
     try {
       const res = await AxiosAPI.delete(`/api/TypeSession/${id}`)
 
@@ -128,7 +128,7 @@ const TypeSessionPage = () => {
     }
   }, [data.length, fetchCount, handleSearch, pageIndex, pageSize, searchTerm])
 
-  const memoizedColumns = useMemo(() => columns(deleteFrame,refetchData), [deleteFrame,refetchData])
+  const memoizedColumns = useMemo(() => columns(deleteTypeSession,refetchData), [deleteTypeSession,refetchData])
 
   const table = useReactTable({
     data,

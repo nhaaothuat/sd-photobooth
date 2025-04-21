@@ -48,14 +48,14 @@ const ViewDetailLevelMembership = ({ id }: { id: number }) => {
             <p><strong>ID:</strong> {level.id}</p>
             <p><strong>Method Name:</strong> {level.name}</p>
           
-            {/* <p><strong>URL:</strong> {frame.frameUrl}</p> */}
-            <p><strong>Style Name:</strong> {level.description}</p>
-            <p><strong>Slot Count:</strong> {level.point}</p>
-            <p><strong>Slot Count:</strong> {level.maxDiscount}</p>
-            <p><strong>Slot Count:</strong> {level.minOrder}</p>
-            <p><strong>Slot Count:</strong> {level.discountPercent}</p>
-            <p><strong>For Mobile:</strong> {level.isActive ? "Yes" : "No"}</p>
-            {/* <p><strong>Created At:</strong> {new Date(level.).toLocaleString()}</p> */}
+         
+            <p><strong>description:</strong> {level.description}</p>
+            <p><strong>point:</strong> {level.point}</p>
+            <p><strong>maxDiscount:</strong> {level.maxDiscount}</p>
+            <p><strong>minOrder:</strong> {level.minOrder}</p>
+            <p><strong>discountPercent:</strong> {level.discountPercent}</p>
+            <p><strong>isActive:</strong> {level.isActive ? "Yes" : "No"}</p>
+           
           </div>
         ) : (
           <div className="text-sm text-red-500">Không thể tải dữ liệu chi tiết</div>

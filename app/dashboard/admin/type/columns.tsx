@@ -1,7 +1,7 @@
 "use client"
 
 import DeletePayment from "@/components/component/DeletePayment"
-import DeleteSticker from "@/components/component/DeleteSticker"
+
 import EditTypeSession from "@/components/component/GPTypeSession"
 import ViewDetailTypeSession from "@/components/component/IDTypeSession"
 import { Button } from "@/components/ui/button"
@@ -15,6 +15,16 @@ const DateCell = ({ value }: { value: string }) => {
      const date = new Date(value)
      return <div>{date.toLocaleDateString()}</div>
 }
+
+const PriceCell = ({ value }: { value: number }) => {
+     const formattedValue = new Intl.NumberFormat('vi-VN', {
+       style: 'currency',
+       currency: 'VND',
+       minimumFractionDigits: 0
+     }).format(value || 0);
+     
+     return <div>{formattedValue}</div>;
+   };
 
 export const columns = (
      onDelete: (id: number) => Promise<void>,
@@ -43,13 +53,9 @@ export const columns = (
           {
                accessorKey: "price",
                header: () => <div className="text-center">Price</div>,
-               cell: ({ row }) => <div className="text-center">{row.getValue("price")}VNĐ</div>
+               cell: ({ row }) => <div className="text-center"><PriceCell value={row.getValue("price")} /></div>
           },
-          {
-               accessorKey: "isPrinting",
-               header: () => <div className="text-center">Is Printing</div>,
-               cell: ({ row }) => <div className="text-center">{row.getValue("isPrinting") ? "Yes" : "No"}</div>
-          },
+
           {
                accessorKey: "ableTakenNumber",
                header: () => <div className="text-center">Able Taken Number</div>,
@@ -61,11 +67,11 @@ export const columns = (
                cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />
           },
           {
-               id:"edit",
+               id: "edit",
                header: () => <div className="text-center">Edit</div>,
-               cell: ({row}) => {
+               cell: ({ row }) => {
                     const id = row.original.id;
-                    return(
+                    return (
                          <EditTypeSession id={id} onUpdateSuccess={refetchData} />
                     )
                }
@@ -75,7 +81,7 @@ export const columns = (
                enableHiding: false,
                cell: ({ row }) => {
                     const id = row.original.id;
-                    const typesession = row.original;
+
                     return (
                          <DropdownMenu>
                               <DropdownMenuTrigger asChild>
@@ -86,16 +92,14 @@ export const columns = (
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="center">
                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                   {/* <DropdownMenuItem onClick={() => navigator.clipboard.writeText(sticker.id.toString())}>
-                                   Copy Sticker ID
-                              </DropdownMenuItem> */}
+
                                    <DropdownMenuSeparator />
                                    <DropdownMenuItem asChild>
                                         <DeletePayment id={id} onDelete={onDelete} />
                                    </DropdownMenuItem>
 
                                    <DropdownMenuItem asChild>
-                                        <ViewDetailTypeSession id={id}  />
+                                        <ViewDetailTypeSession id={id} />
                                    </DropdownMenuItem>
 
 

@@ -1,7 +1,6 @@
 "use client"
 
 import DeletePayment from "@/components/component/DeletePayment"
-import DeleteSticker from "@/components/component/DeleteSticker"
 import EditLevelMembership from "@/components/component/GPLevelMembership"
 import ViewDetailLevelMembership from "@/components/component/IDLevelMembership"
 import { Button } from "@/components/ui/button"

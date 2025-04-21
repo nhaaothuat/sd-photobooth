@@ -30,6 +30,7 @@ interface OrderRequest {
   phone: string;
   typeSessionId: number;
   paymentMethodId: number;
+  coupon: string;
 }
 
 interface OrderResponse {
@@ -42,6 +43,7 @@ const Order = () => {
     phone: "",
     typeSessionId: 0,
     paymentMethodId: 0,
+    coupon:""
   });
   const [typeSessions, setTypeSessions] = React.useState<TypeSession[]>([]);
   const [paymentMethods, setPaymentMethods] = React.useState<PaymentMethod[]>([]);
@@ -131,6 +133,10 @@ const Order = () => {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <Label>Coupon</Label>
+              <Input name="email" value={formData.coupon} onChange={handleChange} placeholder="Enter coupon" required />
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label>Payment Method</Label>

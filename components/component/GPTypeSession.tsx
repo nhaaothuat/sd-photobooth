@@ -29,7 +29,7 @@ const EditTypeSession = ({
     description: "",
     duration: 0,
     price: 0,
-    isPrinting: true,
+   
     forMobile:true,
     ableTakenNumber: 0,
   });
@@ -47,7 +47,7 @@ const EditTypeSession = ({
           description: data?.description || "",
           duration: data?.duration || 0,
           price: data?.price || 0,
-          isPrinting: data?.isPrinting ?? true,
+         
           forMobile: data?.forMobile ?? true,
           ableTakenNumber: data?.ableTakenNumber || 0,
         });
@@ -132,14 +132,10 @@ const EditTypeSession = ({
             onChange={(value) => handleChange("ableTakenNumber", value || 0)}
             required
           />
-          <Checkbox
-            label="In phiếu"
-            checked={formData.isPrinting}
-            onChange={(e) => handleChange("isPrinting", e.currentTarget.checked)}
-          />
+      
            <Checkbox
             label="For Mobile"
-            checked={formData.isPrinting}
+            checked={formData.forMobile}
             onChange={(e) => handleChange("forMobile", e.currentTarget.checked)}
           />
           <Group justify="flex-end" mt="md">

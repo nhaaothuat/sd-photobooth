@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button"
 import AxiosAPI from "@/configs/axios"
 import { Loader2 } from "lucide-react"
-import Image from "next/image"
+
 
 const ViewDetailTypeSession = ({ id }: { id: number }) => {
   const [typeSession, setTypeSession] = useState<TypeSession | null>(null)
@@ -51,7 +51,7 @@ const ViewDetailTypeSession = ({ id }: { id: number }) => {
             
             <p><strong>Style Name:</strong> {typeSession.description}</p>
             <p><strong>Slot Count:</strong> {typeSession.duration}</p>
-            <p><strong>Slot Count:</strong> {typeSession.isPrinting ? "Yes" : "No"}</p>
+            <p><strong>Slot Count:</strong> {typeSession.price}</p>
             <p><strong>Slot Count:</strong> {typeSession.ableTakenNumber}</p>
             <p><strong>For Mobile:</strong> {typeSession.forMobile ? "Yes" : "No"}</p>
             <p><strong>Created At:</strong> {new Date(typeSession.createdAt).toLocaleString()}</p>

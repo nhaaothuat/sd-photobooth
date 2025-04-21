@@ -28,7 +28,7 @@ const formSchema = z.object({
      duration: z.coerce.number().min(0, "Duration must be a non-negative value"),
      price: z.coerce.number().min(0, "Price must be a positive value"),
      ableTakenNumber: z.coerce.number().min(0, "Max participants must be a non-negative value"),
-     isPrinting: z.boolean(),
+     
      forMobile: z.boolean().optional(),
 });
 
@@ -53,7 +53,7 @@ const AddTypeSession: React.FC<AddTypeSessionProps> = ({ onAddSuccess }) => {
                description: "",
                duration: 0,
                price: 0,
-               isPrinting: true,
+               
                ableTakenNumber: 0,
                forMobile: true,
           },
@@ -132,23 +132,10 @@ const AddTypeSession: React.FC<AddTypeSessionProps> = ({ onAddSuccess }) => {
                               {errors.ableTakenNumber && <p className="text-red-500 text-sm">{errors.ableTakenNumber.message}</p>}
                          </div>
 
-                         {/* isPrinting Switch */}
-                         <div className="flex items-center space-x-4 rounded-md border p-4">
-                              <FileText />
-                              <div className="flex-1 space-y-1">
-                                   <p className="text-sm font-medium leading-none">Print Ticket</p>
-                                   <p className="text-sm text-muted-foreground">Enable or disable printing for this session.</p>
-                              </div>
-                              <Controller
-                                   name="isPrinting"
-                                   control={control}
-                                   render={({ field }) => (
-                                        <Switch checked={field.value} onCheckedChange={field.onChange} />
-                                   )}
-                              />
-                         </div>
+                        
+                       
 
-                         {/* forMobile Switch */}
+                        
                          <div className="flex items-center space-x-4 rounded-md border p-4">
                               <FileText />
                               <div className="flex-1 space-y-1">
