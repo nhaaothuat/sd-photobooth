@@ -54,7 +54,7 @@ const menuItems: Record<string, MenuItem[]> = {
     { label: "Sticker Style", link: "/dashboard/admin/sticker-style", icon: Bot },
     { label: "Type Session", link: "/dashboard/admin/type", icon: Settings },
     {
-      label: "User", icon: Settings, subMenu: [{ label: "Test", link: "/dashboard/admin/user/test" },
+      label: "User", icon: Settings, subMenu: [{ label: "Function", link: "/dashboard/admin/user/function" },
       { label: "Account (Manager)", link: "/dashboard/admin/user/account-manager" },
       { label: "Account (Staff)", link: "/dashboard/admin/user/account-staff" },
       ],
@@ -81,7 +81,7 @@ const menuItems: Record<string, MenuItem[]> = {
       { label: "Create Order", link: "/dashboard/manager/order/create" }
       ],
     },
-    // { label: "Booth", link: "/dashboard/manager/booth", icon: FileText },
+    
     {
       label: "Booth", icon: FileText, subMenu: [
         { label: "Get Booth by Location", link: "/dashboard/manager/booth/bylocation" },
