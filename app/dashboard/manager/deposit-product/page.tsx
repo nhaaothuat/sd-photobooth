@@ -46,7 +46,7 @@ export default function DepositProductPage() {
       data={data}
       columns={columns(refetch)}
       isLoading={isLoading}
-      pageCount={totalItems}
+      pageCount={Math.ceil(totalItems / pageSize)}
       pageIndex={pageIndex}
       pageSize={pageSize}
       onPageChange={setPageIndex}

@@ -39,7 +39,7 @@ export default function PaymentMethodPage() {
       data={data}
       columns={columns()}
       isLoading={isLoading}
-      pageCount={totalItems}
+      pageCount={Math.ceil(totalItems / pageSize)}
       pageIndex={pageIndex}
       pageSize={pageSize}
       onPageChange={setPageIndex}
