@@ -5,36 +5,34 @@ export type Booth = {
   boothName: string;
   status: boolean;
   createdAt: string;
-  description:string
+  description: string;
   // location: {
   //   locationName: string;
   //   address: string;
   // };
-  location:Location
+  location?: Location;
 };
 
 export type Coupon = {
-  id: number
-  name: string
-  description: string
-  code: string
-  discount: number | null
-  discountPercent: number | null
-  startDate: string
-  endDate: string
-  maxUse: number
-  maxDiscount: number
-  minOrder: number
-  isActive: boolean
-  usedAmount: number
-  createdAt: string
-  lastModified: string
-  isDeleted: boolean
-  createdById: string | null
-  lastModifiedById: string | null
-}
-
-
+  id: number;
+  name: string;
+  description: string;
+  code: string;
+  discount: number | null;
+  discountPercent: number | null;
+  startDate: string;
+  endDate: string;
+  maxUse: number;
+  maxDiscount: number;
+  minOrder: number;
+  isActive: boolean;
+  usedAmount: number;
+  createdAt: string;
+  lastModified: string;
+  isDeleted: boolean;
+  createdById: string | null;
+  lastModifiedById: string | null;
+};
 
 export type Frame = {
   id: number;
@@ -44,134 +42,130 @@ export type Frame = {
   forMobile: boolean;
   slotCount: number;
   createdAt: string;
-  lastModified: string
-  createdById: string | null
-  lastModifiedById: string | null
-  frameStyleId: number
-  coordinates: Coordinate[]
+  lastModified: string;
+  createdById: string | null;
+  lastModifiedById: string | null;
+  frameStyleId: number;
+  coordinates: Coordinate[];
 };
 
 export type FrameStyle = {
-  id: number
-  name: string
-  description: string
-  imageUrl: string
-  createdAt: string
-  lastModified: string
-  createdById: string | null
-  lastModifiedById: string | null
-}
+  id: number;
+  name: string;
+  description: string;
+  imageUrl: string;
+  createdAt: string;
+  lastModified: string;
+  createdById: string | null;
+  lastModifiedById: string | null;
+};
 
 export type LevelMembership = {
-  id: number
-  name: string
-  description: string
-  point: number
-  isActive: boolean
-  discountPercent: number
-  maxDiscount: number
-  minOrder: number
-  
-}
+  id: number;
+  name: string;
+  description: string;
+  point: number;
+  isActive: boolean;
+  discountPercent: number;
+  maxDiscount: number;
+  minOrder: number;
+};
 
 export type MembershipCard = {
-  id: number
-  points: number
-  description: string
-  isActive: boolean
-  createdAt: string
-  lastModified: string
-  discountPercent: number
-  maxDiscount: number
-  minOrder: number
-  createdById: string | null
-  lastModifiedById: string | null
+  id: number;
+  points: number;
+  description: string;
+  isActive: boolean;
+  createdAt: string;
+  lastModified: string;
+  discountPercent: number;
+  maxDiscount: number;
+  minOrder: number;
+  createdById: string | null;
+  lastModifiedById: string | null;
   levelMemberShip: {
-    id:number
-    name:string
-    point:number
-  }
-  customer:{
-    id:string
-    fullName: string | null
-    email: string | null
-    phoneNumber: number
-  }
-}
+    id: number;
+    name: string;
+    point: number;
+  };
+  customer: {
+    id: string;
+    fullName: string | null;
+    email: string | null;
+    phoneNumber: number;
+  };
+};
 
 export type Sticker = {
-  id: number
-  name: string
-  stickerUrl: string
-  stickerStyleName: string
-  StickerStyleId: number
-  createdAt: string
-  lastModified: string
-  createdById: number | null
-  lastModifiedById: number | null
-}
+  id: number;
+  name: string;
+  stickerUrl: string;
+  stickerStyleName: string;
+  StickerStyleId: number;
+  createdAt: string;
+  lastModified: string;
+  createdById: number | null;
+  lastModifiedById: number | null;
+};
 
 export type StickerStyle = {
-  id: number
-  stickerStyleName: string
-  description: string
-  createdAt: string
-  lastModified: string
-  createdById: string
-  lastModifiedById: string
- 
-}
-
+  id: number;
+  stickerStyleName: string;
+  description: string;
+  createdAt: string;
+  lastModified: string;
+  createdById: string;
+  lastModifiedById: string;
+};
 
 export type Location = {
-  id: number
-  locationName: string
-  address: string
-  createdAt: string
-  lastModified: string
-  createdById: string | null
-  lastModifiedById: string | null
-}
+  id: number;
+  locationName: string;
+  address: string;
+  createdAt: string;
+  lastModified: string;
+  createdById: string | null;
+  lastModifiedById: string | null;
+};
 
 export type TypeSession = {
-  id: number
-  name: string 
-  description: string
-  duration: number
-  price: number
-  forMobile: boolean
-  isPrinting: boolean
-  ableTakenNumber: number
-  createdAt: string
-  lastModified: string
-  createdById: string | null
-  lastModifiedById: string | null
-}
+  id: number;
+  name: string;
+  description: string;
+  duration: number;
+  price: number;
+  forMobile: boolean;
+  isPrinting: boolean;
+  ableTakenNumber: number;
+  createdAt: string;
+  lastModified: string;
+  createdById: string | null;
+  lastModifiedById: string | null;
+};
 
 export type PaymentMethod = {
-  id: number
-  methodName: string 
-  description: string 
-  isActive: boolean
-  createdAt: string
-  lastModified: string
-  createdById: string | null
-  lastModifiedById: string | null
-  forMobile: boolean
-  isOnline: boolean
-}
-
+  id: number;
+  methodName: string;
+  description: string;
+  isActive: boolean;
+  createdAt: string;
+  lastModified: string;
+  createdById: string | null;
+  lastModifiedById: string | null;
+  forMobile: boolean;
+  isOnline: boolean;
+};
 
 export type Session = {
-  id: number
-  code: string
-  expired: string | null
-  isActive: boolean
-  orderId: number
-  createdAt: string
-  lastModified: string
-  isDeleted: boolean
-}
+  id: number;
+  code: string;
+  expired: string | null;
+  isActive: boolean;
+  orderId: number;
+  createdAt: string;
+  lastModified: string;
+  isDeleted: boolean;
+};
 
 export type PhotoStyle = {
   id: number;
@@ -210,11 +204,11 @@ export type Product = {
   depositId: number;
   couponId: number | null;
   levelMembership: string | null;
-  deposit: any | null;         
+  deposit: any | null;
   coupon: string | null;
   discount: number | null;
-  discountPercent:number | null
-}
+  discountPercent: number | null;
+};
 
 export type Transaction = {
   id: number;
@@ -222,14 +216,14 @@ export type Transaction = {
   paymentMethodName: string;
   type: number;
   amount: number;
-  createdAt: string; 
+  createdAt: string;
   orderId: number;
   depositId: number | null;
   description: string | null;
   accountNumber: string | null;
   reference: string | null;
-  transactionDateTime: string | null; 
-}
+  transactionDateTime: string | null;
+};
 
 export type User = {
   id: string;
@@ -237,10 +231,10 @@ export type User = {
   userName: string;
   email: string;
   phoneNumber: string;
-  gender: number; 
-  birthDate: string ; 
+  gender: number;
+  birthDate: string;
   avatar: string | null;
-  role:  string; 
+  role: string;
   isBanned: boolean;
   location: Location | null;
 };
@@ -248,12 +242,12 @@ export type User = {
 export type Order = {
   id: number;
   code: number;
-  status: number; 
+  status: number;
   amount: number;
   email: string;
   phone: string;
-  createdAt: string; 
-  
+  createdAt: string;
+
   sessionCode: string;
   paymentMethodName: string;
   couponCode: string;
@@ -264,8 +258,7 @@ export type Order = {
     id: string;
     email: string;
     phoneNumber: string;
-
-  }
+  };
 };
 
 export type DepositProduct = {
@@ -274,9 +267,9 @@ export type DepositProduct = {
   description: string;
   price: number;
   amountAdd: number;
-  createdAt: string; 
-  lastModified: string; 
-  
+  createdAt: string;
+  lastModified: string;
+
   productId: string;
 };
 
@@ -291,15 +284,15 @@ export type TypeSessionProduct = {
   levelMembershipId: number | null;
   typeSessionId: number | null;
   couponId: number | null;
-  levelMembership: LevelMembership
-  coupon: Coupon
-  typeSession: TypeSession
+  levelMembership: LevelMembership;
+  coupon: Coupon;
+  typeSession: TypeSession;
   discount: number | null;
 };
 
 export type PhotoHistory = {
-  id: number
-}
+  id: number;
+};
 
 export type Coordinate = {
   id: number;
@@ -310,7 +303,7 @@ export type Coordinate = {
   height: number;
 };
 
-export type Payment={
+export type Payment = {
   id: number;
   code: number;
   orderId: number | null;
@@ -320,6 +313,6 @@ export type Payment={
   amount: number;
   paymentMethodName: string;
   orderCode: string | null;
-  createdAt: string; 
-  lastModified: string; 
-}
+  createdAt: string;
+  lastModified: string;
+};
