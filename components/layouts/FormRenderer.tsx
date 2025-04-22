@@ -10,13 +10,13 @@ import {
 import { FieldConfig } from "@/types/field-config";
 
 export default function FormRenderer({ fields }: { fields: FieldConfig[] }) {
-  const { register, setValue, watch } = useFormContext();
+  const { register, setValue, watch,formState: { errors } } = useFormContext();
 
   return (
     <>
       {fields.map((field) => {
         const value = watch(field.name);
-
+        const error = errors[field.name];
         switch (field.type) {
           case "text":
           case "number":

@@ -11,11 +11,8 @@ import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
 import { getLevelMembershipCards } from "@/services/level-membership-card";
 import { IconPlus } from "@tabler/icons-react";
 
-const CreateDialogForm = dynamic(
-  () =>
-    import("@/components/layouts/CreateDialog").then(
-      (mod) => mod.MemoizedCreateDialogForm
-    ),
+const GPUpgradeLevel = dynamic(
+  () => import("@/components/component/GPUpgrade"),
   {
     loading: () => <LoadingSkeleton />,
     ssr: false,
@@ -47,27 +44,13 @@ export default function MembershipCardPage() {
   });
 
   return (
+
+    <>
+    <GPUpgradeLevel onUpdateSuccess={refetch} />
     <CrudPageWrapper
       title="Membership Card Management"
       isSearchable={false}
-      createButton={
-        <CreateDialogForm
-          title="Upgrade Level Membership Card"
-          description="Upgrade Level Membership Card"
-          triggerText="Upgrade Level Membership Card"
-          onSubmit={async (values) => {
-            await AxiosAPI.put("/api/MembershipCard/upgrade-level", {
-              ...values,
-            });
-            refetch();
-          }}
-          fields={[{ type: "text", name: "email", label: "Customer Email" }]}
-          schema={z.object({
-            email: z.string().email("Invalid email"),
-          })}
-          triggerIcon={<IconPlus />}
-        />
-      }
+      
       data={data}
       columns={columns(refetch)}
       isLoading={isLoading}
@@ -77,5 +60,6 @@ export default function MembershipCardPage() {
       onPageChange={setPageIndex}
       onPageSizeChange={setPageSize}
     />
+    </>
   );
 }

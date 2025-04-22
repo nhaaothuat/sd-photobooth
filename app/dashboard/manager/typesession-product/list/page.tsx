@@ -46,9 +46,10 @@ export default function TypeSessionProductPage() {
   const handleDelete = async (id: number) => {
     try {
       await deleteTypeSessionProduct(id);
+      
       toast.success("Type Session Product deleted successfully");
       if (data?.length === 1 && pageIndex > 0) setPageIndex((prev) => prev - 1);
-      else refetch();
+      else  await refetch();
     } catch {
       toast.error("Failed to delete Type Session Product");
     }

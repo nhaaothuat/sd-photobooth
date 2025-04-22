@@ -60,7 +60,7 @@ export const columns = (
     cell: ({ row }) => <DateCell value={row.getValue("endDate")} />,
   },
   {
-    accessorKey: "",
+    accessorKey: "isActive",
     header: "Is Active",
     cell: ({ row }) => <StatusCell value={row.getValue("isActive")} />,
   },
@@ -94,11 +94,7 @@ export const columns = (
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(booth.id.toString())}
-            >
-              Copy booth ID
-            </DropdownMenuItem>
+           
             <DropdownMenuSeparator />
 
             <DropdownMenuItem asChild>
