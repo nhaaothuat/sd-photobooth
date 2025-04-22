@@ -59,7 +59,7 @@ export const columns = (
   },
 
   {
-    accessorKey: "isActive",
+    accessorKey: "",
     header: "Is Active",
     cell: ({ row }) => <StatusCell value={row.getValue("isActive")} />,
   },

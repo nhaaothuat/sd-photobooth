@@ -111,7 +111,7 @@ const UpdateCoupon = ({ couponId, onUpdateSuccess }: UpdateCouponProps) => {
           startDate: data?.startDate?.slice(0, 10) || '',
           endDate: data?.endDate?.slice(0, 10) || '',
           discount: data?.discount ?? null,
-          discountPercent: data?.discountPercent != null ? data.discountPercent * 100 : null,
+          discountPercent: data?.discountPercent != null ? data.discountPercent : null,
         });
       } else {
         toast.error("Không lấy được thông tin coupon");
@@ -138,7 +138,7 @@ const UpdateCoupon = ({ couponId, onUpdateSuccess }: UpdateCouponProps) => {
 
   const handleDiscountChange = (e: React.ChangeEvent<HTMLInputElement>, field: 'discount' | 'discountPercent') => {
     const value = e.target.value;
-    
+
     if (value === '') {
       setValue(field, null, { shouldValidate: true });
       return;
@@ -148,7 +148,7 @@ const UpdateCoupon = ({ couponId, onUpdateSuccess }: UpdateCouponProps) => {
     if (isNaN(numValue)) return;
 
     setValue(field, numValue, { shouldValidate: true });
-    
+
     // Clear the other field when one is set
     if (field === 'discount' && numValue > 0) {
       setValue('discountPercent', null, { shouldValidate: true });
@@ -164,7 +164,7 @@ const UpdateCoupon = ({ couponId, onUpdateSuccess }: UpdateCouponProps) => {
       const payload = {
         ...values,
         discount: values.discount,
-        discountPercent: values.discountPercent !== null ? values.discountPercent / 100 : null,
+        discountPercent: values.discountPercent !== null ? values.discountPercent : null,
       };
 
       await AxiosAPI.put(`/api/Coupon/${couponId}`, payload);
@@ -268,7 +268,11 @@ const UpdateCoupon = ({ couponId, onUpdateSuccess }: UpdateCouponProps) => {
             </div>
 
             <div className="flex items-center space-x-2">
-              <Switch id="isActive" {...register("isActive")} />
+              <Switch
+                id="isActive"
+                checked={watch("isActive")}
+                onCheckedChange={(checked) => setValue("isActive", checked)}
+              />
               <Label htmlFor="isActive">Kích hoạt</Label>
             </div>
 
