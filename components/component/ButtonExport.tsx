@@ -1,37 +1,44 @@
-import React from 'react';
-import { Button } from '@mantine/core'; // Adjust if you're using another library
-import AxiosAPI from '@/configs/axios';
-import { toast } from 'react-toastify';
+import React from "react";
+import { Button } from "@mantine/core";
+import AxiosAPI from "@/configs/axios";
+import { toast } from "react-toastify";
 
-const ExportButton: React.FC = () => {
-    const handleExport = async () => {
-        try {
-            const response = await AxiosAPI.get('/api/DepositProduct/export', {
-                responseType: 'blob',
-            });
+interface ExportButtonProps {
+  endpoint: string;
+  filename: string;
+}
 
-            const blob = new Blob([response.data as any], { type: 'text/csv;charset=utf-8;' });
-            const url = window.URL.createObjectURL(blob);
+const ExportButton: React.FC<ExportButtonProps> = ({ endpoint, filename }) => {
+  const handleExport = async () => {
+    try {
+      const response = await AxiosAPI.get(endpoint, {
+        responseType: "blob",
+      });
 
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', 'products.csv');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+      const blob = new Blob([response.data as any], {
+        type: "text/csv;charset=utf-8;",
+      });
+      const url = window.URL.createObjectURL(blob);
 
-            toast.success('Export thành công!');
-        } catch (error) {
-            console.error('Export failed:', error);
-            toast.error('Xuất file thất bại!');
-        }
-    };
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
 
-    return (
-        <Button onClick={handleExport} variant="filled" color="blue">
-            Export to CSV
-        </Button>
-    );
+      toast.success("Export thành công!");
+    } catch (error) {
+      console.error("Export failed:", error);
+      toast.error("Xuất file thất bại!");
+    }
+  };
+
+  return (
+    <Button onClick={handleExport} variant="filled" color="blue">
+      Export to CSV
+    </Button>
+  );
 };
 
 export default ExportButton;

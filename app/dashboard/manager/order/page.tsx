@@ -38,12 +38,10 @@ const CrudPageWrapper = dynamic(
 const orderSchema = z.object({
   email: z.string().email("Invalid email address").min(1, "Email is required"),
   phone: z.string().min(1, "Phone number is required"),
-  typeSessionId: z.coerce.number().min(1, "Session type is required"),
-  paymentMethodId: z.coerce.number().min(1, "Payment method is required"),
+  typeSessionId: z.coerce.number().min(0, "Session type is required"),
+  paymentMethodId: z.coerce.number().min(0, "Payment method is required"),
   coupon: z.string().optional(),
 });
-
-type OrderFormType = z.infer<typeof orderSchema>;
 
 export default function OrderPage() {
   const [search, setSearch] = useState("");
@@ -105,13 +103,6 @@ export default function OrderPage() {
             description="Create a new order entry"
             triggerText="Add Order"
             schema={orderSchema}
-            defaultValues={{
-              email: "",
-              phone: "",
-              typeSessionId: 0,
-              paymentMethodId: 0,
-              coupon: "",
-            }}
             onSubmit={async (values) => {
               try {
                 const response = await AxiosAPI.post("api/Order/dashboard", {

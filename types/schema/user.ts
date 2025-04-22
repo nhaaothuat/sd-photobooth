@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const customerSchema = z.object({
-  role: z.number().min(0, "Role is required"),
+  role: z.number().default(3),
   userName: z.string().min(1, "Username is required"),
   email: z.string().email("Invalid email"),
   phoneNumber: z.string().min(1, "Phone number is required"),
@@ -12,7 +12,7 @@ export const customerSchema = z.object({
 });
 
 export const staffSchema = z.object({
-  role: z.number().min(0, "Role is required"),
+  role: z.number().default(2),
   userName: z.string().min(1, "Username is required"),
   email: z.string().email("Invalid email"),
   phoneNumber: z.string().min(1, "Phone number is required"),

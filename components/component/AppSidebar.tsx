@@ -34,7 +34,7 @@ type MenuItem = {
 
 const menuItems: Record<string, MenuItem[]> = {
   "/dashboard/admin": [
-    { label: "Admin Dashboard", link: "/dashboard/admin", icon: Bot },
+    { label: "Dashboard", link: "/dashboard/admin", icon: Bot },
     { label: "Payment Method", link: "/dashboard/admin/payment", icon: Users },
     {
       label: "Level Membership",
@@ -94,7 +94,7 @@ const menuItems: Record<string, MenuItem[]> = {
     },
   ],
   "/dashboard/manager": [
-    { label: "Manager Dashboard", link: "/dashboard/manager", icon: Bot },
+    { label: "Dashboard", link: "/dashboard/manager", icon: Bot },
     { label: "Location", link: "/dashboard/manager/location", icon: Users },
     { label: "Coupon", link: "/dashboard/manager/coupon", icon: FileText },
 

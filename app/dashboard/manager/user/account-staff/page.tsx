@@ -52,7 +52,10 @@ export default function AccountStaffPage() {
     const fetchLocations = async () => {
       try {
         const res = await getAllLocations();
-        setLocations(res);
+        const validLocations = res.filter(
+          (l): l is Location => !!l?.locationName && !!l?.id
+        );
+        setLocations(validLocations);
       } catch (error) {
         console.error("Failed to fetch locations", error);
         toast.error("Failed to load locations");
@@ -71,16 +74,6 @@ export default function AccountStaffPage() {
           title="Add Staff"
           triggerText="+ Add Staff"
           schema={staffSchema}
-          defaultValues={{
-            role: 2,
-            userName: "",
-            email: "",
-            phoneNumber: "",
-            password: "",
-            fullName: "",
-            gender: "2",
-            birthDate: "",
-          }}
           fields={[
             {
               type: "text",

@@ -12,6 +12,7 @@ import {
   deleteTypeSessionProduct,
   getTypeSessionProductList,
 } from "@/services/type-session-product";
+import ExportButton from "@/components/component/ButtonExport";
 
 const CrudPageWrapper = dynamic(
   () =>
@@ -64,6 +65,12 @@ export default function TypeSessionProductPage() {
       pageCount={Math.ceil(totalItems / pageSize)}
       pageIndex={pageIndex}
       pageSize={pageSize}
+      rightSlot={
+        <ExportButton
+          endpoint="/api/TypeSessionProduct/export"
+          filename="TypeSessionProduct.csv"
+        />
+      }
       onPageChange={setPageIndex}
       onPageSizeChange={setPageSize}
     />

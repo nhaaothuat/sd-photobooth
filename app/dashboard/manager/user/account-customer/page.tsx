@@ -54,16 +54,6 @@ export default function AccountCustomerPage() {
           title="Add Customer"
           triggerText="+ Add Customer"
           schema={customerSchema}
-          defaultValues={{
-            role: 3,
-            userName: "",
-            email: "",
-            phoneNumber: "",
-            password: "",
-            fullName: "",
-            gender: "2",
-            birthDate: "",
-          }}
           fields={[
             {
               type: "text",

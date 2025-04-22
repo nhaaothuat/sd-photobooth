@@ -58,7 +58,7 @@ interface CreateDialogFormProps<T> {
   description?: string;
   triggerText: string;
   schema: ZodType<T>;
-  defaultValues: T;
+  defaultValues?: T;
   fields: Field[];
   onSubmit: (values: T) => Promise<void>;
   onSuccess?: () => void;

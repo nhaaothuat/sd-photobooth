@@ -40,7 +40,7 @@ const boothSchema = z.object({
   boothName: z.string().min(1, "Required"),
   locationId: z.string().min(1, "Required"),
   description: z.string().optional(),
-  status: z.boolean(),
+  status: z.boolean().default(true),
 });
 
 export default function BoothPage() {
@@ -55,7 +55,10 @@ export default function BoothPage() {
     const fetchLocations = async () => {
       try {
         const res = await getAllLocations();
-        setLocations(res);
+        const validLocations = res.filter(
+          (l): l is Location => !!l?.locationName && !!l?.id
+        );
+        setLocations(validLocations);
       } catch (error) {
         console.error("Failed to fetch locations", error);
         toast.error("Failed to load locations");
@@ -97,12 +100,6 @@ export default function BoothPage() {
           description="Create new booth entry"
           triggerText="Add Booth"
           schema={boothSchema}
-          defaultValues={{
-            boothName: "",
-            locationId: "",
-            description: "",
-            status: true,
-          }}
           onSubmit={async (values) => {
             await AxiosAPI.post("/api/Booth", {
               ...values,
@@ -116,10 +113,12 @@ export default function BoothPage() {
               type: "select",
               name: "locationId",
               label: "Location",
-              options: locations.map((l) => ({
-                label: l.locationName,
-                value: l.id,
-              })),
+              options: locations
+                .filter((l) => l && l.locationName)
+                .map((l) => ({
+                  label: l.locationName,
+                  value: l.id,
+                })),
             },
             { type: "text", name: "description", label: "Description" },
             {

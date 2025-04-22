@@ -2,12 +2,9 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import { useDebounce } from "@/hooks/useDebounce";
 import { usePaginatedQuery } from "@/hooks/usePaginatedQuery";
 import { DepositProduct } from "@/types/type";
-import AxiosAPI from "@/configs/axios";
 import { columns } from "./columns";
-import AddDepositProduct from "@/components/component/AddDepositProduct";
 import ExportButton from "@/components/component/ButtonExport";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
 import {
@@ -15,6 +12,20 @@ import {
   getDepositProduct,
 } from "@/services/deposit-product";
 import { toast } from "react-toastify";
+import { couponSchema } from "@/types/schema/coupon";
+import AxiosAPI from "@/configs/axios";
+import { DepositProductSchema } from "@/types/schema/deposit-product";
+
+const CreateDialogForm = dynamic(
+  () =>
+    import("@/components/layouts/CreateDialog").then(
+      (mod) => mod.MemoizedCreateDialogForm
+    ),
+  {
+    loading: () => <LoadingSkeleton />,
+    ssr: false,
+  }
+);
 
 const CrudPageWrapper = dynamic(
   () =>
@@ -57,8 +68,35 @@ export default function DepositProductPage() {
     <CrudPageWrapper
       isSearchable={false}
       title="Deposit Product Management"
-      createButton={<AddDepositProduct onSuccess={refetch} />}
-      rightSlot={<ExportButton />}
+      createButton={
+        <CreateDialogForm
+          title="Add Deposit Product"
+          description="Create new deposit product entry"
+          triggerText="Add Deposit Product"
+          schema={DepositProductSchema}
+          fields={[
+            { name: "name", label: "Name", type: "text" },
+            { name: "description", label: "Description", type: "text" },
+            { name: "price", label: "Price", type: "number" },
+            {
+              name: "amountAdd",
+              label: "Amount Add",
+              type: "number",
+            },
+            { name: "productId", label: "Product ID", type: "text" },
+          ]}
+          onSubmit={async (values) => {
+            await AxiosAPI.post("/api/DepositProduct", values);
+            refetch();
+          }}
+        />
+      }
+      rightSlot={
+        <ExportButton
+          endpoint="/api/DepositProduct/export"
+          filename="DepositProduct.csv"
+        />
+      }
       data={data}
       columns={columns(handleDelete)}
       isLoading={isLoading}
