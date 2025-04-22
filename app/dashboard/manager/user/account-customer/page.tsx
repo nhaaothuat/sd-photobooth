@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
 import { getCustomerList } from "@/services/user";
 import { customerSchema } from "@/types/schema/user";
+import { IconPlus } from "@tabler/icons-react";
 
 const CreateDialogForm = dynamic(
   () =>
@@ -52,7 +53,7 @@ export default function AccountCustomerPage() {
       createButton={
         <CreateDialogForm
           title="Add Customer"
-          triggerText="+ Add Customer"
+          triggerText="Add Customer"
           schema={customerSchema}
           fields={[
             {
@@ -102,6 +103,7 @@ export default function AccountCustomerPage() {
             });
             refetch();
           }}
+          triggerIcon={<IconPlus />}
         />
       }
       data={data}

@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { DefaultValues, FieldValues, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { memo, useState } from "react";
+import { memo, ReactNode, useState } from "react";
 import { ZodType } from "zod";
 import { toast } from "react-toastify";
 
@@ -57,6 +57,7 @@ interface CreateDialogFormProps<T> {
   title: string;
   description?: string;
   triggerText: string;
+  triggerIcon?: ReactNode;
   schema: ZodType<T>;
   defaultValues?: T;
   fields: Field[];
@@ -68,6 +69,7 @@ const CreateDialogForm = <T extends FieldValues>({
   title,
   description,
   triggerText,
+  triggerIcon,
   schema,
   defaultValues,
   fields,
@@ -108,7 +110,10 @@ const CreateDialogForm = <T extends FieldValues>({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">{triggerText}</Button>
+        <Button variant="outline">
+          {triggerIcon}
+          {triggerText}
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
@@ -116,7 +121,10 @@ const CreateDialogForm = <T extends FieldValues>({
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onInternalSubmit)} className="space-y-4 max-h-[80vh] overflow-y-auto">
+        <form
+          onSubmit={handleSubmit(onInternalSubmit)}
+          className="space-y-4 max-h-[80vh] overflow-y-auto"
+        >
           {fields.map((field) => {
             const errorMsg = errors?.[field.name as keyof T]?.message;
 

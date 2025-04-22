@@ -11,6 +11,7 @@ import { getStaffList } from "@/services/user";
 import { staffSchema } from "@/types/schema/user";
 import { toast } from "react-toastify";
 import { getAllLocations } from "@/services/location";
+import { IconPlus } from "@tabler/icons-react";
 
 const CreateDialogForm = dynamic(
   () =>
@@ -72,7 +73,7 @@ export default function AccountStaffPage() {
       createButton={
         <CreateDialogForm
           title="Add Staff"
-          triggerText="+ Add Staff"
+          triggerText="Add Staff"
           schema={staffSchema}
           fields={[
             {
@@ -131,6 +132,7 @@ export default function AccountStaffPage() {
             });
             refetch();
           }}
+          triggerIcon={<IconPlus />}
         />
       }
       data={data}

@@ -13,6 +13,7 @@ import {
 import { Order } from "@/types/type";
 import DeletePayment from "@/components/component/DeletePayment";
 import ViewDetailOrder from "@/components/component/IDOrder";
+import { OrderStatus, OrderStatusMeta } from "@/types/enum/order-status";
 
 const DateCell = ({ value }: { value: string }) => {
   const date = new Date(value);
@@ -36,7 +37,21 @@ export const columns = (
   {
     accessorKey: "status",
     header: "Status",
-    cell: ({ row }) => <div>{row.getValue("status")}</div>,
+    cell: ({ row }) => {
+      const statusValue = row.getValue("status") as OrderStatus;
+      const meta = OrderStatusMeta[statusValue];
+
+      if (!meta) return <div className="text-gray-500">Unknown</div>;
+
+      const Icon = meta.icon;
+
+      return (
+        <div className={`flex items-center gap-2 ${meta.colorClass}`}>
+          <Icon />
+          <span>{meta.label}</span>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "amount",

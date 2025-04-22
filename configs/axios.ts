@@ -3,7 +3,6 @@ import handleAxiosError from "@/utils/handle-axios-error";
 import axios, { AxiosRequestConfig } from "axios";
 import Cookies from "js-cookie";
 
-
 const instance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_SERVER_APP_API_URL,
   headers: {
@@ -11,11 +10,9 @@ const instance = axios.create({
   },
 });
 
-
-
 instance.interceptors.request.use((config) => {
   const token = Cookies.get("AccessToken");
-  
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -29,15 +26,16 @@ instance.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       Cookies.remove("AccessToken");
-      
     }
     return Promise.reject(error);
   }
 );
 
-
 const AxiosAPI = {
-  get: async <T>(url: string, config?: AxiosRequestConfig): Promise<CustomAxiosResponse<T>> => {
+  get: async <T>(
+    url: string,
+    config?: AxiosRequestConfig
+  ): Promise<CustomAxiosResponse<T>> => {
     try {
       const response = await instance.get<T>(url, config);
       return response;

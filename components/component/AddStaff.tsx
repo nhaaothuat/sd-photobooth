@@ -22,11 +22,24 @@ import {
 import { toast } from "react-toastify";
 import AxiosAPI from "@/configs/axios";
 import { Location } from "@/types/type";
+import { getAllLocations } from "@/services/location";
 
 const AddStaff = ({ onSuccess }: { onSuccess: () => void }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [locations, setLocations] = useState<Location[]>([]);
+
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const response = await getAllLocations();
+        setLocations(response);
+      } catch (err) {
+        toast.error("Failed to fetch locations");
+      }
+    };
+    fetchLocations();
+  },[]);
 
   const [formData, setFormData] = useState({
     role: 2,

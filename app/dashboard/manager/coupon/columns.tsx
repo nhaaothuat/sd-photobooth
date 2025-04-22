@@ -13,10 +13,12 @@ import {
 import DeletePayment from "@/components/component/DeletePayment";
 import ViewDetailCoupon from "@/components/component/IDCoupon";
 import UpdateCoupon from "@/components/component/GPCoupon";
+const StatusCell = ({ value }: { value: boolean }) => {
+  const text = value ? "Active" : "Inactive";
+  const colorClass = value ? "text-green-600" : "text-gray-400";
 
-const StatusCell = ({ value }: { value: boolean }) => (
-  <div className="capitalize">{value ? "Active" : "Inactive"}</div>
-);
+  return <div className={`capitalize font-medium ${colorClass}`}>{text}</div>;
+};
 
 const DateCell = ({ value }: { value: string }) => {
   const date = new Date(value);
@@ -57,7 +59,6 @@ export const columns = (
     header: "endDate",
     cell: ({ row }) => <DateCell value={row.getValue("endDate")} />,
   },
-
   {
     accessorKey: "",
     header: "Is Active",

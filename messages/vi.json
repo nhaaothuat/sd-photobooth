@@ -7,5 +7,12 @@
     "vi": "Việt Nam",
     "en": "English",
     "label": "Language"
+  },
+  
+  "Sidebar":{
+    "Dashboard":"Bảng điều khiển",
+    "Payment Method":"Phương thức thanh toán"
+   
+
   }
 }

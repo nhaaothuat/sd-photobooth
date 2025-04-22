@@ -21,9 +21,7 @@ const DateCell = ({ value }: { value: string }) => {
   return <div>{date.toLocaleDateString()}</div>;
 };
 
-export const columns = (): //   onDelete: (id: number) => Promise<void>,
-//   refetchData: () => void,
-ColumnDef<Session>[] => [
+export const columns = (): ColumnDef<Session>[] => [
   {
     accessorKey: "id",
     header: () => <div className="text-center">ID</div>,

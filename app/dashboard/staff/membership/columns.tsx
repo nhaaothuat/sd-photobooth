@@ -16,7 +16,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 
 export const columns = (
-  // onDelete: (id: number) => Promise<void>,
   refetchData: () => void
 ): ColumnDef<MembershipCard>[] => [
   {
@@ -40,7 +39,7 @@ export const columns = (
   },
   {
     accessorKey: "customer.fullName",
-    header: () => <div className="text-center">customer name</div>,
+    header: () => <div className="text-center">Customer Name</div>,
     cell: ({ row }) => {
       const name = row.original.customer.fullName;
       return <div className="text-center">{name || "No Name"}</div>;
@@ -48,10 +47,10 @@ export const columns = (
   },
   {
     accessorKey: "customer.email",
-    header: () => <div className="text-center">customer name</div>,
+    header: () => <div className="text-center">Customer Email</div>,
     cell: ({ row }) => {
       const email = row.original.customer.email;
-      return <div className="text-center">{email || "No Name"}</div>;
+      return <div className="text-center">{email || "No Email"}</div>;
     },
   },
   {
@@ -64,7 +63,7 @@ export const columns = (
 
   {
     accessorKey: "levelMemberShip",
-    header: () => <div className="text-center">levelMemberShip</div>,
+    header: () => <div className="text-center">Level Membership</div>,
     cell: ({ row }) => {
       const name = row.original.levelMemberShip.name;
       return <div className="text-center">{name || "No Name"}</div>;

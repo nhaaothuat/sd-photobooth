@@ -179,7 +179,6 @@ const menuItems: Record<string, MenuItem[]> = {
   ],
   "/dashboard/staff": [
     { label: "Staff Dashboard", link: "/dashboard/staff", icon: Bot },
-    // { label: "Customer", link: "/dashboard/staff/customer", icon: Users },
     { label: "Session Code", link: "/dashboard/staff/session", icon: FileText },
     {
       label: "Membership Card",
@@ -202,13 +201,11 @@ const menuItems: Record<string, MenuItem[]> = {
         },
       ],
     },
+
     {
       label: "Order",
       icon: FileText,
-      subMenu: [
-        { label: "List Order", link: "/dashboard/staff/order/get" },
-        { label: "Create Order", link: "/dashboard/staff/order/create" },
-      ],
+      link: "/dashboard/staff/order",
     },
     {
       label: "Settings",
