@@ -1,33 +1,31 @@
-
 "use client";
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Text } from "@mantine/core";
-import { Button } from "@/components/ui/button";
-import { Pencil } from "lucide-react";
 import { useSession } from "next-auth/react";
 import AxiosAPI from "@/configs/axios";
+import GPAvatar from "@/components/component/GPAvatar";
+import GPProfile from "@/components/component/GPProfile";
 
 interface User {
   id: string;
+  avatar: string | null;
   fullName: string | null;
   userName: string;
   email: string;
   phoneNumber: string;
   gender: number;
   birthDate: string | null;
-  avatar: string | null;
 }
 
-const GeneralPage = () => {
+const ProfilePage = () => {
   const { data: session } = useSession();
-  const [users, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   const fetchUsers = async () => {
     try {
       const response = await AxiosAPI.get<User>("/api/Identity/profile");
-      // console.log(response.data);
       setUser(response.data);
     } catch (err) {
       console.error("Lỗi API:", err);
@@ -43,16 +41,12 @@ const GeneralPage = () => {
         <CardTitle>Profile</CardTitle>
       </CardHeader>
       <CardContent>
-        {users && (
+        {user && (
           <>
             <Card className="flex items-center justify-between p-5">
               <div className="flex items-center gap-3">
                 <Avatar className="w-20 h-20">
-                  <AvatarImage
-                    src={users.avatar || "https://github.com/shadcn.png"}
-                    alt="@shadcn"
-                  />
-
+                  <AvatarImage src={user.avatar ?? undefined} alt="@shadcn" />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
 
@@ -63,23 +57,18 @@ const GeneralPage = () => {
                   </Text>
                   <Text className="font-sans font-normal text-slate-400">
                     {" "}
-                    {session?.user?.role} | {users.email}
+                    {session?.user?.role} | {user.email}
                   </Text>
                 </div>
               </div>
 
-              <Button
-                variant="outline"
-                size={"lg"}
-                className="flex items-center  "
-              >
-                <Pencil className="w-10 h-10" />
-              </Button>
+              <GPAvatar onUpdateSuccess={fetchUsers} />
             </Card>
 
             <Card className=" my-5">
               <CardHeader>
-                <CardTitle>Personal Information</CardTitle>
+                {/* <CardTitle>Personal Information</CardTitle> */}
+                <GPProfile onUpdateSuccess={fetchUsers} />
               </CardHeader>
               <CardContent>
                 <div className="flex items-end justify-between ">
@@ -92,7 +81,7 @@ const GeneralPage = () => {
                         Full Name
                       </Text>
                       <Text className="font-sans font-medium" size="sm">
-                        {users.fullName || "N/A"}
+                        {user.fullName || "N/A"}
                       </Text>
                     </div>
 
@@ -104,7 +93,7 @@ const GeneralPage = () => {
                         Phone Number
                       </Text>
                       <Text className="font-sans font-medium" size="sm">
-                        {users.phoneNumber || "N/A"}
+                        {user.phoneNumber || "N/A"}
                       </Text>
                     </div>
                   </div>
@@ -118,9 +107,9 @@ const GeneralPage = () => {
                   </Text>
                   <Text className="font-sans font-medium" size="sm">
                     {" "}
-                    {users.gender === 0
+                    {user.gender === 0
                       ? "Nam"
-                      : users.gender === 1
+                      : user.gender === 1
                       ? "Nữ"
                       : "Other"}
                   </Text>
@@ -133,7 +122,9 @@ const GeneralPage = () => {
                     Birth Date
                   </Text>
                   <Text className="font-sans font-medium" size="sm">
-                    {users.birthDate || "N/A"}
+                    {user.birthDate
+                      ? new Date(user.birthDate).toLocaleDateString()
+                      : "N/A"}
                   </Text>
                 </div>
               </CardContent>
@@ -145,4 +136,4 @@ const GeneralPage = () => {
   );
 };
 
-export default GeneralPage;
+export default ProfilePage;
