@@ -27,8 +27,8 @@ const GeneralPage = () => {
   const fetchUsers = async () => {
     try {
       const response = await AxiosAPI.get<User>("/api/Identity/profile");
-      console.log(response.data);
-      // setUser(response.data);
+      // console.log(response.data);
+      setUser(response.data);
     } catch (err) {
       console.error("Lỗi API:", err);
     }
