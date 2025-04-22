@@ -11,15 +11,15 @@ const ByPhotoHistory = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleFetchStickers = async () => {
+  const handlePhotoHistorys = async () => {
     if (!inputId.trim()) {
-      setError("Vui lòng nhập ID");
+      setError("Please enter a valid ID");
       return;
     }
 
     const id = parseInt(inputId);
     if (isNaN(id)) {
-      setError("ID phải là số");
+      setError("ID invalid");
       return;
     }
 
@@ -32,8 +32,8 @@ const ByPhotoHistory = () => {
       );
       setStickers(response.data || []);
     } catch (error) {
-      console.error("Lỗi khi lấy sticker theo ID:", error);
-      setError("Không tìm thấy dữ liệu với ID này");
+      console.error("Error cannot find out Photo History via ID", error);
+      setError("No Photo History found for this ID");
       setStickers([]);
     } finally {
       setIsLoading(false);
@@ -46,33 +46,30 @@ const ByPhotoHistory = () => {
         <input
           type="text"
           className="flex-1 border border-gray-300 rounded p-2"
-          placeholder="Nhập ID"
+          placeholder="Enter ID"
           value={inputId}
           onChange={(e) => setInputId(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleFetchStickers()}
+          onKeyDown={(e) => e.key === "Enter" && handlePhotoHistorys()}
         />
         <button
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          onClick={handleFetchStickers}
+          onClick={handlePhotoHistorys}
           disabled={isLoading}
         >
-          {isLoading ? "Đang tải..." : "Tìm kiếm"}
+          {isLoading ? "Loading..." : "Search"}
         </button>
       </div>
 
       {error && <p className="text-red-500 mb-4">{error}</p>}
 
       {isLoading ? (
-        <p className="text-gray-500">Đang tải dữ liệu...</p>
+        <p className="text-gray-500">Loading...</p>
       ) : stickers.length > 0 ? (
         <div>
-          <h2 className="text-lg font-semibold mb-4">Danh sách Sticker</h2>
+          <h2 className="text-lg font-semibold mb-4">List Photo History</h2>
           <SimpleGrid cols={6} spacing="lg" verticalSpacing="sm">
             {stickers.map((sticker) => (
-              <div
-                key={`${sticker.id}`}
-                className="flex flex-col items-center"
-              >
+              <div key={`${sticker.id}`} className="flex flex-col items-center">
                 {sticker.imageUrl ? (
                   <Indicator
                     inline
@@ -87,7 +84,6 @@ const ByPhotoHistory = () => {
                       src={sticker.imageUrl}
                       className="rounded-lg"
                       onError={(e) => {
-                        // Xử lý khi hình ảnh lỗi
                         const target = e.target as HTMLImageElement;
                         target.style.display = "none";
                       }}
@@ -103,7 +99,7 @@ const ByPhotoHistory = () => {
           </SimpleGrid>
         </div>
       ) : inputId && !error ? (
-        <p className="text-gray-500">Không có sticker nào cho ID này</p>
+        <p className="text-gray-500">No Photo History found!</p>
       ) : null}
     </div>
   );
