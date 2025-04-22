@@ -20,9 +20,9 @@ const ViewDetailCustomer = () => {
         `/api/User/detail?email=${encodeURIComponent(email)}`
       );
 
-      // Kiểm tra dữ liệu trả về
+     
       if (!response.data || !response.data.id) {
-        throw new Error("NOT_FOUND"); // Chủ động throw error để xử lý chung
+        throw new Error("NOT_FOUND"); 
       }
 
       setCustomer(response.data);
@@ -66,14 +66,14 @@ const ViewDetailCustomer = () => {
 
       {loading && <div className="p-4 text-center">Đang tải dữ liệu...</div>}
 
-      {/* Hiển thị lỗi */}
+     
       {error && (
         <div className="p-4 border border-red-200 rounded bg-red-50 text-red-600">
           {error}
         </div>
       )}
 
-      {/* Chỉ hiển thị khi có dữ liệu hợp lệ */}
+     
       {!error && customer && (
         <div className="border-t pt-4 space-y-2">
           <p>

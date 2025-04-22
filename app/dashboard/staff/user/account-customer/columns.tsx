@@ -3,9 +3,7 @@
 import { User } from "@/types/type";
 import { ColumnDef } from "@tanstack/react-table";
 
-export const columns = (): // onDelete: (id: number) => Promise<void>,
-// refetchData: () => void,
-ColumnDef<User>[] => [
+export const columns = (): ColumnDef<User>[] => [
   {
     accessorKey: "id",
     header: () => <div className="text-center">ID</div>,

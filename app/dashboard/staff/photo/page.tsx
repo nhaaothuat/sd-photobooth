@@ -70,7 +70,7 @@ const ByPhotoHistory = () => {
           <SimpleGrid cols={6} spacing="lg" verticalSpacing="sm">
             {stickers.map((sticker) => (
               <div
-                key={`${sticker.id}-${sticker.name}`}
+                key={`${sticker.id}`}
                 className="flex flex-col items-center"
               >
                 {sticker.imageUrl ? (

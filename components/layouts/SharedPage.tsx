@@ -2,7 +2,7 @@ import React, { JSX, ReactNode } from "react";
 import { SharedTable } from "@/components/layouts/SharedTable";
 import { SearchInput } from "./SearchInput";
 import { PageSizeSelector } from "./PageSizeSelector";
-import { isSea } from "node:sea";
+
 
 export interface CrudPageWrapperProps<T> {
   title?: string;
@@ -65,6 +65,7 @@ function CrudPageWrapper<T>({
         pageSize={pageSize}
         onPageChange={onPageChange}
         onPageSizeChange={onPageSizeChange}
+        
       />
     </div>
   );

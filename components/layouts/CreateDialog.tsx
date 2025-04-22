@@ -116,13 +116,13 @@ const CreateDialogForm = <T extends FieldValues>({
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onInternalSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onInternalSubmit)} className="space-y-4 max-h-[80vh] overflow-y-auto">
           {fields.map((field) => {
             const errorMsg = errors?.[field.name as keyof T]?.message;
 
             if (field.type === "text") {
               return (
-                <div key={field.name} className="space-y-1.5">
+                <div key={field.name} className="space-y-2">
                   <Label htmlFor={field.name}>{field.label}</Label>
                   <Input id={field.name} {...register(field.name as any)} />
                   {field.description && (
