@@ -1,7 +1,8 @@
 {
   "HomePage": {
     "title": "Hello world!",
-    "Dashboard": "Tieu de"
+    "Dashboard": "Tieu de",
+    "Payment Method": "Phương thức thanh toán"
   },
   "ButtonTest":{
     "vi": "Việt Nam",

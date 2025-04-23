@@ -11,6 +11,9 @@ import { deleteOrder, getOrderList } from "@/services/order";
 import PaymentDialog from "@/components/layouts/PaymentDialog";
 import dynamic from "next/dynamic";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Terminal } from "lucide-react";
 
 const CreateDialogForm = dynamic(
   () =>
@@ -49,6 +52,7 @@ export default function OrderPage() {
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [paymentLink, setPaymentLink] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [cashOrderInfo, setCashOrderInfo] = useState<any | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -92,7 +96,10 @@ export default function OrderPage() {
         title="Order Management"
         isSearchable={false}
         createButton={
+
+
           <CreateDialogForm
+
             title="Add Order"
             description="Create a new order entry"
             triggerText="Add Order"
@@ -102,19 +109,46 @@ export default function OrderPage() {
                 const response = await AxiosAPI.post("api/Order/dashboard", {
                   ...values,
                 });
-                const data = response.data as unknown as OrderResponse;
-                if (data.paymentLink) {
+
+                const data = response.data as OrderResponse;
+
+                const selectedPaymentMethod = paymentMethods.find(
+                  (method) => method.id === values.paymentMethodId
+                );
+
+                const isBanking = selectedPaymentMethod?.methodName.toLowerCase() === "banking";
+                const isCash = selectedPaymentMethod?.methodName.toLowerCase() === "cash";
+
+                if (isBanking && data.paymentLink) {
                   setPaymentLink(data.paymentLink);
                   setIsDialogOpen(true);
+                } else if (isCash && data.code) {
+                  const sessionResponse = await AxiosAPI.post(
+                    `/api/Session/${data.code}`, {}
+                  );
+                  const sessionData = sessionResponse.data;
+
+
+                  setCashOrderInfo({
+                    orderCode: data.code,
+                    sessionInfo: sessionData,
+                  });
+
+                  toast.success("Cash order created successfully.");
                 } else {
-                  console.error("No payment link received.");
+                  console.error("Unexpected response:", data);
+                  toast.error("Failed to create order: No payment link or order code.");
                 }
+                refetch();
               } catch (error) {
                 toast.error(
-                  "Error creating order: " + error || "Unknown error"
+                  error instanceof Error
+                    ? `Error creating order: ${error.message}`
+                    : "Unknown error"
                 );
               }
             }}
+
             fields={[
               {
                 type: "text",
@@ -154,6 +188,7 @@ export default function OrderPage() {
               },
             ]}
           />
+
         }
         data={data}
         columns={columns(handleDelete, refetch)}
@@ -164,11 +199,32 @@ export default function OrderPage() {
         onPageChange={setPageIndex}
         onPageSizeChange={setPageSize}
       />
+
       <PaymentDialog
         open={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         paymentLink={paymentLink}
       />
+
+      {cashOrderInfo ? (
+        <Alert>
+          <Terminal className="h-4 w-4" />
+          <AlertTitle>Cash Order Created!</AlertTitle>
+          <AlertDescription>
+            <div className="text-sm">
+              <p><strong>Order Code:</strong> {cashOrderInfo.orderCode}</p>
+              <p className="mt-2 font-medium">Session Info:</p>
+              <pre className="bg-muted p-2 rounded text-xs overflow-x-auto">
+                {JSON.stringify(cashOrderInfo.sessionInfo, null, 2)}
+              </pre>
+            </div>
+          </AlertDescription>
+        </Alert>
+      ) : (
+        <Alert>
+        <p className="text-sm text-muted-foreground">No results</p>
+        </Alert>
+      )}
     </>
   );
 }

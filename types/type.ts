@@ -69,6 +69,7 @@ export type LevelMembership = {
   discountPercent: number;
   maxDiscount: number;
   minOrder: number;
+  nextLevelId: number | null;
 };
 
 export type MembershipCard = {

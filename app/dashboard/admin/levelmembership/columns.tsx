@@ -49,6 +49,11 @@ export const columns = (
                cell: ({ row }) => <div className="text-center">{row.getValue("minOrder")}</div>
           },
           {
+               accessorKey: "nextLevelId",
+               header: () => <div className="text-center">nextLevelId</div>,
+               cell: ({ row }) => <div className="text-center">{row.getValue("nextLevelId")}</div>
+          },
+          {
                id: "edit",
                header: () => <div className="text-center">Edit</div>,
                cell: ({ row }) => {

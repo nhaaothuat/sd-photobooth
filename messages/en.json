@@ -1,12 +1,55 @@
 {
   "HomePage": {
     "title": "Hello world!",
-    "Dashboard": "Dashboard"
+    "Dashboard": "Dashboard",
+     "Payment Method": "Payment Method"
   },
   "ButtonTest": {
     "vi": "Việt Nam",
     "en": "English",
     "label": "Language"
+  },
+  "Sidebar": {
+    "Dashboard": "Dashboard",
+    "Payment Method": "Payment Method",
+    "Level Membership": "Level Membership",
+    "Frame": "Frame",
+    "List Frame": "List Frame",
+    "Get by Frame Style": "Get by Frame Style",
+    "Frame Style": "Frame Style",
+    "Sticker": "Sticker",
+    "List Sticker": "List Sticker",
+    "Get by Sticker Style": "Get by Sticker Style",
+    "Sticker Style": "Sticker Style",
+    "Type Session": "Type Session",
+    "User": "User",
+    "Function": "Function",
+    "Account (Manager)": "Account (Manager)",
+    "Account (Staff)": "Account (Staff)",
+    "Photo Style": "Photo Style",
+    "Settings": "Settings",
+    "Profile": "Profile",
+
+    "Location": "Location",
+    "Coupon": "Coupon",
+    "Order": "Order",
+    "Booth": "Booth",
+    "Get Booth by Location": "Get Booth by Location",
+    "List Booth": "List Booth",
+    "Session": "Session",
+    "Deposit Product": "Deposit Product",
+    "TypeSession Product": "TypeSession Product",
+    "TypeSession Product List": "TypeSession Product List",
+    "Get by Coupon": "Get by Coupon",
+    "Get by Type Session": "Get by Type Session",
+    "Transaction": "Transaction",
+    "View Detail Customer": "View Detail Customer",
+    "Account (Customer)": "Account (Customer)",
+
+    "Staff Dashboard": "Staff Dashboard",
+    "Session Code": "Session Code",
+    "Membership Card": "Membership Card",
+    "Photo History": "Photo History"
   }
   
   

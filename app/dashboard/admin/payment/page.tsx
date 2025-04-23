@@ -22,12 +22,14 @@ import { debounce } from "lodash";
 import { toast } from "react-toastify";
 import { Label } from "@/components/ui/label";
 import AddPayment from "@/components/component/AddPayment";
-
+import { Title } from "@mantine/core";
+import {useTranslations} from 'next-intl';
 const usePaymentMethodData = () => {
   const [data, setData] = useState<PaymentMethod[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [totalItems, setTotalItems] = useState(0);
+ 
 
   const fetchCount = useCallback(async () => {
     try {
@@ -113,7 +115,7 @@ const PaymentMethodPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [pageSize, setPageSize] = useState(5);
   const [pageIndex, setPageIndex] = useState(0);
-
+  const t = useTranslations('HomePage');
   const { data, loading, error, totalItems, fetchCount, handleSearch } =
     usePaymentMethodData();
   const refetchData = useCallback(() => {
@@ -190,6 +192,7 @@ const PaymentMethodPage = () => {
 
   return (
     <div className="w-full space-y-4">
+      <Title >{t("Payment Method")}</Title>
       <div className="flex items-center justify-between py-4">
         <Input
           placeholder="Tìm kiếm Payment Method"
