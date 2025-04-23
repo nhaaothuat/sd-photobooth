@@ -27,84 +27,84 @@ export const columns = (
   onDelete: (id: number) => Promise<void>,
   refetchData: () => void
 ): ColumnDef<Booth>[] => [
-  {
-    accessorKey: "id",
-    header: () => <div className="text-center">ID</div>,
-    cell: ({ row }) => <div className="text-center">{row.getValue("id")}</div>,
-  },
-  {
-    accessorKey: "boothName",
-    header: "Booth Name",
-    cell: ({ row }) => <div>{row.getValue("boothName")}</div>,
-  },
+    {
+      accessorKey: "id",
+      header: () => <div className="text-center">ID</div>,
+      cell: ({ row }) => <div className="text-center">{row.getValue("id")}</div>,
+    },
+    {
+      accessorKey: "boothName",
+      header: () => <div className="text-center">Booth Name</div>,
+      cell: ({ row }) => <div className="text-center">{row.getValue("boothName")}</div>,
+    },
+    {
+      accessorKey: "status",
+      header: () => <div className="text-center">Status</div>,
+      cell: ({ row }) => <StatusCell value={row.getValue("status")} />,
+    },
+    {
+      accessorKey: "createdAt",
+      header: () => <div className="text-center">Created At</div>,
+      cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />,
+    },
+    {
+      accessorKey: "location.locationName",
+      header: () => <div className="text-center">Location Name</div>,
+      cell: ({ row }) => {
+        const location = row.original.location;
+        return <div className="text-center">{location?.locationName ?? "N/A"}</div>;
+      },
+    },
+    {
+      accessorKey: "location.address",
+      header: () => <div className="text-center">Address</div>,
+      cell: ({ row }) => {
+        const location = row.original.location;
+        return <div className="text-center">{location?.address ?? "N/A"}</div>;
+      },
+    },
 
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => <StatusCell value={row.getValue("status")} />,
-  },
-  {
-    accessorKey: "createdAt",
-    header: "Created At",
-    cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />,
-  },
-  {
-    accessorKey: "location.locationName",
-    header: "Location Name",
-    cell: ({ row }) => {
-      const location = row.original.location;
-      return <div>{location?.locationName ?? "N/A"}</div>;
+    {
+      id: "edit",
+      header: () => <div className="text-center">Edit</div>,
+      cell: ({ row }) => {
+        const id = row.original.id;
+        return <UpdateBooth id={id} onUpdateSuccess={refetchData} />;
+      },
     },
-  },
-  {
-    accessorKey: "location.address",
-    header: "Address",
-    cell: ({ row }) => {
-      const location = row.original.location;
-      return <div>{location?.address ?? "N/A"}</div>;
-    },
-  },
-  {
-    id: "edit",
-    header: () => <div className="text-center">Edit</div>,
-    cell: ({ row }) => {
-      const id = row.original.id;
-      return <UpdateBooth id={id} onUpdateSuccess={refetchData} />;
-    },
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const id = row.original.id;
-      const booth = row.original;
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(booth.id.toString())}
-            >
-              Copy booth ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const id = row.original.id;
+        const booth = row.original;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(booth.id.toString())}
+              >
+                Copy booth ID
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
 
-            <DropdownMenuItem asChild>
-              <DeletePayment id={id} onDelete={onDelete} />
-            </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <DeletePayment id={id} onDelete={onDelete} />
+              </DropdownMenuItem>
 
-            <DropdownMenuItem asChild>
-              <ViewDetailBooth id={id} />
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+              <DropdownMenuItem asChild>
+                <ViewDetailBooth id={id} />
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
     },
-  },
-];
+  ];

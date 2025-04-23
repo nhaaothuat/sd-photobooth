@@ -49,7 +49,7 @@ export default function OrderPage() {
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [paymentLink, setPaymentLink] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
+  // const [responseData, setResponseData] = useState<any>(null);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -102,12 +102,16 @@ export default function OrderPage() {
                 const response = await AxiosAPI.post("api/Order/dashboard", {
                   ...values,
                 });
-                const data = response.data as unknown as OrderResponse;
+                
+                const data = response.data as OrderResponse;
+                
+                
                 if (data.paymentLink) {
                   setPaymentLink(data.paymentLink);
                   setIsDialogOpen(true);
                 } else {
                   console.error("No payment link received.");
+                 
                 }
               } catch (error) {
                 toast.error(
@@ -164,6 +168,7 @@ export default function OrderPage() {
         onPageChange={setPageIndex}
         onPageSizeChange={setPageSize}
       />
+      
       <PaymentDialog
         open={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}

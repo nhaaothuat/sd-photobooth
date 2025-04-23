@@ -26,27 +26,28 @@ export const columns = (
 ): ColumnDef<Order>[] => [
   {
     accessorKey: "id",
-    header: () => <div className="text-center">ID</div>,
-    cell: ({ row }) => <div className="text-center">{row.getValue("id")}</div>,
+    header: () => <div className="flex justify-center w-full">ID</div>,
+    cell: ({ row }) => <div className="text-center w-full">{row.getValue("id")}</div>,
   },
   {
     accessorKey: "code",
-    header: "Code",
-    cell: ({ row }) => <div>{row.getValue("code")}</div>,
+    header: () => <div className="flex justify-center w-full">Code</div>,
+    cell: ({ row }) => <div className="text-center w-full">{row.getValue("code")}</div>,
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: () => <div className="flex justify-center w-full">Status</div>,
     cell: ({ row }) => {
       const statusValue = row.getValue("status") as OrderStatus;
       const meta = OrderStatusMeta[statusValue];
-
-      if (!meta) return <div className="text-gray-500">Unknown</div>;
-
+  
+      if (!meta)
+        return <div className="text-gray-500 text-center w-full">Unknown</div>;
+  
       const Icon = meta.icon;
-
+  
       return (
-        <div className={`flex items-center gap-2 ${meta.colorClass}`}>
+        <div className={`flex justify-center items-center gap-2 w-full ${meta.colorClass}`}>
           <Icon />
           <span>{meta.label}</span>
         </div>
@@ -55,35 +56,39 @@ export const columns = (
   },
   {
     accessorKey: "amount",
-    header: "Amount",
-    cell: ({ row }) => <div>{row.getValue("amount")}</div>,
+    header: () => <div className="flex justify-center w-full">Amount</div>,
+    cell: ({ row }) => <div className="text-center w-full">{row.getValue("amount")}</div>,
   },
   {
     accessorKey: "email",
-    header: "Email",
-    cell: ({ row }) => <div>{row.getValue("email")}</div>,
+    header: () => <div className="flex justify-center w-full">Email</div>,
+    cell: ({ row }) => <div className="text-center w-full">{row.getValue("email")}</div>,
   },
   {
     accessorKey: "sessionCode",
-    header: "Session Code",
-    cell: ({ row }) => <div>{row.getValue("sessionCode")}</div>,
+    header: () => <div className="flex justify-center w-full">Session Code</div>,
+    cell: ({ row }) => <div className="text-center w-full">{row.getValue("sessionCode")}</div>,
   },
   {
     accessorKey: "couponCode",
-    header: "Coupon",
-    cell: ({ row }) => <div>{row.getValue("couponCode")}</div>,
+    header: () => <div className="flex justify-center w-full">Coupon</div>,
+    cell: ({ row }) => <div className="text-center w-full">{row.getValue("couponCode")}</div>,
   },
   {
     accessorKey: "boothName",
-    header: "Booth",
-    cell: ({ row }) => <div>{row.getValue("boothName")}</div>,
+    header: () => <div className="flex justify-center w-full">Booth</div>,
+    cell: ({ row }) => <div className="text-center w-full">{row.getValue("boothName")}</div>,
   },
-
   {
     accessorKey: "createdAt",
-    header: "Created At",
-    cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />,
+    header: () => <div className="flex justify-center w-full">Created At</div>,
+    cell: ({ row }) => (
+      <div className="text-center w-full">
+        <DateCell value={row.getValue("createdAt")} />
+      </div>
+    ),
   },
+  
   {
     id: "actions",
     enableHiding: false,

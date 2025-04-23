@@ -34,37 +34,44 @@ export const columns = (
   },
   {
     accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => <div>{row.getValue("name")}</div>,
+    header: () => <div className="text-center">Name</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("name")}</div>,
   },
   {
     accessorKey: "frameStyleName",
-    header: "Style",
-    cell: ({ row }) => <div>{row.getValue("frameStyleName")}</div>,
+    header: () => <div className="text-center">Style</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("frameStyleName")}</div>,
   },
   {
     accessorKey: "slotCount",
-    header: "Slots",
-    cell: ({ row }) => <div>{row.getValue("slotCount")}</div>,
+    header: () => <div className="text-center">Slots</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("slotCount")}</div>,
   },
   {
     accessorKey: "frameUrl",
-    header: "Preview",
+    header: () => <div className="text-center">Preview</div>,
     cell: ({ row }) => (
-      <Image
-        src={row.getValue("frameUrl")}
-        alt="Frame"
-        width={80}
-        height={80}
-        className="rounded-md object-contain"
-      />
+      <div className="text-center">
+        <Image
+          src={row.getValue("frameUrl")}
+          alt="Frame"
+          width={80}
+          height={80}
+          className="rounded-md object-contain inline-block"
+        />
+      </div>
     ),
   },
   {
     accessorKey: "createdAt",
-    header: "Created At",
-    cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />,
+    header: () => <div className="text-center">Created At</div>,
+    cell: ({ row }) => (
+      <div className="text-center">
+        <DateCell value={row.getValue("createdAt")} />
+      </div>
+    ),
   },
+  
   {
     id: "edit",
     header: () => <div className="text-center">Edit</div>,

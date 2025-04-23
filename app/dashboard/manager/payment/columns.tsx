@@ -15,41 +15,44 @@ export const columns = (): ColumnDef<Payment>[] => [
   },
   {
     accessorKey: "orderId",
-    header: "Order ID",
-    cell: ({ row }) => <div>{row.getValue("orderId")}</div>,
+    header: () => <div className="text-center">Order ID</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("orderId")}</div>,
   },
   {
     accessorKey: "depositId",
-    header: "Deposit ID",
-    cell: ({ row }) => <div>{row.getValue("depositId")}</div>,
+    header: () => <div className="text-center">Deposit ID</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("depositId")}</div>,
   },
   {
     accessorKey: "paymentMethodName",
-    header: "Payment Method",
-    cell: ({ row }) => <div>{row.getValue("paymentMethodName")}</div>,
+    header: () => <div className="text-center">Payment Method</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("paymentMethodName")}</div>,
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: () => <div className="text-center">Status</div>,
     cell: ({ row }) => {
       const statusValue = row.getValue("status") as PaymentStatus;
       const meta = PaymentStatusMeta[statusValue];
 
-      if (!meta) return <div className="text-gray-500">Unknown</div>;
+      if (!meta) return <div className="text-center text-gray-500">Unknown</div>;
 
       const Icon = meta.icon;
 
       return (
-        <div className={`flex items-center gap-2 ${meta.colorClass}`}>
-          <Icon />
-          <span>{meta.label}</span>
+        <div className="flex justify-center items-center">
+          <div className={`flex items-center gap-2 text-center ${meta.colorClass}`}>
+            <Icon />
+            <span className="">{meta.label}</span>
+          </div>
         </div>
       );
     },
   },
   {
     accessorKey: "createdAt",
-    header: "Created At",
-    cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />,
+    header: () => <div className="text-center">Created At</div>,
+    cell: ({ row }) => <div className="text-center"><DateCell value={row.getValue("createdAt")} /></div>,
   },
+
 ];

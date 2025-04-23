@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -126,7 +126,7 @@ const menuItems: Record<string, MenuItem[]> = {
       link: "/dashboard/manager/deposit-product",
       icon: FileText,
     },
-    // { label: "TypeSession Product", link: "/dashboard/manager/typesession-product", icon: FileText },
+ 
     {
       label: "TypeSession Product",
       icon: FileText,
@@ -219,10 +219,14 @@ const menuItems: Record<string, MenuItem[]> = {
 
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
-  const currentPath = Object.keys(menuItems).find((key) =>
-    pathname.startsWith(key)
+  const currentPath = useMemo(
+    () => Object.keys(menuItems).find((key) => pathname.startsWith(key)),
+    [pathname]
   );
-  const items = menuItems[currentPath || "/dashboard/staff"] || [];
+  const items = useMemo(
+    () => menuItems[currentPath || "/dashboard/staff"] || [],
+    [currentPath]
+  );
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
 
   const toggleMenu = (label: string) => {

@@ -31,37 +31,48 @@ export const columns = (
   },
   {
     accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => <div>{row.getValue("name")}</div>,
+    header: () => <div className="text-center">Name</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("name")}</div>,
   },
   {
     accessorKey: "stickerStyleName",
-    header: "Style",
-    cell: ({ row }) => <div>{row.getValue("stickerStyleName")}</div>,
+    header: () => <div className="text-center">Style</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("stickerStyleName")}</div>,
   },
   {
     accessorKey: "stickerUrl",
-    header: "Image",
+    header: () => <div className="text-center">Image</div>,
     cell: ({ row }) => (
-      <Image
-        src={row.getValue("stickerUrl")}
-        alt="Sticker"
-        width={50}
-        height={50}
-        className="rounded-md"
-      />
+      <div className="text-center">
+        <Image
+          src={row.getValue("stickerUrl")}
+          alt="Sticker"
+          width={50}
+          height={50}
+          className="rounded-md inline-block"
+        />
+      </div>
     ),
   },
   {
     accessorKey: "createdAt",
-    header: "Created At",
-    cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />,
+    header: () => <div className="text-center">Created At</div>,
+    cell: ({ row }) => (
+      <div className="text-center">
+        <DateCell value={row.getValue("createdAt")} />
+      </div>
+    ),
   },
   {
     accessorKey: "lastModified",
-    header: "Last Modified",
-    cell: ({ row }) => <DateCell value={row.getValue("lastModified")} />,
+    header: () => <div className="text-center">Last Modified</div>,
+    cell: ({ row }) => (
+      <div className="text-center">
+        <DateCell value={row.getValue("lastModified")} />
+      </div>
+    ),
   },
+  
   {
     id: "edit",
     header: () => <div className="text-center">Edit</div>,

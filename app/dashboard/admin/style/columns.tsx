@@ -39,18 +39,6 @@ export const columns = (
       <div className="text-center">{row.getValue("description")}</div>
     ),
   },
-  // {
-  //      accessorKey: "imageUrl",
-  //      header: () => <div className="text-center">Image</div>,
-  //      cell: ({ row }) => <Image
-  //           src={row.getValue("imageUrl")}
-  //           alt="image"
-  //           width={50}
-  //           height={50}
-  //           className="rounded-md"
-  //      />,
-
-  // },
   {
     accessorKey: "faceImage",
     header: () => <div className="text-center">Face Image</div>,
@@ -69,6 +57,7 @@ export const columns = (
       </div>
     ),
   },
+  
   {
     id: "edit",
     header: () => <div className="text-center">Edit</div>,

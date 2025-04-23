@@ -50,14 +50,14 @@ export const columns = (
           {
                accessorKey: "createdAt",
                header: () => <div className="text-center">Created At</div>,
-               cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />
+               cell: ({ row }) => <div className="text-center"><DateCell value={row.getValue("createdAt")} /></div>
           },
           {
-               id:"edit",
+               id: "edit",
                header: () => <div className="text-center">Edit</div>,
-               cell: ({row}) => {
+               cell: ({ row }) => {
                     const id = row.original.id;
-                    return(
+                    return (
                          <EditPaymentMethod id={id} onUpdated={refetchData} />
                     )
                }
@@ -94,9 +94,9 @@ export const columns = (
                                    </DropdownMenuItem>
 
                                    {/* <DropdownMenuItem asChild> */}
-                                        {/* <EditPaymentMethod id={id} onUpdated={refetchData} /> */}
+                                   {/* <EditPaymentMethod id={id} onUpdated={refetchData} /> */}
                                    {/* </DropdownMenuItem> */}
-                                   
+
 
                               </DropdownMenuContent>
                          </DropdownMenu>

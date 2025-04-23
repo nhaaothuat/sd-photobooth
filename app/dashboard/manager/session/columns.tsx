@@ -29,30 +29,42 @@ export const columns = (): ColumnDef<Session>[] => [
   },
   {
     accessorKey: "code",
-    header: "Code",
-    cell: ({ row }) => <div>{row.getValue("code")}</div>,
+    header: () => <div className="text-center">Code</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("code")}</div>,
   },
   {
     accessorKey: "expired",
-    header: "Expired",
-    cell: ({ row }) => <DateCell value={row.getValue("expired")} />,
+    header: () => <div className="text-center">Expired</div>,
+    cell: ({ row }) => (
+      <div className="text-center">
+        <DateCell value={row.getValue("expired")} />
+      </div>
+    ),
   },
   {
     accessorKey: "orderId",
-    header: "OrderID",
-    cell: ({ row }) => <div>{row.getValue("orderId")}</div>,
+    header: () => <div className="text-center">OrderID</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("orderId")}</div>,
   },
   {
     accessorKey: "isActive",
-    header: "IsActive",
-    cell: ({ row }) => <StatusCell value={row.getValue("isActive")} />,
+    header: () => <div className="text-center">IsActive</div>,
+    cell: ({ row }) => (
+      <div className="text-center">
+        <StatusCell value={row.getValue("isActive")} />
+      </div>
+    ),
   },
   {
     accessorKey: "createdAt",
-    header: "Created At",
-    cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />,
+    header: () => <div className="text-center">Created At</div>,
+    cell: ({ row }) => (
+      <div className="text-center">
+        <DateCell value={row.getValue("createdAt")} />
+      </div>
+    ),
   },
-
+  
   {
     id: "actions",
     enableHiding: false,

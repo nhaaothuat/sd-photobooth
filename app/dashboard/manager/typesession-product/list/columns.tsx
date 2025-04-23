@@ -30,35 +30,35 @@ export const columns = (
   },
   {
     accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => <div>{row.getValue("name")}</div>,
+    header: () => <div className="text-center">Name</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("name")}</div>,
   },
   {
     accessorKey: "productId",
-    header: "Product",
-    cell: ({ row }) => <div>{row.getValue("productId")}</div>,
+    header: () => <div className="text-center">Product</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("productId")}</div>,
   },
   {
     accessorKey: "levelMembershipId",
-    header: "Level Membership ID",
-    cell: ({ row }) => <div>{row.getValue("levelMembershipId")}</div>,
+    header: () => <div className="text-center">Level Membership ID</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("levelMembershipId")}</div>,
   },
   {
     accessorKey: "typeSessionId",
-    header: "TypeSession ID",
-    cell: ({ row }) => <div>{row.getValue("typeSessionId")}</div>,
+    header: () => <div className="text-center">TypeSession ID</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("typeSessionId")}</div>,
   },
   {
     accessorKey: "couponId",
-    header: "Coupon ID",
-    cell: ({ row }) => <div>{row.getValue("couponId")}</div>,
+    header: () => <div className="text-center">Coupon ID</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("couponId")}</div>,
   },
-
   {
     accessorKey: "createdAt",
-    header: "Created At",
-    cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />,
+    header: () => <div className="text-center">Created At</div>,
+    cell: ({ row }) => <div className="text-center"><DateCell value={row.getValue("createdAt")} /></div>,
   },
+  
   {
     id: "edit",
     header: () => <div className="text-center">Edit</div>,

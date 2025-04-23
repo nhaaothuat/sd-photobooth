@@ -34,21 +34,20 @@ export const columns = (
   },
   {
     accessorKey: "locationName",
-    header: "Location Name",
-    cell: ({ row }) => <div>{row.getValue("locationName")}</div>,
+    header: () => <div className="text-center">Location Name</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("locationName")}</div>,
   },
   {
     accessorKey: "address",
-    header: "Address",
-    cell: ({ row }) => <div>{row.getValue("address")}</div>,
+    header: () => <div className="text-center">Address</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("address")}</div>,
   },
-
   {
     accessorKey: "createdAt",
-    header: "Created At",
-    cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />,
+    header: () => <div className="text-center">Created At</div>,
+    cell: ({ row }) => <div className="text-center"><DateCell value={row.getValue("createdAt")} /></div>,
   },
-
+  
   {
     id: "edit",
     header: () => <div className="text-center">Edit</div>,

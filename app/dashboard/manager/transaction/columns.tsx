@@ -14,33 +14,33 @@ export const columns = (): ColumnDef<Transaction>[] => [
   },
   {
     accessorKey: "paymentId",
-    header: "Payment ID",
-    cell: ({ row }) => <div>{row.getValue("paymentId")}</div>,
+    header: () => <div className="text-center">Payment ID</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("paymentId")}</div>,
   },
   {
     accessorKey: "paymentMethodName",
-    header: "Payment Method Name",
-    cell: ({ row }) => <div>{row.getValue("paymentMethodName")}</div>,
+    header: () => <div className="text-center">Payment Method Name</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("paymentMethodName")}</div>,
   },
   {
     accessorKey: "type",
-    header: "Type",
-    cell: ({ row }) => <div>{row.getValue("type")}</div>,
+    header: () => <div className="text-center">Type</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("type")}</div>,
   },
   {
     accessorKey: "amount",
-    header: "Amount",
-    cell: ({ row }) => <div>{row.getValue("amount")}</div>,
+    header: () => <div className="text-center">Amount</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("amount")}</div>,
   },
   {
     accessorKey: "orderId",
-    header: "Order ID",
-    cell: ({ row }) => <div>{row.getValue("orderId")}</div>,
+    header: () => <div className="text-center">Order ID</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("orderId")}</div>,
   },
-
   {
     accessorKey: "createdAt",
-    header: "Created At",
-    cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />,
+    header: () => <div className="text-center">Created At</div>,
+    cell: ({ row }) => <div className="text-center"><DateCell value={row.getValue("createdAt")} /></div>,
   },
+  
 ];

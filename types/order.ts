@@ -8,4 +8,6 @@ interface OrderRequest {
 
 interface OrderResponse {
   paymentLink: string;
+  status:number;
+  code:number;
 }

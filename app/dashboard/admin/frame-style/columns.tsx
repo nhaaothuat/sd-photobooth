@@ -26,82 +26,90 @@ export const columns = (
   onDelete: (id: number) => Promise<void>,
   refetchData: () => void
 ): ColumnDef<FrameStyle>[] => [
-  {
-    accessorKey: "id",
-    header: () => <div className="text-center">ID</div>,
-    cell: ({ row }) => <div className="text-center">{row.getValue("id")}</div>,
-  },
-  {
-    accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => <div>{row.getValue("name")}</div>,
-  },
-  {
-    accessorKey: "description",
-    header: "Description",
-    cell: ({ row }) => <div>{row.getValue("description")}</div>,
-  },
-
-  {
-    accessorKey: "imageUrl",
-    header: "Preview",
-    cell: ({ row }) => (
-      <Image
-        src={row.getValue("imageUrl")}
-        alt="Frame"
-        width={80}
-        height={80}
-        className="rounded-md"
-      />
-    ),
-  },
-  {
-    id: "edit",
-    header: () => <div className="text-center">Edit</div>,
-    cell: ({ row }) => {
-      const id = row.original.id;
-      return <UpdateFrameStyle id={id} onUpdated={refetchData} />;
+    {
+      accessorKey: "id",
+      header: () => <div className="text-center">ID</div>,
+      cell: ({ row }) => <div className="text-center">{row.getValue("id")}</div>,
     },
-  },
-  {
-    accessorKey: "createdAt",
-    header: "Created At",
-    cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />,
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const id = row.original.id;
-      const framestyle = row.original;
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="center">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            {/* <DropdownMenuItem onClick={() => navigator.clipboard.writeText(payment.id.toString())}>
+    {
+      accessorKey: "name",
+      header: () => <div className="text-center">Name</div>,
+      cell: ({ row }) => <div className="text-center">{row.getValue("name")}</div>,
+    },
+    {
+      accessorKey: "description",
+      header: () => <div className="text-center">Description</div>,
+      cell: ({ row }) => <div className="text-center">{row.getValue("description")}</div>,
+    },
+    {
+      accessorKey: "imageUrl",
+      header: () => <div className="text-center">Preview</div>,
+      cell: ({ row }) => (
+        <div className="text-center">
+          <Image
+            src={row.getValue("imageUrl")}
+            alt="Frame"
+            width={80}
+            height={80}
+            className="rounded-md inline-block"
+          />
+        </div>
+      ),
+    },
+    {
+      id: "edit",
+      header: () => <div className="text-center">Edit</div>,
+      cell: ({ row }) => {
+        const id = row.original.id;
+        return (
+          <div className="text-center">
+            <UpdateFrameStyle id={id} onUpdated={refetchData} />
+          </div>
+        );
+      },
+    },
+
+    {
+      accessorKey: "createdAt",
+      header: () => <div className="text-center">Created At</div>,
+      cell: ({ row }) => <div className="text-center">
+        <DateCell value={row.getValue("createdAt")} />
+      </div>,
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const id = row.original.id;
+        const framestyle = row.original;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <MoreHorizontal />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="center">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              {/* <DropdownMenuItem onClick={() => navigator.clipboard.writeText(payment.id.toString())}>
                              Copy Sticker ID
                         </DropdownMenuItem> */}
-            {/* <DropdownMenuSeparator /> */}
+              {/* <DropdownMenuSeparator /> */}
 
-            <DropdownMenuItem asChild>
-              <DeletePayment id={id} onDelete={onDelete} />
-            </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <DeletePayment id={id} onDelete={onDelete} />
+              </DropdownMenuItem>
 
-            <DropdownMenuItem asChild>
-              <ViewDetailFrameStyle id={id} />
-            </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <ViewDetailFrameStyle id={id} />
+              </DropdownMenuItem>
 
-            <DropdownMenuItem asChild>
-              {/* <UpdateFrame id={id}  onUpdated={refetchData} /> */}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+              <DropdownMenuItem asChild>
+                {/* <UpdateFrame id={id}  onUpdated={refetchData} /> */}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
     },
-  },
-];
+  ];

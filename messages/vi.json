@@ -10,9 +10,46 @@
   },
   
   "Sidebar":{
-    "Dashboard":"Bảng điều khiển",
-    "Payment Method":"Phương thức thanh toán"
-   
-
+    "Dashboard": "Bảng điều khiển",
+    "Payment Method": "Phương thức thanh toán",
+    "Level Membership": "Hạng thành viên",
+    "Frame": "Khung hình",
+    "List Frame": "Danh sách khung hình",
+    "Get by Frame Style": "Lấy theo kiểu khung",
+    "Frame Style": "Kiểu khung",
+    "Sticker": "Sticker",
+    "List Sticker": "Danh sách sticker",
+    "Get by Sticker Style": "Lấy theo kiểu sticker",
+    "Sticker Style": "Kiểu sticker",
+    "Type Session": "Loại phiên",
+    "User": "Người dùng",
+    "Function": "Chức năng",
+    "Account (Manager)": "Tài khoản (Quản lý)",
+    "Account (Staff)": "Tài khoản (Nhân viên)",
+    "Photo Style": "Kiểu ảnh",
+    "Settings": "Cài đặt",
+    "Profile": "Hồ sơ",
+  
+    "Location": "Địa điểm",
+    "Coupon": "Mã giảm giá",
+    "Order": "Đơn hàng",
+    "Booth": "Gian hàng",
+    "Get Booth by Location": "Lấy gian hàng theo địa điểm",
+    "List Booth": "Danh sách gian hàng",
+    "Session": "Phiên chụp",
+    "Deposit Product": "Sản phẩm đặt cọc",
+    "TypeSession Product": "Sản phẩm loại phiên",
+    "TypeSession Product List": "Danh sách sản phẩm loại phiên",
+    "Get by Coupon": "Lấy theo mã giảm giá",
+    "Get by Type Session": "Lấy theo loại phiên",
+    "Transaction": "Giao dịch",
+    "View Detail Customer": "Xem chi tiết khách hàng",
+    "Account (Customer)": "Tài khoản (Khách hàng)",
+  
+    "Staff Dashboard": "Bảng điều khiển nhân viên",
+    "Session Code": "Mã phiên chụp",
+    "Membership Card": "Thẻ thành viên",
+    "Photo History": "Lịch sử ảnh"
   }
+  
 }

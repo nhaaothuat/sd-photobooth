@@ -36,40 +36,40 @@ export const columns = (
   },
   {
     accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => <div>{row.getValue("name")}</div>,
+    header: () => <div className="text-center">Name</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("name")}</div>,
   },
   {
     accessorKey: "code",
-    header: "Code",
-    cell: ({ row }) => <div>{row.getValue("code")}</div>,
+    header: () => <div className="text-center">Code</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("code")}</div>,
   },
   {
     accessorKey: "discount",
-    header: "Discount",
-    cell: ({ row }) => <div>{row.getValue("discount")}</div>,
+    header: () => <div className="text-center">Discount</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("discount")}</div>,
   },
   {
     accessorKey: "startDate",
-    header: "startDate",
-    cell: ({ row }) => <DateCell value={row.getValue("startDate")} />,
+    header: () => <div className="text-center">Start Date</div>,
+    cell: ({ row }) => <div className="text-center"><DateCell value={row.getValue("startDate")} /></div> ,
   },
   {
     accessorKey: "endDate",
-    header: "endDate",
-    cell: ({ row }) => <DateCell value={row.getValue("endDate")} />,
+    header: () => <div className="text-center">End Date</div>,
+    cell: ({ row }) => <div className="text-center"><DateCell value={row.getValue("endDate")} /></div>,
   },
   {
     accessorKey: "isActive",
-    header: "Is Active",
-    cell: ({ row }) => <StatusCell value={row.getValue("isActive")} />,
+    header: () => <div className="text-center">Is Active</div>,
+    cell: ({ row }) => <div className="text-center"><StatusCell value={row.getValue("isActive")} /></div>,
   },
   {
     accessorKey: "createdAt",
-    header: "Created At",
-    cell: ({ row }) => <DateCell value={row.getValue("createdAt")} />,
+    header: () => <div className="text-center">Created At</div>,
+    cell: ({ row }) => <div className="text-center"><DateCell value={row.getValue("createdAt")} /></div> ,
   },
-
+  
   {
     id: "edit",
     header: () => <div className="text-center">Edit</div>,
