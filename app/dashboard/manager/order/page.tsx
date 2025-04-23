@@ -206,23 +206,25 @@ export default function OrderPage() {
         paymentLink={paymentLink}
       />
 
-{cashOrderInfo && (
- 
-    <Alert>
-      <Terminal className="h-4 w-4" />
-      <AlertTitle>Cash Order Created!</AlertTitle>
-      <AlertDescription>
-        <div className="text-sm">
-          <p><strong>Order Code:</strong> {cashOrderInfo.orderCode}</p>
-          <p className="mt-2 font-medium">Session Info:</p>
-          <pre className="bg-muted p-2 rounded text-xs overflow-x-auto">
-            {JSON.stringify(cashOrderInfo.sessionInfo, null, 2)}
-          </pre>
-        </div>
-      </AlertDescription>
-    </Alert>
-  
-)}
+      {cashOrderInfo ? (
+        <Alert>
+          <Terminal className="h-4 w-4" />
+          <AlertTitle>Cash Order Created!</AlertTitle>
+          <AlertDescription>
+            <div className="text-sm">
+              <p><strong>Order Code:</strong> {cashOrderInfo.orderCode}</p>
+              <p className="mt-2 font-medium">Session Info:</p>
+              <pre className="bg-muted p-2 rounded text-xs overflow-x-auto">
+                {JSON.stringify(cashOrderInfo.sessionInfo, null, 2)}
+              </pre>
+            </div>
+          </AlertDescription>
+        </Alert>
+      ) : (
+        <Alert>
+        <p className="text-sm text-muted-foreground">No results</p>
+        </Alert>
+      )}
     </>
   );
 }
