@@ -27,17 +27,22 @@ export const PageSizeSelector = ({
                     value={value.toString()}
                     onValueChange={(val) => onChange(Number(val))}
                >
-                    <SelectTrigger className="w-[90px] h-[40px] rounded-full border border-gray-300 bg-white px-4 py-2 shadow-md transition hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <SelectTrigger className="w-[100px] h-[36px] rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-900 font-normal transition-colors duration-150 hover:border-gray-300 focus:border-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-300">
                          <SelectValue placeholder={placeholder} />
                     </SelectTrigger>
-                    <SelectContent className="rounded-xl border border-gray-200 shadow-lg bg-white" >
+                    <SelectContent className="rounded-md border border-gray-200 bg-white shadow-sm">
                          {options.map((option) => (
-                              <SelectItem key={option} value={option.toString()} className="cursor-pointer rounded-md px-4 py-2 text-sm hover:bg-blue-100 focus:bg-blue-100">
+                              <SelectItem
+                                   key={option}
+                                   value={option.toString()}
+                                   className="cursor-pointer px-3 py-1.5 text-sm text-gray-800 hover:bg-gray-100 focus:bg-gray-100"
+                              >
                                    {option}
                               </SelectItem>
                          ))}
                     </SelectContent>
                </Select>
           </div>
+
      );
 };
