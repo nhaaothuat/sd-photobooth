@@ -21,19 +21,32 @@ const ResetPasswordPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const token = decodeURIComponent(searchParams.get("token") || "");
+  const rawToken = searchParams.get("token") || "";
   const email = decodeURIComponent(searchParams.get("email") || "");
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const restoreSpecialChars = (encodedToken: string) => {
+    const specialChars: Record<string, string> = {
+      "%20": " ", "%2B": "+", "%3D": "=", "%2F": "/", 
+      "%40": "@", "%3F": "?", "%26": "&",
+    };
+    let restoredToken = encodedToken;
+    for (const [encoded, original] of Object.entries(specialChars)) {
+      restoredToken = restoredToken.replace(new RegExp(encoded, "g"), original);
+    }
+    return restoredToken;
+  };
+
+  // Token cuối cùng
+  const finalToken = decodeURIComponent(restoreSpecialChars(rawToken));
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!token || !email) {
-      toast.error("Invalid reset link.");
-      return;
-    }
+    
 
     if (password !== confirmPassword) {
       toast.error("Passwords do not match!");
@@ -45,7 +58,7 @@ const ResetPasswordPage = () => {
 
       const res = await AxiosAPI.post("/api/Identity/reset-password", {
         email,
-        token,
+        token:finalToken,
         newPassword: password,
       });
       // console.log(res);
