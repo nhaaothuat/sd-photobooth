@@ -29,11 +29,12 @@ const ResetPasswordPage = () => {
   const [loading, setLoading] = useState(false);
 
   const restoreSpecialChars = (encodedToken: string) => {
+    const decodedToken = decodeURIComponent(encodedToken);
     const specialChars: Record<string, string> = {
       "%20": " ", "%2B": "+", "%3D": "=", "%2F": "/", 
       "%40": "@", "%3F": "?", "%26": "&",
     };
-    let restoredToken = encodedToken;
+    let restoredToken = decodedToken;
     for (const [encoded, original] of Object.entries(specialChars)) {
       restoredToken = restoredToken.replace(new RegExp(encoded, "g"), original);
     }
@@ -41,7 +42,7 @@ const ResetPasswordPage = () => {
   };
 
   // Token cuối cùng
-  const finalToken = decodeURIComponent(restoreSpecialChars(rawToken));
+  const finalToken = restoreSpecialChars(rawToken);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
