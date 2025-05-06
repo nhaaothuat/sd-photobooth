@@ -12,6 +12,7 @@ import { staffSchema } from "@/types/schema/user";
 import { toast } from "react-toastify";
 import { getAllLocations } from "@/services/location";
 import { IconPlus } from "@tabler/icons-react";
+import { PlusCircleIcon } from "lucide-react";
 
 const CreateDialogForm = dynamic(
   () =>
@@ -73,7 +74,8 @@ export default function AccountStaffPage() {
       createButton={
         <CreateDialogForm
           title="Add Staff"
-          triggerText="Add Staff"
+          triggerText=""
+          triggerIcon={<PlusCircleIcon className="w-10 h-10" />}
           schema={staffSchema}
           fields={[
             {
@@ -132,7 +134,7 @@ export default function AccountStaffPage() {
             });
             refetch();
           }}
-          triggerIcon={<IconPlus />}
+          
         />
       }
       data={data}

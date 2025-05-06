@@ -14,11 +14,11 @@ const PaymentConfirm = () => {
     const orderCode = searchParams.get("orderCode");
     const status = searchParams.get("status");
     const cancel = searchParams.get("cancel");
-    
+
     const confirmPayment = async () => {
       if (status === "PAID" && orderCode) {
         try {
-          const response = await AxiosAPI.post(`/api/Session/${orderCode}`, 
+          const response = await AxiosAPI.post(`/api/Session/${orderCode}`,
             orderCode,
           );
 
@@ -60,9 +60,10 @@ const PaymentConfirm = () => {
           </div>
         )}
 
-        <p className="text-gray-500 mt-2">
-          Bạn sẽ được chuyển hướng sau 3 giây...
-        </p>
+       
+         
+      
+
       </div>
     </div>
   );

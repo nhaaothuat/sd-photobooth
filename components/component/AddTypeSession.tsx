@@ -65,7 +65,7 @@ const AddTypeSession: React.FC<AddTypeSessionProps> = ({ onAddSuccess }) => {
 
           try {
                await AxiosAPI.post("api/TypeSession", values);
-               toast.success("Type session added successfully!");
+               toast.success("Thêm thành công!");
                reset();
                setIsOpen(false);
                onAddSuccess();

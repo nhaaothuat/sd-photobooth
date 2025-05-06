@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import { couponSchema } from "@/types/schema/coupon";
 import AxiosAPI from "@/configs/axios";
 import { DepositProductSchema } from "@/types/schema/deposit-product";
+import { PlusCircleIcon } from "lucide-react";
 
 const CreateDialogForm = dynamic(
   () =>
@@ -55,7 +56,7 @@ export default function DepositProductPage() {
   const handleDelete = async (id: number) => {
     try {
       await deleteDepositProduct(id);
-      toast.success("Deposit product deleted successfully");
+      toast.success("Xóa thành công");
       if (data?.length === 1 && pageIndex > 0) setPageIndex((prev) => prev - 1);
       else refetch();
     } catch (error) {
@@ -72,7 +73,8 @@ export default function DepositProductPage() {
         <CreateDialogForm
           title="Add Deposit Product"
           description="Create new deposit product entry"
-          triggerText="Add Deposit Product"
+          triggerText=""
+          triggerIcon={<PlusCircleIcon className="w-10 h-10" />}
           schema={DepositProductSchema}
           fields={[
             { name: "name", label: "Name", type: "text" },
@@ -83,7 +85,7 @@ export default function DepositProductPage() {
               label: "Amount Add",
               type: "number",
             },
-            { name: "productId", label: "Product ID", type: "text" },
+         
           ]}
           onSubmit={async (values) => {
             await AxiosAPI.post("/api/DepositProduct", values);

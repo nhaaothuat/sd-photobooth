@@ -12,48 +12,46 @@ const protectedRoutes: Record<string, string[]> = {
   "/dashboard/staff": ["Staff"],
 };
 
+const publicRoutes = new Set([
+  "/", "/forget-password", "/reset-password",
+  "/confirm-payment-payos", "/success", "/failed",
+  "/privacy", "/about"
+]);
+
 function AuthWrapper({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
-  const publicRoutes = [ "/","/forget-password","/reset-password","/confirm-payment-payos", "/success", "/failed","/privacy","/about"];
-
   
 
   useEffect(() => {
-    console.log("pathname:", pathname);
-    console.log(session);
     if (status === "loading") return;
 
-    if (publicRoutes.includes(pathname)) return;
+    const accessToken = Cookies.get("AccessToken");
 
-    if (Cookies.get("AccessToken") === undefined) {
+    
+    if (publicRoutes.has(pathname)) return;
+
+    
+    if (!accessToken || !session) {
       signOut({ callbackUrl: "/" });
       return;
     }
 
-    // if (!session || Cookies.get("AccessToken") === undefined) {
-    //   console.log("No session or token found → Logging out...");
-    //   signOut({ redirect: false }).then(() => {
-    //     Cookies.remove("AccessToken");
-    //     router.replace("/");
-    //   });
-    //   return;
-    // }
-
+   
     const matchedRoute = Object.keys(protectedRoutes).find((route) =>
       pathname.startsWith(route)
     );
 
     if (matchedRoute) {
       const allowedRoles = protectedRoutes[matchedRoute];
+      const userRole = session.user?.role || "";
 
-      if (!session || !allowedRoles.includes(session.user?.role || "")) {
+      if (!allowedRoles.includes(userRole)) {
         router.replace("/");
-        return;
       }
     }
-  }, [pathname, session, status]);
+  }, [pathname, session, status, router]);
 
   if (status === "loading") return <Loading />;
 

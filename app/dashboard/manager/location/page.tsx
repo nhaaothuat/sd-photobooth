@@ -11,6 +11,7 @@ import { Location } from "@/types/type";
 import dynamic from "next/dynamic";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
 import { deleteLocation, getLocationList } from "@/services/location";
+import { PlusCircleIcon } from "lucide-react";
 
 const CreateDialogForm = dynamic(
   () =>
@@ -59,7 +60,7 @@ export default function LocationPage() {
   const handleDelete = async (id: number) => {
     try {
       await deleteLocation(id);
-      toast.success("Location deleted successfully");
+      toast.success("Xóa thành công");
       if (data?.length === 1 && pageIndex > 0) setPageIndex((prev) => prev - 1);
       else refetch();
     } catch {
@@ -74,9 +75,10 @@ export default function LocationPage() {
       onSearchChange={setSearch}
       createButton={
         <CreateDialogForm
-          title="Add Location"
+          title="Add Location "
           description="Create a new location"
-          triggerText="Add Location"
+          triggerText=""
+          triggerIcon={<PlusCircleIcon className="w-10 h-10" />}
           schema={locationSchema}
           onSubmit={async (values) => {
             await AxiosAPI.post("/api/Location", values);

@@ -97,7 +97,7 @@ const AddPhotoStyle: React.FC<AddPhotoStyleProps> = ({ onAddSuccess }) => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      toast.success("Photo Style created successfully!");
+      toast.success("Thêm thành công!");
       reset();
       setPreviewImage(null);
       setIsOpen(false);

@@ -15,7 +15,7 @@ const ViewDetailFrame = ({ id }: { id: number }) => {
     try {
       setLoading(true)
       const response = await AxiosAPI.get<Frame>(`/api/Frame/${id}`)
-      console.log(response.data)
+      // console.log(response.data)
       setFrame(response.data)
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu chi tiết", error)
@@ -36,7 +36,7 @@ const ViewDetailFrame = ({ id }: { id: number }) => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Chi tiết phương thức thanh toán</DialogTitle>
+          <DialogTitle>Chi tiết</DialogTitle>
         </DialogHeader>
 
         {loading ? (

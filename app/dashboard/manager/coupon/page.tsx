@@ -12,6 +12,7 @@ import dynamic from "next/dynamic";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
 import { couponSchema } from "@/types/schema/coupon";
 import { deleteCoupon, getCouponList } from "@/services/coupon";
+import { PlusCircleIcon } from "lucide-react";
 
 const CreateDialogForm = dynamic(
   () =>
@@ -57,7 +58,7 @@ export default function CouponPage() {
   const handleDelete = async (id: number) => {
     try {
       await deleteCoupon(id);
-      toast.success("Delete coupon successfully");
+      toast.success("Xóa thành côngO");
       if (data?.length === 1 && pageIndex > 0) setPageIndex((prev) => prev - 1);
       else refetch();
     } catch (error) {
@@ -77,7 +78,8 @@ export default function CouponPage() {
         <CreateDialogForm
           title="Add Coupon"
           description="Create new coupon entry"
-          triggerText="Add Coupon"
+          triggerText=""
+          triggerIcon={<PlusCircleIcon className="w-10 h-10" />}
           schema={couponSchema as ZodType<CouponFormType>}
           fields={[
             { name: "name", label: "Name", type: "text" },

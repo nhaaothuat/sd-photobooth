@@ -10,5 +10,5 @@ export const DepositProductSchema = z.object({
     return isNaN(parsed) ? undefined : parsed;
   }, z.number().min(0, "Số lượng phải >= 0").optional()),
 
-  productId: z.string().min(1, "Product ID là bắt buộc"),
+  // productId: z.string().min(1, "Product ID là bắt buộc"),
 });

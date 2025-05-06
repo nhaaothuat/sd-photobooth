@@ -13,6 +13,7 @@ import { Location } from "@/types/type";
 import dynamic from "next/dynamic";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
 import { getAllLocations } from "@/services/location";
+import { PlusCircleIcon } from "lucide-react";
 
 const CreateDialogForm = dynamic(
   () =>
@@ -81,7 +82,7 @@ export default function BoothPage() {
   const handleDelete = async (id: number) => {
     try {
       await deleteBooth(id);
-      toast.success("Booth deleted successfully");
+      toast.success("Xóa thành công");
       if (data?.length === 1 && pageIndex > 0) setPageIndex((prev) => prev - 1);
       else refetch();
     } catch {
@@ -98,13 +99,15 @@ export default function BoothPage() {
         <CreateDialogForm
           title="Add Booth"
           description="Create new booth entry"
-          triggerText="Add Booth"
+          triggerText=""
+          triggerIcon={<PlusCircleIcon className="w-10 h-10" />}
           schema={boothSchema}
           onSubmit={async (values) => {
             await AxiosAPI.post("/api/Booth", {
               ...values,
               locationId: Number(values.locationId),
             });
+            // toast.success("Thêm thành công! ");
             refetch();
           }}
           fields={[

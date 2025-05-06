@@ -24,17 +24,9 @@ const FailedPage = () => {
             transaction, or an error occurred. If you need help, please contact
             support.
           </Text>
-          <Button
-            variant="outline"
-            size="md"
-            mt="xl"
-            className="mt-6 border-red-500 text-red-500 hover:bg-red-100"
-          >
-            Go back to home page
-          </Button>
+          
         </div>
-        {/* Ảnh trên desktop */}
-        {/* <Image src={image.src} className="hidden sm:block" /> */}
+       
       </SimpleGrid>
     </Container>
   );

@@ -1,3 +1,4 @@
+import { DeleteItem } from "@/components/component/DeleteGeneric";
 import DeletePayment from "@/components/component/DeletePayment";
 import UpdateStickerStyle from "@/components/component/GPStickerStyle";
 import ViewDetailStickerStyle from "@/components/component/IDStickerStyle";
@@ -10,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { deleteStickerStyle } from "@/services/sticker-style";
 import { StickerStyle } from "@/types/type";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
@@ -19,10 +21,7 @@ const DateCell = ({ value }: { value: string }) => {
   return <div>{date.toLocaleDateString()}</div>;
 };
 
-export const columns = (
-  onDelete: (id: number) => Promise<void>,
-  refetchData: () => void
-): ColumnDef<StickerStyle>[] => [
+export const columns: ColumnDef<StickerStyle>[] = [
     {
       accessorKey: "id",
       header: () => <div className="text-center">ID</div>,
@@ -62,37 +61,39 @@ export const columns = (
       header: () => <div className="text-center">Edit</div>,
       cell: ({ row }) => {
         const id = row.original.id;
-        return <UpdateStickerStyle id={id} onUpdateSuccess={refetchData} />;
+        // return <UpdateStickerStyle id={id} onUpdateSuccess={refetchData} />;
+        return <DeleteItem  id={id} deleteFn={deleteStickerStyle} queryKey="stickerStyles"
+       />
       },
     },
-    {
-      id: "actions",
-      enableHiding: false,
-      cell: ({ row }) => {
-        const id = row.original.id;
-        const sticker = row.original;
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <MoreHorizontal />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="center">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              {/* <DropdownMenuItem onClick={() => navigator.clipboard.writeText(sticker.id.toString())}>
-                                   Copy Sticker ID
-                              </DropdownMenuItem> */}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <DeletePayment id={id} onDelete={onDelete} />
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <ViewDetailStickerStyle id={id} />
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        );
-      },
-    },
+    // {
+    //   id: "actions",
+    //   enableHiding: false,
+    //   cell: ({ row }) => {
+    //     const id = row.original.id;
+    //     const sticker = row.original;
+    //     return (
+    //       <DropdownMenu>
+    //         <DropdownMenuTrigger asChild>
+    //           <Button variant="ghost" className="h-8 w-8 p-0">
+    //             <MoreHorizontal />
+    //           </Button>
+    //         </DropdownMenuTrigger>
+    //         <DropdownMenuContent align="center">
+    //           <DropdownMenuLabel>Actions</DropdownMenuLabel>
+    //           {/* <DropdownMenuItem onClick={() => navigator.clipboard.writeText(sticker.id.toString())}>
+    //                                Copy Sticker ID
+    //                           </DropdownMenuItem> */}
+    //           <DropdownMenuSeparator />
+    //           <DropdownMenuItem asChild>
+    //             <DeletePayment id={id} onDelete={onDelete} />
+    //           </DropdownMenuItem>
+    //           <DropdownMenuItem asChild>
+    //             <ViewDetailStickerStyle id={id} />
+    //           </DropdownMenuItem>
+    //         </DropdownMenuContent>
+    //       </DropdownMenu>
+    //     );
+    //   },
+    // },
   ];

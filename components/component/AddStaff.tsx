@@ -102,11 +102,11 @@ const AddStaff = ({ onSuccess }: { onSuccess: () => void }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>+ Add Customer</Button>
+        <Button>+ Add Staff</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Thêm Khách Hàng</DialogTitle>
+          <DialogTitle>Thêm Nhân viên</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="grid gap-4 py-2">
           <div className="grid gap-2">

@@ -36,7 +36,7 @@ const ViewDetailLocation = ({ id }: { id: number }) => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Chi tiết phương thức thanh toán</DialogTitle>
+          <DialogTitle>Chi tiết </DialogTitle>
         </DialogHeader>
 
         {loading ? (
@@ -46,8 +46,8 @@ const ViewDetailLocation = ({ id }: { id: number }) => {
         ) : location ? (
           <div className="space-y-2 text-sm">
             <p><strong>ID:</strong> {location.id}</p>
-            <p><strong>ID:</strong> {location.locationName}</p>
-            <p><strong>ID:</strong> {location.address}</p>
+            <p><strong>Location Name:</strong> {location.locationName}</p>
+            <p><strong>Address:</strong> {location.address}</p>
             <p><strong>Created At:</strong> {new Date(location.createdAt).toLocaleString()}</p>
           </div>
         ) : (

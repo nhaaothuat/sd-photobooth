@@ -35,7 +35,7 @@ const ViewDetailPhotoStyle = ({ id }: { id: number }) => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Chi tiết phương thức thanh toán</DialogTitle>
+          <DialogTitle>Chi tiết </DialogTitle>
         </DialogHeader>
 
         {loading ? (

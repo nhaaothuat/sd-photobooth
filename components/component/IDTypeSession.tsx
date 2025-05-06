@@ -36,7 +36,7 @@ const ViewDetailTypeSession = ({ id }: { id: number }) => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Chi tiết phương thức thanh toán</DialogTitle>
+          <DialogTitle>Chi tiết </DialogTitle>
         </DialogHeader>
 
         {loading ? (

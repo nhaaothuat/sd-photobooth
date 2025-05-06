@@ -17,6 +17,36 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "imgcdn.stablediffusionweb.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "img.goodfon.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "image.civitai.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.prod.website-files.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "encrypted-tbn0.gstatic.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.pixeldojo.ai",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
         hostname: "mlf2vmoci1kz.i.optimole.com",
         pathname: "/**",
       },

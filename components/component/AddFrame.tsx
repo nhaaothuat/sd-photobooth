@@ -113,7 +113,7 @@ const AddFrame = ({ onSuccess }: { onSuccess: () => void }) => {
           "Content-Type": "multipart/form-data",
         },
       });
-      toast.success("Frame added successfully!");
+      toast.success("Thêm thành công!");
       reset();
       setIsOpen(false);
       onSuccess();

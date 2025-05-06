@@ -21,7 +21,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
 import fpt from "@/assets/tech-x.png";
 
 const formSchema = z.object({
@@ -65,16 +64,16 @@ const Home = () => {
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center p-6 md:p-10">
-      {/* <video autoPlay loop muted className="absolute top-0 left-0 w-full h-full object-cover z-0">
-      <source src="/background1.mp4" type="video/mp4" />
-    </video> */}
-      <Image
+      <video autoPlay loop muted className="absolute top-0 left-0 w-full h-full object-cover z-0">
+        <source src="/background1.mp4" type="video/mp4" />
+      </video>
+      {/* <Image
         src={"/blue-1295919_1280.png"}
         alt="bg"
         className="absolute top-0 left-0 w-full h-full object-cover z-0"
         width={0}
         height={0}
-      />
+      /> */}
       <div className="relative z-10 w-full max-w-sm">
         <Card className="bg-white/10 backdrop-blur-md shadow-xl border border-white/10 rounded-lg">
           <CardHeader className="flex items-center justify-center">

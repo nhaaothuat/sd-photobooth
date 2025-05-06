@@ -76,8 +76,8 @@ const AddSticker: React.FC<AddStickerProps> = ({ onAddSuccess }) => {
       });
 
       if (response.status === 200) {
-        toast.success("Sticker added successfully!");
-        console.log(response.data);
+        toast.success("Thêm thành công! ");
+        // console.log(response.data);
         reset();
         setIsOpen(false);
         onAddSuccess();

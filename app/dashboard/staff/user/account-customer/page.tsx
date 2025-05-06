@@ -10,6 +10,7 @@ import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
 import { getCustomerList } from "@/services/user";
 import { customerSchema } from "@/types/schema/user";
 import { Icon360View, IconPlus } from "@tabler/icons-react";
+import { PlusCircleIcon } from "lucide-react";
 
 const CreateDialogForm = dynamic(
   () =>
@@ -53,7 +54,8 @@ export default function AccountCustomerPage() {
       createButton={
         <CreateDialogForm
           title="Add Customer"
-          triggerText="Add Customer"
+          triggerText=""
+          triggerIcon={<PlusCircleIcon className="w-10 h-10" />}
           schema={customerSchema}
           fields={[
             {
@@ -103,7 +105,7 @@ export default function AccountCustomerPage() {
             });
             refetch();
           }}
-          triggerIcon={<IconPlus />}
+         
         />
       }
       data={data}

@@ -47,7 +47,7 @@ const EditPaymentMethod = ({ id, onUpdated }: { id: number; onUpdated?: () => vo
   const handleUpdate = async () => {
     try {
       await AxiosAPI.put(`/api/PaymentMethod/${id}`, form)
-      toast.success("Cập nhật thành công!")
+      toast.success("Updated Successfully!")
       close()
       onUpdated?.()
     } catch (error) {

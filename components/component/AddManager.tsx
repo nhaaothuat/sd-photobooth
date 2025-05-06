@@ -58,7 +58,7 @@ const AddManager = ({ onSuccess }: { onSuccess: () => void }) => {
     try {
       const response = await AxiosAPI.post("/api/User/create", formData)
       if (response.status === 200 || response.status === 201) {
-        toast.success("User created successfully!")
+        toast.success("Thêm thành công!")
         onSuccess()
         setOpen(false)
         resetForm()
@@ -75,11 +75,11 @@ const AddManager = ({ onSuccess }: { onSuccess: () => void }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>+ Add Customer</Button>
+        <Button>+ Add Manager</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Thêm Khách Hàng</DialogTitle>
+          <DialogTitle>Thêm Quản Lý</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="grid gap-4 py-2">
           <div className="grid gap-2">

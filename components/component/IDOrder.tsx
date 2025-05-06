@@ -36,7 +36,7 @@ const ViewDetailOrder = ({ id }: { id: number }) => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Chi tiết phương thức thanh toán</DialogTitle>
+          <DialogTitle>Chi tiết </DialogTitle>
         </DialogHeader>
 
         {loading ? (
@@ -46,12 +46,12 @@ const ViewDetailOrder = ({ id }: { id: number }) => {
         ) : order ? (
           <div className="space-y-2 text-sm">
             <p><strong>ID:</strong> {order.id}</p>
-            <p><strong>Method Name:</strong> {order.code}</p>
+            <p><strong>code:</strong> {order.code}</p>
           
-            <p><strong>Method Name:</strong> {order.couponCode}</p>
+            <p><strong>couponCode:</strong> {order.couponCode}</p>
             <p><strong>Booth Name:</strong> {order.boothName}</p>
-            <p><strong>Method Name:</strong> {order.phone}</p>
-            <p><strong>Method Name:</strong> {order.sessionCode}</p>
+            <p><strong>phone:</strong> {order.phone}</p>
+            <p><strong>sessionCode:</strong> {order.sessionCode}</p>
             <p><strong>Created At:</strong> {new Date(order.createdAt).toLocaleString()}</p>
           </div>
         ) : (

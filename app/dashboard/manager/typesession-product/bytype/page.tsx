@@ -40,7 +40,7 @@ const ByTypeSessionProduct = () => {
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      <label className="block mb-2 font-medium">Chọn Sticker Style:</label>
+      <label className="block mb-2 font-medium">Chọn TypeSession:</label>
       <select
         className="w-full border border-gray-300 rounded p-2 mb-4"
         onChange={(e) => setSelectedStyleId(parseInt(e.target.value))}

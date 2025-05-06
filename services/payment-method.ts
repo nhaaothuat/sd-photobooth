@@ -1,31 +1,67 @@
 import AxiosAPI from "@/configs/axios";
 import { PaginatedResponse } from "@/types/paginated-response";
-import { Payment } from "@/types/type";
+import { PaymentMethod } from "@/types/type";
 
-export const getPaymentMethod = async (
-  page: number,
-  size: number,
-  search?: string
-): Promise<PaginatedResponse<Payment>> => {
-  const url = search?.trim()
-    ? `/api/PaymentMethod/by-name/${search}`
-    : `/api/PaymentMethod`;
-  const [res, countRes] = await Promise.all([
-    AxiosAPI.get<Payment[]>(url, {
+export const getPaymentMethods = async ({
+  page,
+  pageSize,
+}: {
+  page: number;
+  pageSize: number;
+}): Promise<PaginatedResponse<PaymentMethod>> => {
+  const res = await AxiosAPI.get<PaymentMethod[]>(
+    "/api/PaymentMethod",
+    {
       params: {
         PageNumber: page,
-        PageSize: size,
+        PageSize: pageSize,
       },
-    }),
-    AxiosAPI.get<number>("/api/PaymentMethod/count"),
-  ]);
+    }
+  );
+
   return {
-    items: res.data ?? [],
-    totalItems: countRes.data ?? 0,
+    items: res.data  || [],
+    totalItems:  res.data ? res.data.length : 0,
   };
+ 
+};
+
+export const getPaymentMethodCount = async (): Promise<number> => {
+  const res = await AxiosAPI.get<number>("/api/PaymentMethod/count");
+  return res.data || 0;
+};
+
+export const searchPaymentMethodsByName = async (
+  name: string
+): Promise<PaymentMethod[]> => {
+  const res = await AxiosAPI.get<PaymentMethod[]>(
+    `/api/PaymentMethod/by-name/${name}`
+  );
+  return res.data || [];
+};
+
+export const createPaymentMethod = async (data: PaymentMethod) => {
+  const res = await AxiosAPI.post("/api/PaymentMethod", data);
+  return res.data;
+};
+
+export const updatePaymentMethod = async ({
+  id,
+  data,
+}: {
+  id: number;
+  data: PaymentMethod;
+}) => {
+  const res = await AxiosAPI.put(`/api/PaymentMethod/${id}`, data);
+  return res.data;
 };
 
 export const deletePaymentMethod = async (id: number) => {
   const res = await AxiosAPI.delete(`/api/PaymentMethod/${id}`);
-  if (res.status !== 200) throw new Error("Delete failed");
+  return res.data;
+};
+
+export const getPaymentMethodById = async (id: number) => {
+  const res = await AxiosAPI.get(`/api/PaymentMethod/${id}`);
+  return res.data;
 };

@@ -60,7 +60,7 @@ export default async function RootLayout({
         <Providers>
           <NextIntlClientProvider messages={messages}>
             <MantineProvider withCssVariables={false}>
-              <SessionProvider>
+              <SessionProvider >
                 <AuthWrapper>
                   {children}
                   <ToastContainer />

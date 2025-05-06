@@ -13,7 +13,8 @@ import dynamic from "next/dynamic";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal } from "lucide-react";
+import { PlusCircleIcon, Terminal } from "lucide-react";
+import CashOrderDialog from "@/components/component/CashOrderDialog";
 
 const CreateDialogForm = dynamic(
   () =>
@@ -53,7 +54,7 @@ export default function OrderPage() {
   const [paymentLink, setPaymentLink] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [cashOrderInfo, setCashOrderInfo] = useState<any | null>(null);
-
+  const [isCashDialogOpen, setIsCashDialogOpen] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -82,7 +83,7 @@ export default function OrderPage() {
   const handleDelete = async (id: number) => {
     try {
       await deleteOrder(id);
-      toast.success("Order deleted successfully");
+      toast.success("Xóa thành công");
       if (data?.length === 1 && pageIndex > 0) setPageIndex((prev) => prev - 1);
       else refetch();
     } catch {
@@ -102,7 +103,8 @@ export default function OrderPage() {
 
             title="Add Order"
             description="Create a new order entry"
-            triggerText="Add Order"
+            triggerText=""
+            triggerIcon={<PlusCircleIcon className="w-10 h-10" />}
             schema={orderSchema}
             onSubmit={async (values) => {
               try {
@@ -133,8 +135,8 @@ export default function OrderPage() {
                     orderCode: data.code,
                     sessionInfo: sessionData,
                   });
-
-                  toast.success("Cash order created successfully.");
+                  setIsCashDialogOpen(true);
+                 
                 } else {
                   console.error("Unexpected response:", data);
                   toast.error("Failed to create order: No payment link or order code.");
@@ -205,25 +207,13 @@ export default function OrderPage() {
         onClose={() => setIsDialogOpen(false)}
         paymentLink={paymentLink}
       />
-
-      {cashOrderInfo ? (
-        <Alert>
-          <Terminal className="h-4 w-4" />
-          <AlertTitle>Cash Order Created!</AlertTitle>
-          <AlertDescription>
-            <div className="text-sm">
-              <p><strong>Order Code:</strong> {cashOrderInfo.orderCode}</p>
-              <p className="mt-2 font-medium">Session Info:</p>
-              <pre className="bg-muted p-2 rounded text-xs overflow-x-auto">
-                {JSON.stringify(cashOrderInfo.sessionInfo, null, 2)}
-              </pre>
-            </div>
-          </AlertDescription>
-        </Alert>
-      ) : (
-        <Alert>
-        <p className="text-sm text-muted-foreground">No results</p>
-        </Alert>
+      {cashOrderInfo && (
+        <CashOrderDialog
+          open={isCashDialogOpen}
+          onClose={() => setIsCashDialogOpen(false)}
+          orderCode={cashOrderInfo.orderCode}
+          sessionInfo={cashOrderInfo.sessionInfo}
+        />
       )}
     </>
   );

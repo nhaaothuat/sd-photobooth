@@ -39,7 +39,7 @@ const ViewDetailBooth = ({ id }: { id: number }) => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Chi tiết phương thức thanh toán</DialogTitle>
+          <DialogTitle>Chi tiết</DialogTitle>
         </DialogHeader>
 
         {loading ? (
@@ -53,18 +53,18 @@ const ViewDetailBooth = ({ id }: { id: number }) => {
               <strong>ID:</strong> {booth.id}
             </p>
             <p>
-              <strong>Method Name:</strong> {booth.boothName}
+              <strong>boothName:</strong> {booth.boothName}
             </p>
             <p>
-              <strong>Method Name:</strong> {booth.description}
-            </p>
-
-            <p>
-              <strong>Style Name:</strong> {booth.location?.locationName}
+              <strong>description:</strong> {booth.description}
             </p>
 
             <p>
-              <strong>For Mobile:</strong> {booth.status ? "Yes" : "No"}
+              <strong>locationName:</strong> {booth.location?.locationName}
+            </p>
+
+            <p>
+              <strong>Status:</strong> {booth.status ? "Yes" : "No"}
             </p>
             <p>
               <strong>Created At:</strong>{" "}

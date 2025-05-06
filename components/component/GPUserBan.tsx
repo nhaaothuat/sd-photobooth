@@ -1,3 +1,4 @@
+"use client"
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,7 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "react-toastify";
 import AxiosAPI from "@/configs/axios";
 
-const GPUserBan: React.FC = () => {
+const GPUserBan = () => {
   const [email, setEmail] = useState("");
   const [isBanned, setIsBanned] = useState(false);
   const [loading, setLoading] = useState(false);

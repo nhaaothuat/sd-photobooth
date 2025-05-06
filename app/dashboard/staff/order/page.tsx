@@ -13,7 +13,7 @@ import dynamic from "next/dynamic";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal } from "lucide-react";
+import { PlusCircleIcon, Terminal } from "lucide-react";
 
 const CreateDialogForm = dynamic(
   () =>
@@ -102,7 +102,8 @@ export default function OrderPage() {
 
             title="Add Order"
             description="Create a new order entry"
-            triggerText="Add Order"
+            triggerText=""
+            triggerIcon={<PlusCircleIcon className="w-10 h-10" />}
             schema={orderSchema}
             onSubmit={async (values) => {
               try {

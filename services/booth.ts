@@ -1,5 +1,5 @@
 import AxiosAPI from "@/configs/axios";
-import axios from "@/configs/axios";
+
 import { Booth } from "@/types/booth";
 import { PaginatedResponse } from "@/types/paginated-response";
 

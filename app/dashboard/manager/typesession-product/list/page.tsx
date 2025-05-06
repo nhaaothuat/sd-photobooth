@@ -47,7 +47,7 @@ export default function TypeSessionProductPage() {
     try {
       await deleteTypeSessionProduct(id);
       
-      toast.success("Type Session Product deleted successfully");
+      toast.success("Xóa thành công!");
       if (data?.length === 1 && pageIndex > 0) setPageIndex((prev) => prev - 1);
       else  await refetch();
     } catch {

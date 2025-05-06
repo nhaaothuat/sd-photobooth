@@ -293,6 +293,8 @@ export type TypeSessionProduct = {
 
 export type PhotoHistory = {
   id: number;
+  url: string;
+  photoStyleName: string;
 };
 
 export type Coordinate = {

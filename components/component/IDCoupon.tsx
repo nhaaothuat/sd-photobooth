@@ -35,7 +35,7 @@ const ViewDetailCoupon = ({ id }: { id: number }) => {
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Chi tiết phương thức thanh toán</DialogTitle>
+            <DialogTitle>Chi tiết </DialogTitle>
           </DialogHeader>
   
           {loading ? (
@@ -45,15 +45,15 @@ const ViewDetailCoupon = ({ id }: { id: number }) => {
           ) : coupon ? (
             <div className="space-y-2 text-sm">
               <p><strong>ID:</strong> {coupon.id}</p>
-              <p><strong>Method Name:</strong> {coupon.code}</p>
-              <p><strong>Method Name:</strong> {coupon.discount}</p>
-              <p><strong>Method Name:</strong> {coupon.discountPercent}</p>
+              <p><strong>Code:</strong> {coupon.code}</p>
+              <p><strong>discount:</strong> {coupon.discount}</p>
+              <p><strong>discountPercent:</strong> {coupon.discountPercent}</p>
              
              
               
-              <p><strong>For Mobile:</strong> {coupon.isActive ? "Yes" : "No"}</p>
-              <p><strong>Created At:</strong> {new Date(coupon.startDate).toLocaleString()}</p>
-              <p><strong>Created At:</strong> {new Date(coupon.endDate).toLocaleString()}</p>
+              <p><strong>isActive:</strong> {coupon.isActive ? "Yes" : "No"}</p>
+              <p><strong>startDate:</strong> {new Date(coupon.startDate).toLocaleString()}</p>
+              <p><strong>endDate:</strong> {new Date(coupon.endDate).toLocaleString()}</p>
               <p><strong>Created At:</strong> {new Date(coupon.createdAt).toLocaleString()}</p>
             </div>
           ) : (

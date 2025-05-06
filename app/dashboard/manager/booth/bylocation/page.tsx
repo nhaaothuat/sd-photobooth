@@ -1,85 +1,131 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import AxiosAPI from "@/configs/axios";
-
 import { Location, Booth } from "@/types/type";
-import { Badge, Card, Group, SimpleGrid, Text } from "@mantine/core";
+import {
+  Badge,
+  Card,
+  Group,
+  SimpleGrid,
+  Text,
+  Select,
+  Title,
+  Center,
+  Loader,
+  Skeleton,
+} from "@mantine/core";
+
+
 const ByLocation = () => {
-  const [location, setLocation] = useState<Location[]>([]);
-  const [selectedStyleId, setSelectedStyleId] = useState<number | null>(null);
-  const [booth, setBooth] = useState<Booth[]>([]);
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
+  const [booths, setBooths] = useState<Booth[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
 
   useEffect(() => {
-    const fetchStyles = async () => {
+    const fetchLocations = async () => {
       try {
         const response = await AxiosAPI.get<Location[]>("/api/Location");
-        setLocation(response.data || []);
+        setLocations(response.data || []);
       } catch (error) {
-        console.error("Lỗi khi lấy danh sách sticker style:", error);
+        console.error("Lỗi khi lấy danh sách địa điểm:", error);
       }
     };
-
-    fetchStyles();
+    fetchLocations();
   }, []);
 
+
   useEffect(() => {
-    const fetchStickersByStyle = async () => {
-      if (!selectedStyleId) return;
+    const fetchBoothsByLocation = async () => {
+      if (!selectedLocationId) return;
+      setIsLoading(true);
       try {
         const response = await AxiosAPI.get<Booth[]>(
-          `/api/Booth/by-location/${selectedStyleId}`
+          `/api/Booth/by-location/${selectedLocationId}`
         );
-        setBooth(response.data || []);
+        setBooths(response.data || []);
       } catch (error) {
-        console.error("Lỗi khi lấy sticker theo style:", error);
+        console.error("Lỗi khi lấy danh sách booth:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
-
-    fetchStickersByStyle();
-  }, [selectedStyleId]);
+    fetchBoothsByLocation();
+  }, [selectedLocationId]);
 
   return (
-    <div className="p-4 max-w-4xl mx-auto">
-      <label className="block mb-2 font-medium">Chọn Sticker Style:</label>
-      <select
-        className="w-full border border-gray-300 rounded p-2 mb-4"
-        onChange={(e) => setSelectedStyleId(parseInt(e.target.value))}
-        defaultValue=""
-      >
-        <option value="" disabled>
-          -- Chọn một style --
-        </option>
-        {location.length > 0 ? (
-          location.map((style) => (
-            <option key={style.id} value={style.id}>
-              {style.locationName}
-            </option>
-          ))
-        ) : (
-          <option value="" disabled>
-            Không có dữ liệu
-          </option>
-        )}
-      </select>
-      <SimpleGrid cols={4} spacing="sm" verticalSpacing="lg">
-        {booth.map((item) => (
-          <div key={item.id} className="flex flex-col items-center">
-            <Card shadow="sm" padding="lg" radius="md" withBorder>
-              <Group justify="space-between" mt="md" mb="xs">
-                <Text fw={500}>{item.boothName}</Text>
-                <Badge color={item.status ? "green" : "red"}>
-                  {item.status ? "Hoạt động" : "Không hoạt động"}
+    <div className="p-6 max-w-5xl pl-6">
+      <Title order={2} mb="lg" className="text-gray-900 font-semibold ">
+        Danh sách Booth theo địa điểm
+      </Title>
+
+      <Select
+        // label="Chọn địa điểm"
+        placeholder="Chọn một địa điểm"
+        data={locations.map((loc) => ({
+          label: loc.locationName,
+          value: loc.id.toString(),
+        }))}
+        value={selectedLocationId}
+        onChange={setSelectedLocationId}
+        mb="xl"
+        searchable
+        nothingFoundMessage="Không có địa điểm"
+        classNames={{
+          root: "w-full",
+          input: "rounded-lg border-gray-300 shadow-sm hover:shadow-md transition duration-150",
+          dropdown: "rounded-md shadow-lg",
+          // item: "hover:bg-gray-100 text-gray-800",
+        }}
+        styles={{ label: { fontWeight: 500, fontSize: "16px" } }}
+      />
+
+      {isLoading ? (
+        <Center h={200}>
+          <Skeleton height={40} width={200} radius="xl" animate />
+        </Center>
+      ) : booths.length === 0 ? (
+        <Text c="dimmed" className="text-center mt-8">
+          Không có booth nào cho địa điểm này.
+        </Text>
+      ) : (
+        <SimpleGrid
+          cols={{ base: 1, sm: 2, md: 3, lg: 4 }}
+          spacing="lg"
+          verticalSpacing="xl"
+        >
+          {booths.map((booth) => (
+            <Card
+              key={booth.id}
+              shadow="sm"
+              padding="lg"
+              radius="xl"
+              withBorder
+              className="transition-shadow hover:shadow-md bg-white"
+            >
+              <Group justify="space-between" mb="sm">
+                <Text fw={600} className="text-gray-900">
+                  {booth.boothName}
+                </Text>
+                <Badge
+                  color={booth.status ? "green" : "gray"}
+                  variant="filled"
+                  className="text-sm"
+                >
+                  {booth.status ? "Hoạt động" : "Không hoạt động"}
                 </Badge>
               </Group>
-
-              <Text size="xs" c="gray">
-                Tạo lúc: {new Date(item.createdAt).toLocaleString()}
+              <Text size="xs" c="dimmed">
+                Tạo lúc: {new Date(booth.createdAt).toLocaleString()}
               </Text>
             </Card>
-          </div>
-        ))}
-      </SimpleGrid>
+          ))}
+        </SimpleGrid>
+      )}
     </div>
+
   );
 };
 

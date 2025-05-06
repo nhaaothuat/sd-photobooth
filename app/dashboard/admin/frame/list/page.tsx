@@ -123,7 +123,7 @@ const FramePage = () => {
 
         if (res.status !== 200) throw new Error("Xóa thất bại");
 
-        toast.success("Đã xóa phương thức thanh toán thành công");
+        toast.success("Đã xóa  thành công");
         fetchCount();
         if (data.length <= 1 && pageIndex > 0) {
           setPageIndex((prev) => prev - 1);
@@ -229,13 +229,13 @@ const FramePage = () => {
         <div className="text-red-500 p-4">Error: {error}</div>
       ) : (
         <>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
+          <div className="rounded-3xl border  ">
+            <Table className="">
+              <TableHeader className=" ">
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
+                  <TableRow key={headerGroup.id} className="">
                     {headerGroup.headers.map((header) => (
-                      <TableHead key={header.id}>
+                      <TableHead key={header.id} className="rounded-3xl" >
                         {flexRender(
                           header.column.columnDef.header,
                           header.getContext()

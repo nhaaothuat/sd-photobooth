@@ -76,7 +76,7 @@ const StickerPage = () => {
 
         if (res.status !== 200) throw new Error("Xóa thất bại");
 
-        toast.success("Đã xóa phương thức thanh toán thành công");
+        toast.success("Đã xóa thành công");
         fetchCount();
         if (data.length <= 1 && pageIndex > 0) {
           setPageIndex((prev) => prev - 1);

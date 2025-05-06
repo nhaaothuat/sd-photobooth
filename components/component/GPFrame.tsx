@@ -145,7 +145,7 @@ const UpdateFrame = ({ id, onUpdated }: { id: number; onUpdated?: () => void }) 
                     headers: { "Content-Type": "multipart/form-data" },
                });
 
-               toast.success("Frame updated successfully!");
+               toast.success("Cập nhật thành công!");
                setIsOpen(false);
                onUpdated?.();
           } catch (err: any) {

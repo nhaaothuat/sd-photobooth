@@ -56,7 +56,7 @@ const AddFrameStyle = ({ onSuccess }: { onSuccess?: () => void }) => {
           "Content-Type": "multipart/form-data",
         },
       });
-      toast.success("Frame style added successfully!");
+      toast.success("Thêm thành công!");
       reset();
       setIsOpen(false);
       onSuccess?.();
