@@ -38,6 +38,11 @@ export const columns = (): ColumnDef<Transaction>[] => [
     cell: ({ row }) => <div className="text-center">{row.getValue("orderId")}</div>,
   },
   {
+    accessorKey: "depositId",
+    header: () => <div className="text-center">Deposit ID</div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("depositId")}</div>,
+  },
+  {
     accessorKey: "createdAt",
     header: () => <div className="text-center">Created At</div>,
     cell: ({ row }) => <div className="text-center"><DateCell value={row.getValue("createdAt")} /></div>,

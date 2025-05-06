@@ -13,6 +13,7 @@ import {
 import DeletePayment from "@/components/component/DeletePayment";
 import ViewDetailLocation from "@/components/component/IDLocation";
 import UpdateLocation from "@/components/component/GPLocation";
+import { Group } from "@mantine/core";
 
 const StatusCell = ({ value }: { value: boolean }) => (
   <div className="capitalize">{value ? "Active" : "Inactive"}</div>
@@ -48,48 +49,19 @@ export const columns = (
     cell: ({ row }) => <div className="text-center"><DateCell value={row.getValue("createdAt")} /></div>,
   },
   
+  
   {
-    id: "edit",
-    header: () => <div className="text-center">Edit</div>,
-    cell: ({ row }) => {
-      const id = row.original.id;
-      return <UpdateLocation id={id} onUpdateSuccess={refetchData} />;
+      id: "actions",
+      header: () => <div className="text-center">Actions</div>,
+      cell: ({ row }) => (
+         
+        <Group justify="center">
+          <UpdateLocation id={row.original.id} onUpdateSuccess={refetchData} />
+          <ViewDetailLocation id={row.original.id} />
+          <DeletePayment id={row.original.id} onDelete={onDelete} />
+        </Group>
+      ),
     },
-  },
 
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const id = row.original.id;
-      const booth = row.original;
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(booth.id.toString())}
-            >
-              Copy booth ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-
-            <DropdownMenuItem asChild>
-              <DeletePayment id={id} onDelete={onDelete} />
-            </DropdownMenuItem>
-
-            <DropdownMenuItem asChild>
-              <ViewDetailLocation id={id} />
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
+ 
 ];

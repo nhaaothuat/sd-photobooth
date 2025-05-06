@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import AxiosAPI from "@/configs/axios";
 import { Loader2 } from "lucide-react";
+import { FaEye } from "react-icons/fa";
 const ViewDetailBooth = ({ id }: { id: number }) => {
   const [booth, setBooth] = useState<Booth | null>(null);
   const [open, setOpen] = useState(false);
@@ -35,7 +36,7 @@ const ViewDetailBooth = ({ id }: { id: number }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Xem</Button>
+        <Button variant="outline"><FaEye /></Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

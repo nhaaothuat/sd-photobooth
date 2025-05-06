@@ -109,7 +109,7 @@ const menuItems: Record<string, MenuItem[]> = {
       ],
     },
     { label: "Session", link: "/dashboard/manager/session", icon: Calendar },
-    { label: "Payment Method", link: "/dashboard/manager/payment", icon: CreditCard },
+    { label: "Payment", link: "/dashboard/manager/payment", icon: CreditCard },
     { label: "Deposit Product", link: "/dashboard/manager/deposit-product", icon: Package },
     {
       label: "TypeSession Product",
@@ -128,7 +128,7 @@ const menuItems: Record<string, MenuItem[]> = {
         { label: "View Detail Customer", link: "/dashboard/manager/user/detailc" },
         { label: "Account (Customer)", link: "/dashboard/manager/user/account-customer" },
         { label: "Account (Staff)", link: "/dashboard/manager/user/account-staff" },
-        { label: "Ban/Unban Staff", link: "/dashboard/manager/user/func" },
+        { label: "Ban/Unban Customer", link: "/dashboard/manager/user/func" },
       ],
     },
     {

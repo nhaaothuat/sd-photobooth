@@ -88,7 +88,7 @@ export function SharedTable<TData>({
                 className="hover:bg-gray-100 dark:hover:bg-[#2a2a2c] transition"
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="px-4 py-3">
+                  <TableCell key={cell.id} className="px-4 py-3 text-center">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}

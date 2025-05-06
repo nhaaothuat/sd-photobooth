@@ -6,7 +6,7 @@ const ManagerPage = () => {
   return (
     <>
       <DashboardCard />
-      <ChartCard />
+      {/* <ChartCard /> */}
     </>
   );
 };

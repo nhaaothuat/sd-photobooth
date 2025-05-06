@@ -15,6 +15,7 @@ import { Order } from "@/types/type";
 import DeletePayment from "@/components/component/DeletePayment";
 import ViewDetailOrder from "@/components/component/IDOrder";
 import { OrderStatus, OrderStatusMeta } from "@/types/enum/order-status";
+import { Group } from "@mantine/core";
 
 const DateCell = ({ value }: { value: string }) => {
   const date = new Date(value);
@@ -87,34 +88,18 @@ export const columns = (
 
     {
       id: "actions",
-      enableHiding: false,
+     
+      header: () => <div className="text-center">Actions</div>,
       cell: ({ row }) => {
         const id = row.original.id;
-        const code = row.original.code;
-        const frame = row.original;
+       
+
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <MoreHorizontal />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="center">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => navigator.clipboard.writeText(code.toString())}>
-                Copy Sticker ID
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
+          <Group justify="center">
+            <DeletePayment id={id} onDelete={onDelete} />
+            <ViewDetailOrder id={id} />
+          </Group>
 
-              <DropdownMenuItem asChild>
-                <DeletePayment id={id} onDelete={onDelete} />
-              </DropdownMenuItem>
-
-              <DropdownMenuItem asChild>
-                <ViewDetailOrder id={id} />
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
         );
       },
     },

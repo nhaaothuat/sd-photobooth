@@ -51,9 +51,9 @@ export const columns = (
   
   {
     id: "actions",
-    header: "Actions",
+    header: () => <div className="text-center">Actions</div>,
     cell: ({ row }) => (
-      <Group>
+      <Group justify="center">
         <ViewDetailDepositProduct id={row.original.id} />
         <DeletePayment id={row.original.id} onDelete={onDelete} />
       </Group>

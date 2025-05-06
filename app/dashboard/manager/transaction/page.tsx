@@ -1,6 +1,6 @@
 "use client";
 
-import { useDebounce } from "@/hooks/useDebounce";
+
 import { useState } from "react";
 import { usePaginatedQuery } from "@/hooks/usePaginatedQuery";
 import { Transaction } from "@/types/type";
@@ -21,8 +21,7 @@ const CrudPageWrapper = dynamic(
 );
 
 export default function TransactionPage() {
-  const [search, setSearch] = useState("");
-  const debouncedSearch = useDebounce(search, 500);
+
 
   const [pageSize, setPageSize] = useState(5);
   const [pageIndex, setPageIndex] = useState(0);
@@ -31,7 +30,7 @@ export default function TransactionPage() {
     queryKey: "transactions",
     pageIndex,
     pageSize,
-    search: debouncedSearch,
+
     queryFn: async ({ page, size }) => {
       return await getTransaction(page, size);
     },
@@ -39,9 +38,9 @@ export default function TransactionPage() {
 
   return (
     <CrudPageWrapper
+      isSearchable={false}
       title="Transaction Management"
-      search={search}
-      onSearchChange={setSearch}
+
       createButton={null}
       data={data}
       columns={columns()}

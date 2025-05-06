@@ -11,12 +11,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import ViewDetailSession from "@/components/component/IDSession";
+import { Group } from "@mantine/core";
 
 const StatusCell = ({ value }: { value: boolean }) => (
   <div className="capitalize">{value ? "Active" : "Inactive"}</div>
 );
 
-const DateCell = ({ value }: { value: string }) => {
+const DateCell = ({ value }: { value: string | null }) => {
+  if (!value) return <div>-</div>;
+
   const date = new Date(value);
   return <div>{date.toLocaleDateString()}</div>;
 };
@@ -47,6 +50,11 @@ export const columns = (): ColumnDef<Session>[] => [
     cell: ({ row }) => <div className="text-center">{row.getValue("orderId")}</div>,
   },
   {
+    accessorKey: "ableTakenNumber",
+    header: () => <div className="text-center">AbleTakenNumber </div>,
+    cell: ({ row }) => <div className="text-center">{row.getValue("ableTakenNumber")}</div>,
+  },
+  {
     accessorKey: "isActive",
     header: () => <div className="text-center">IsActive</div>,
     cell: ({ row }) => (
@@ -64,40 +72,19 @@ export const columns = (): ColumnDef<Session>[] => [
       </div>
     ),
   },
-  
   {
     id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const id = row.original.id;
-      const booth = row.original;
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(booth.id.toString())}
-            >
-              Copy booth ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
+    header: () => <div className="text-center">Actions</div>,
+    cell: ({ row }) => (
 
-            {/* <DropdownMenuItem asChild>
-                <DeletePayment id={id} onDelete={onDelete} />
-              </DropdownMenuItem> */}
 
-            <DropdownMenuItem asChild>
-              <ViewDetailSession id={id} />
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+      <Group justify="center">
+        <ViewDetailSession id={row.original.id} />
+      </Group>
+
+
+    ),
   },
+
+
 ];

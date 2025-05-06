@@ -13,6 +13,7 @@ import {
 import DeletePayment from "@/components/component/DeletePayment";
 import ViewDetailCoupon from "@/components/component/IDCoupon";
 import UpdateCoupon from "@/components/component/GPCoupon";
+import { Group } from "@mantine/core";
 const StatusCell = ({ value }: { value: boolean }) => {
   const text = value ? "Active" : "Inactive";
   const colorClass = value ? "text-green-600" : "text-gray-400";
@@ -70,43 +71,19 @@ export const columns = (
     cell: ({ row }) => <div className="text-center"><DateCell value={row.getValue("createdAt")} /></div> ,
   },
   
+  
+
   {
-    id: "edit",
-    header: () => <div className="text-center">Edit</div>,
-    cell: ({ row }) => {
-      const id = row.original.id;
-      return <UpdateCoupon couponId={id} onUpdateSuccess={refetchData} />;
-    },
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const id = row.original.id;
-      const booth = row.original;
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+        id: "actions",
+        header: () => <div className="text-center">Actions</div>,
+        cell: ({ row }) => (
            
-            <DropdownMenuSeparator />
-
-            <DropdownMenuItem asChild>
-              <DeletePayment id={id} onDelete={onDelete} />
-            </DropdownMenuItem>
-
-            <DropdownMenuItem asChild>
-              <ViewDetailCoupon id={id} />
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
+          <Group justify="center">
+            <UpdateCoupon couponId={row.original.id} onUpdateSuccess={refetchData} />
+            <ViewDetailCoupon id={row.original.id} />
+            <DeletePayment id={row.original.id} onDelete={onDelete} />
+          </Group>
+        ),
+      },
+  
 ];

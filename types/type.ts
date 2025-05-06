@@ -166,6 +166,7 @@ export type Session = {
   createdAt: string;
   lastModified: string;
   isDeleted: boolean;
+  ableTakenNumber: number;
 };
 
 export type PhotoStyle = {
@@ -237,6 +238,10 @@ export type User = {
   avatar: string | null;
   role: string;
   isBanned: boolean;
+  membershipCard: {
+    id: number;
+    currentLevel: string;
+  };
   location: Location | null;
 };
 

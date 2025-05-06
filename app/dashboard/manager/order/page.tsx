@@ -42,8 +42,8 @@ const orderSchema = z.object({
   email: z.string().email("Invalid email address").min(1, "Email is required"),
   phone: z.string().min(1, "Phone number is required"),
   typeSessionId: z.coerce.number().min(0, "Session type is required"),
-  paymentMethodId: z.coerce.number().min(0, "Payment method is required"),
-  coupon: z.string().optional(),
+  paymentMethodId: z.coerce.number().min(1, "Payment method is required"),
+  couponCode: z.string().optional(),
 });
 
 export default function OrderPage() {
@@ -124,6 +124,8 @@ export default function OrderPage() {
                 if (isBanking && data.paymentLink) {
                   setPaymentLink(data.paymentLink);
                   setIsDialogOpen(true);
+                 
+                  refetch();
                 } else if (isCash && data.code) {
                   const sessionResponse = await AxiosAPI.post(
                     `/api/Session/${data.code}`, {}
@@ -136,12 +138,13 @@ export default function OrderPage() {
                     sessionInfo: sessionData,
                   });
                   setIsCashDialogOpen(true);
-                 
+                
+                  refetch();
                 } else {
                   console.error("Unexpected response:", data);
                   toast.error("Failed to create order: No payment link or order code.");
                 }
-                refetch();
+               
               } catch (error) {
                 toast.error(
                   error instanceof Error
@@ -175,8 +178,8 @@ export default function OrderPage() {
               },
               {
                 type: "text",
-                name: "coupon",
-                label: "Coupon",
+                name: "couponCode",
+                label: "Coupon Code",
                 placeholder: "Enter coupon code (optional)",
               },
               {
