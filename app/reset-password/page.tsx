@@ -21,9 +21,8 @@ const ResetPasswordPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const token = searchParams.get("token"); // Lấy token từ URL
-  const email = searchParams.get("email"); // Lấy email từ URL nếu có
-
+  const token = searchParams.get("token"); 
+  const email = searchParams.get("email"); 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -92,7 +91,7 @@ const ResetPasswordPage = () => {
                     required
                   />
                 </div>
-                {/* <div className="grid gap-2">
+                <div className="grid gap-2">
                   <Label htmlFor="confirm-password">Confirm Password</Label>
                   <Input
                     id="confirm-password"
@@ -102,7 +101,7 @@ const ResetPasswordPage = () => {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
                   />
-                </div> */}
+                </div>
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Updating..." : "Update Password"}
                 </Button>

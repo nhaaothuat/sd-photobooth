@@ -23,42 +23,42 @@ const ViewDetailTypeSessionProduct = ({ id }: { id: number }) => {
                setLoading(false)
           }
      }
-  
+
      useEffect(() => {
           if (open) fetchDetail()
      }, [open])
 
-  return (
-     <Dialog open={open} onOpenChange={setOpen}>
-     <DialogTrigger asChild>
-          <Button variant="outline"><FaEye /></Button>
-     </DialogTrigger>
-     <DialogContent>
-          <DialogHeader>
-               <DialogTitle>Chi tiết </DialogTitle>
-          </DialogHeader>
+     return (
+          <Dialog open={open} onOpenChange={setOpen}>
+               <DialogTrigger asChild>
+                    <Button variant="outline"><FaEye /></Button>
+               </DialogTrigger>
+               <DialogContent>
+                    <DialogHeader>
+                         <DialogTitle>Chi tiết </DialogTitle>
+                    </DialogHeader>
 
-          {loading ? (
-               <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                    <Loader2 className="animate-spin h-4 w-4" /> <span>Đang tải...</span>
-               </div>
-          ) : type ? (
-               <div className="space-y-2 text-sm">
-                    <p><strong>ID:</strong> {type.id}</p>
-                    <p><strong>Method Name:</strong> {type.name}</p>
-                    <p><strong>productId:</strong> {type.productId}</p>
-                    <p><strong>typeSessionId:</strong> {type.typeSessionId}</p>
-                    <p><strong>levelMembershipId:</strong> {type.levelMembershipId}</p>
-                    <p><strong>couponId:</strong> {type.couponId}</p>
-                    
-                    <p><strong>Created At:</strong> {new Date(type.createdAt).toLocaleString()}</p>
-               </div>
-          ) : (
-               <div className="text-sm text-red-500">Không thể tải dữ liệu chi tiết</div>
-          )}
-     </DialogContent>
-</Dialog>
-  )
+                    {loading ? (
+                         <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                              <Loader2 className="animate-spin h-4 w-4" /> <span>Đang tải...</span>
+                         </div>
+                    ) : type ? (
+                         <div className="space-y-2 text-sm">
+                              <p><strong>ID:</strong> {type.id}</p>
+                              <p><strong>Method Name:</strong> {type.name}</p>
+                              <p><strong>productId:</strong> {type.productId}</p>
+                              <p><strong>typeSessionId:</strong> {type.typeSessionId}</p>
+                              <p><strong>levelMembershipId:</strong> {type.levelMembershipId}</p>
+                              <p><strong>couponId:</strong> {type.couponId}</p>
+
+                              <p><strong>Created At:</strong> {new Date(type.createdAt).toLocaleString()}</p>
+                         </div>
+                    ) : (
+                         <div className="text-sm text-red-500">Không thể tải dữ liệu chi tiết</div>
+                    )}
+               </DialogContent>
+          </Dialog>
+     )
 }
 
 export default ViewDetailTypeSessionProduct

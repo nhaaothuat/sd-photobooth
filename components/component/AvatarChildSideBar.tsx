@@ -19,29 +19,21 @@ import { SidebarMenuButton } from '../ui/sidebar';
 import AxiosAPI from '@/configs/axios';
 import { IconSettings } from '@tabler/icons-react';
 import ChangePassword from './ChangePassword';
+import { useUserStore } from '@/hooks/userStore';
 interface User {
      avatar: string | null;
 }
 
 const AvatarChildSideBar = () => {
-
+     const { user, fetchUser } = useUserStore();
      const { data: session } = useSession();
      const [opened, setOpened] = useState(false);
      const router = useRouter();
-     const [user, setUser] = useState<User | null>(null);
-
-     const fetchUsers = useCallback(async () => {
-          try {
-               const response = await AxiosAPI.get<User>("/api/Identity/profile");
-               setUser(response.data);
-          } catch (err) {
-               console.error("Lỗi API:", err);
-          }
-     }, []);
+    
 
      useEffect(() => {
-          fetchUsers();
-     }, [fetchUsers]);
+          fetchUser();
+        }, []);
 
      const handleLogout = async () => {
           Cookies.remove("AccessToken");

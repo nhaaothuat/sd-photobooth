@@ -44,136 +44,23 @@ import {
 } from "lucide-react";
 
 import fpt from "@/assets/tech-x.png";
+import { useTranslations } from "next-intl";
+import { getMenuItems } from "@/lib/menuItems";
 
 
-type MenuItem = {
-  label: string;
-  link?: string;
-  icon?: React.ElementType;
-  subMenu?: { label: string; link: string }[];
-};
-
-const menuItems: Record<string, MenuItem[]> = {
-  "/dashboard/admin": [
-    { label: "Dashboard", link: "/dashboard/admin", icon: Gauge },
-    { label: "Payment Method", link: "/dashboard/admin/payment", icon: CreditCard },
-    { label: "Level Membership", link: "/dashboard/admin/levelmembership", icon: Layers },
-    {
-      label: "Frame",
-      icon: ImageDown,
-      subMenu: [
-        { label: "List Frame", link: "/dashboard/admin/frame/list" },
-        { label: "Get by Frame Style", link: "/dashboard/admin/frame/byframe" },
-      ],
-    },
-    { label: "Frame Style", link: "/dashboard/admin/frame-style", icon: Brush },
-    {
-      label: "Sticker",
-      icon: StickyNote,
-      subMenu: [
-        { label: "List Sticker", link: "/dashboard/admin/sticker/list" },
-        { label: "Get by Sticker Style", link: "/dashboard/admin/sticker/bysticker" },
-      ],
-    },
-    { label: "Sticker Style", link: "/dashboard/admin/sticker-style", icon: Shapes },
-    { label: "Type Session", link: "/dashboard/admin/type", icon: ListOrdered },
-    {
-      label: "User",
-      icon: UserCog,
-      subMenu: [
-        { label: "Function", link: "/dashboard/admin/user/function" },
-        { label: "Account (Manager)", link: "/dashboard/admin/user/account-manager" },
-        { label: "Account (Staff)", link: "/dashboard/admin/user/account-staff" },
-      ],
-    },
-    { label: "Photo Style", link: "/dashboard/admin/style", icon: Camera },
-    {
-      label: "Settings",
-      icon: Settings,
-      subMenu: [
-        { label: "Profile", link: "/dashboard/admin/settings/profile" },
-      ],
-    },
-  ],
-  "/dashboard/manager": [
-    { label: "Dashboard", link: "/dashboard/manager", icon: Gauge },
-    { label: "Location", link: "/dashboard/manager/location", icon: MapPin },
-    { label: "Coupon", link: "/dashboard/manager/coupon", icon: Gift },
-    { label: "Order", icon: ShoppingCart, link: "/dashboard/manager/order" },
-    {
-      label: "Booth",
-      icon: Store,
-      subMenu: [
-        { label: "Get Booth by Location", link: "/dashboard/manager/booth/bylocation" },
-        { label: "List Booth", link: "/dashboard/manager/booth/list" },
-      ],
-    },
-    { label: "Session", link: "/dashboard/manager/session", icon: Calendar },
-    { label: "Payment", link: "/dashboard/manager/payment", icon: CreditCard },
-    { label: "Deposit Product", link: "/dashboard/manager/deposit-product", icon: Package },
-    {
-      label: "TypeSession Product",
-      icon: Boxes,
-      subMenu: [
-        { label: "TypeSession Product List", link: "/dashboard/manager/typesession-product/list" },
-        { label: "Get by Coupon", link: "/dashboard/manager/typesession-product/bycoupon" },
-        { label: "Get by Type Session", link: "/dashboard/manager/typesession-product/bytype" },
-      ],
-    },
-    { label: "Transaction", link: "/dashboard/manager/transaction", icon: Repeat },
-    {
-      label: "User",
-      icon: UserCog,
-      subMenu: [
-        { label: "View Detail Customer", link: "/dashboard/manager/user/detailc" },
-        { label: "Account (Customer)", link: "/dashboard/manager/user/account-customer" },
-        { label: "Account (Staff)", link: "/dashboard/manager/user/account-staff" },
-        { label: "Ban/Unban Customer", link: "/dashboard/manager/user/func" },
-      ],
-    },
-    {
-      label: "Settings",
-      icon: Settings,
-      subMenu: [
-        { label: "Profile", link: "/dashboard/manager/settings/profile" },
-      ],
-    },
-  ],
-  "/dashboard/staff": [
-    { label: "Staff Dashboard", link: "/dashboard/staff", icon: Gauge },
-    { label: "Session Code", link: "/dashboard/staff/session", icon: Calendar },
-    { label: "Membership Card", link: "/dashboard/staff/membership", icon: Badge },
-    { label: "Photo History", link: "/dashboard/staff/photo", icon: Clock },
-    {
-      label: "User",
-      icon: UserCog,
-      subMenu: [
-        { label: "View Detail Customer", link: "/dashboard/staff/user/detailc" },
-        { label: "Account (Customer)", link: "/dashboard/staff/user/account-customer" },
-      ],
-    },
-    { label: "Order", icon: ShoppingCart, link: "/dashboard/staff/order" },
-    {
-      label: "Settings",
-      icon: Settings,
-      subMenu: [
-        { label: "Profile", link: "/dashboard/staff/settings/profile" },
-      ],
-    },
-  ],
-};
 
 
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
+  const t = useTranslations("AppSidebar");
+ 
   const pathname = usePathname();
+  const menuItems = useMemo(() => getMenuItems(t), [t]);
   const currentPath = useMemo(
-    () => Object.keys(menuItems).find((key) => pathname.startsWith(key)),
-    [pathname]
+    () => Object.keys(menuItems).find((key) => pathname.startsWith(key)) || "/dashboard/staff",
+    [pathname, menuItems]
   );
-  const items = useMemo(
-    () => menuItems[currentPath || "/dashboard/staff"] || [],
-    [currentPath]
-  );
+  const items = menuItems[currentPath];
+  
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
 
   const toggleMenu = (label: string) => {

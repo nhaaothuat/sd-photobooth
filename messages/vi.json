@@ -1,56 +1,54 @@
 {
-  "HomePage": {
-    "title": "Hello world!",
-    "Dashboard": "Tieu de",
-    "Payment Method": "Phương thức thanh toán"
-  },
-  "ButtonTest":{
+  "ButtonTest": {
     "vi": "Việt Nam",
     "en": "English",
     "label": "Language"
   },
+
+  "AppSidebar": {
+    "dashboard": "Bảng điều khiển",
+    "paymentMethod": "Phương thức thanh toán",
+    "levelMembership": "Cấp độ thành viên",
+    "frame": "Khung ảnh",
+    "listFrame": "Danh sách khung",
+    "getByFrameStyle": "Lấy theo kiểu khung",
+    "frameStyle": "Kiểu khung",
+    "sticker": "Sticker",
+    "listSticker": "Danh sách sticker",
+    "getByStickerStyle": "Lấy theo kiểu sticker",
+    "stickerStyle": "Kiểu sticker",
+    "typeSession": "Loại phiên chụp",
+    "user": "Người dùng",
+    "function": "Chức năng",
+    "accountManager": "Tài khoản (Quản lý)",
+    "accountStaff": "Tài khoản (Nhân viên)",
+    "accountCustomer": "Tài khoản (Khách hàng)",
+    "viewDetailCustomer": "Xem chi tiết khách hàng",
+    "banUnbanCustomer": "Cấm / Bỏ cấm khách hàng",
+    "photoStyle": "Kiểu ảnh",
+    "settings": "Cài đặt",
+    "profile": "Hồ sơ",
   
-  "Sidebar":{
-    "Dashboard": "Bảng điều khiển",
-    "Payment Method": "Phương thức thanh toán",
-    "Level Membership": "Hạng thành viên",
-    "Frame": "Khung hình",
-    "List Frame": "Danh sách khung hình",
-    "Get by Frame Style": "Lấy theo kiểu khung",
-    "Frame Style": "Kiểu khung",
-    "Sticker": "Sticker",
-    "List Sticker": "Danh sách sticker",
-    "Get by Sticker Style": "Lấy theo kiểu sticker",
-    "Sticker Style": "Kiểu sticker",
-    "Type Session": "Loại phiên",
-    "User": "Người dùng",
-    "Function": "Chức năng",
-    "Account (Manager)": "Tài khoản (Quản lý)",
-    "Account (Staff)": "Tài khoản (Nhân viên)",
-    "Photo Style": "Kiểu ảnh",
-    "Settings": "Cài đặt",
-    "Profile": "Hồ sơ",
+   
+    "location": "Địa điểm",
+    "coupon": "Mã giảm giá",
+    "order": "Đơn hàng",
+    "booth": "Gian hàng",
+    "getBoothByLocation": "Lấy gian hàng theo địa điểm",
+    "listBooth": "Danh sách gian hàng",
+    "session": "Phiên chụp",
+    "payment": "Thanh toán",
+    "depositProduct": "Sản phẩm đặt cọc",
+    "typeSessionProduct": "Sản phẩm loại phiên",
+    "typeSessionProductList": "Danh sách phiên ",
+    "getByCoupon": "Lấy theo mã giảm giá",
+    "getByTypeSession": "Lấy theo loại phiên",
+    "transaction": "Giao dịch",
   
-    "Location": "Địa điểm",
-    "Coupon": "Mã giảm giá",
-    "Order": "Đơn hàng",
-    "Booth": "Gian hàng",
-    "Get Booth by Location": "Lấy gian hàng theo địa điểm",
-    "List Booth": "Danh sách gian hàng",
-    "Session": "Phiên chụp",
-    "Deposit Product": "Sản phẩm đặt cọc",
-    "TypeSession Product": "Sản phẩm loại phiên",
-    "TypeSession Product List": "Danh sách sản phẩm loại phiên",
-    "Get by Coupon": "Lấy theo mã giảm giá",
-    "Get by Type Session": "Lấy theo loại phiên",
-    "Transaction": "Giao dịch",
-    "View Detail Customer": "Xem chi tiết khách hàng",
-    "Account (Customer)": "Tài khoản (Khách hàng)",
-  
-    "Staff Dashboard": "Bảng điều khiển nhân viên",
-    "Session Code": "Mã phiên chụp",
-    "Membership Card": "Thẻ thành viên",
-    "Photo History": "Lịch sử ảnh"
+    
+    "staffDashboard": "Bảng điều khiển nhân viên",
+    "sessionCode": "Mã phiên chụp",
+    "membershipCard": "Thẻ thành viên",
+    "photoHistory": "Lịch sử ảnh"
   }
-  
 }

@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import AxiosAPI from "@/configs/axios"
 import { Loader2 } from "lucide-react"
 import { FaEye } from "react-icons/fa"
+import { Card, Divider, Group, Skeleton, Text } from "@mantine/core"
+
 
 
 const ViewDetailLocation = ({ id }: { id: number }) => {
@@ -41,16 +43,43 @@ const ViewDetailLocation = ({ id }: { id: number }) => {
         </DialogHeader>
 
         {loading ? (
-          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <Loader2 className="animate-spin h-4 w-4" /> <span>Đang tải...</span>
-          </div>
+          <Skeleton height={8} mt={6} width="70%" radius="xl" />
         ) : location ? (
-          <div className="space-y-2 text-sm">
-            <p><strong>ID:</strong> {location.id}</p>
-            <p><strong>Location Name:</strong> {location.locationName}</p>
-            <p><strong>Address:</strong> {location.address}</p>
-            <p><strong>Created At:</strong> {new Date(location.createdAt).toLocaleString()}</p>
-          </div>
+          <Card
+            shadow="sm"
+            padding="lg"
+            radius="md"
+            withBorder
+            className="bg-white dark:bg-[#1f1f1f] border border-gray-200 dark:border-[#333] transition-all"
+          >
+            <Text size="lg" fw={600} className="mb-2 text-gray-900 dark:text-white">
+              Thông tin địa điểm
+            </Text>
+
+            <Divider className="mb-4 dark:border-[#444]" />
+
+            <Group justify="space-between" className="mb-2">
+              <Text size="sm" className="text-gray-500 dark:text-gray-400">ID:</Text>
+              <Text size="sm" fw={500} className="text-gray-900 dark:text-gray-100">{location.id}</Text>
+            </Group>
+
+            <Group justify="space-between" className="mb-2">
+              <Text size="sm" className="text-gray-500 dark:text-gray-400">Location Name:</Text>
+              <Text size="sm" fw={500} className="text-gray-900 dark:text-gray-100">{location.locationName}</Text>
+            </Group>
+
+            <Group justify="space-between" className="mb-2">
+              <Text size="sm" className="text-gray-500 dark:text-gray-400">Address:</Text>
+              <Text size="sm" fw={500} className="text-gray-900 dark:text-gray-100">{location.address}</Text>
+            </Group>
+
+            <Group justify="space-between">
+              <Text size="sm" className="text-gray-500 dark:text-gray-400">Created At:</Text>
+              <Text size="sm" fw={500} className="text-gray-900 dark:text-gray-100">
+                {new Date(location.createdAt).toLocaleString()}
+              </Text>
+            </Group>
+          </Card>
         ) : (
           <div className="text-sm text-red-500">Không thể tải dữ liệu chi tiết</div>
         )}
