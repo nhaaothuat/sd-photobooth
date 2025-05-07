@@ -13,6 +13,7 @@ import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
 import { couponSchema } from "@/types/schema/coupon";
 import { deleteCoupon, getCouponList } from "@/services/coupon";
 import { PlusCircleIcon } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const CreateDialogForm = dynamic(
   () =>
@@ -41,7 +42,7 @@ type CouponFormType = z.infer<typeof couponSchema>;
 export default function CouponPage() {
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
-
+  const { toast } = useToast();
   const [pageSize, setPageSize] = useState(5);
   const [pageIndex, setPageIndex] = useState(0);
 
@@ -58,11 +59,21 @@ export default function CouponPage() {
   const handleDelete = async (id: number) => {
     try {
       await deleteCoupon(id);
-      toast.success("Xóa thành côngO");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        // title: t("successTitle"),
+        // description: t("successDesc"),
+      })
       if (data?.length === 1 && pageIndex > 0) setPageIndex((prev) => prev - 1);
       else refetch();
     } catch (error) {
-      toast.error("Failed to delete coupon");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 ",
+        variant: "destructive",
+        // title: t("errorTitle"),
+        // description: t("errorDesc"),
+
+      })
     }
   };
 
@@ -90,6 +101,8 @@ export default function CouponPage() {
               name: "discountPercent",
               label: "Discount Percent(%)",
               type: "number",
+              step: 0.001,
+            
             },
             { name: "maxUse", label: "Max Use", type: "number" },
             { name: "maxDiscount", label: "Max Discount", type: "number" },

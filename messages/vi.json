@@ -50,5 +50,45 @@
     "sessionCode": "Mã phiên chụp",
     "membershipCard": "Thẻ thành viên",
     "photoHistory": "Lịch sử ảnh"
+  },
+  "toast": {
+    "successTitle": "Thành công",
+    "successDesc": "Hành động của bạn đã được hoàn tất thành công.",
+    "errorTitle": "Có gì đó không ổn",
+    "errorDesc": "Chúng tôi không thể hoàn thành yêu cầu của bạn. Vui lòng thử lại."
+  },
+  "manager":{
+    "areYouSureTitle": "Bạn có chắc chắn?",
+    "areYouSureDesc": "Hành động này không thể hoàn tác. Vui lòng xác nhận để tiếp tục.",
+    "cancel": "Hủy bỏ",
+    "delete": "Xóa",
+    "id": "Mã ID",
+    "locationName": "Tên Vị trí",
+    "address": "Địa chỉ",
+    "createdAt": "Ngày tạo",
+    "actions": "Hành động",
+    "none":"Không thể tải dữ liệu chi tiết",
+    "info":"Thông tin địa điểm",
+    "de":"Chi tiết",
+    "ma":"Quản lý địa điểm",
+    "add":"Thêm địa điểm",
+    "editTitle": "Chỉnh sửa Địa điểm",
+    "nameLabel": "Tên địa điểm",
+    "addressLabel": "Địa chỉ",
+    
+    "update": "Cập nhật",
+    
+    "name": "Tên",
+    "code": "Mã",
+    "discount": "Giảm giá",
+    "startDate": "Ngày bắt đầu",
+    "endDate": "Ngày kết thúc",
+    "isActive": "Hoạt động"
+    
+   
+    
+  },
+  "common":{
+    "search":"Tìm kiếm"
   }
 }

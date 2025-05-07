@@ -17,8 +17,10 @@ import { DefaultValues, FieldValues, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { memo, ReactNode, useState } from "react";
 import { ZodType } from "zod";
-import { toast } from "react-toastify";
-import { PlusCircleIcon } from "lucide-react";
+
+import { useToast } from "@/hooks/use-toast";
+import { FaAccusoft } from "react-icons/fa";
+import { useTranslations } from "next-intl";
 
 type Field =
   | {
@@ -45,6 +47,9 @@ type Field =
     type: "number";
     name: string;
     label: string;
+    step?: number;
+
+    
     description?: string;
   }
   | {
@@ -79,7 +84,8 @@ const CreateDialogForm = <T extends FieldValues>({
 }: CreateDialogFormProps<T>) => {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const { toast } = useToast()
+  const t = useTranslations("toast");
   const {
     register,
     handleSubmit,
@@ -96,13 +102,23 @@ const CreateDialogForm = <T extends FieldValues>({
     try {
       setLoading(true);
       await onSubmit(values);
-      toast.success("Thêm thành công!");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title:t("successTitle"),
+        description: t("successDesc"),
+      })
       reset();
       setIsOpen(false);
       onSuccess?.();
     } catch (error: any) {
       console.error(error);
-      toast.error(error?.response?.data?.message || "Error occurred");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 ",
+        variant: "destructive",
+        title: t("errorTitle"),
+        description: t("errorDesc"),
+       
+      })
     } finally {
       setLoading(false);
     }
@@ -144,8 +160,9 @@ const CreateDialogForm = <T extends FieldValues>({
                     {field.label}
                   </Label>
                   <Input
+                  {...(field.type === "number" && { step: field.step })}
                     id={field.name}
-                    type={field.type === "number" ? "number" : field.type === "date" ? "date" : "text"}
+                    type={field.type === "number" ? "number" : field.type === "date" ? "date" : "text"} 
                     {...register(field.name as any, field.type === "number" ? { valueAsNumber: true } : {})}
                     className="w-full rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-[#1c1c1e] text-gray-900 dark:text-gray-100 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                   />

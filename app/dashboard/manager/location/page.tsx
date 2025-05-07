@@ -1,6 +1,6 @@
 "use client";
 
-import { toast } from "react-toastify";
+import { toast } from "sonner"
 import { useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { z } from "zod";
@@ -12,6 +12,8 @@ import dynamic from "next/dynamic";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
 import { deleteLocation, getLocationList } from "@/services/location";
 import { PlusCircleIcon } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useTranslations } from "next-intl";
 
 const CreateDialogForm = dynamic(
   () =>
@@ -36,14 +38,22 @@ const CrudPageWrapper = dynamic(
 );
 
 const locationSchema = z.object({
-  locationName: z.string().min(1, "Required"),
-  address: z.string().min(1, "Required"),
+  locationName: z
+    .string()
+    .min(1, "Location Name is required / Tên địa điểm là bắt buộc")
+    .max(100, "Location Name cannot exceed 100 characters / Tên địa điểm không được vượt quá 100 ký tự"),
+  address: z
+    .string()
+    .min(1, "Address is required / Địa chỉ là bắt buộc")
+    .max(200, "Address cannot exceed 200 characters / Địa chỉ không được vượt quá 200 ký tự"),
 });
 
 export default function LocationPage() {
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
-
+  const { toast } = useToast();
+  const t = useTranslations("toast");
+  const a = useTranslations("manager");
   const [pageSize, setPageSize] = useState(5);
   const [pageIndex, setPageIndex] = useState(0);
 
@@ -60,23 +70,33 @@ export default function LocationPage() {
   const handleDelete = async (id: number) => {
     try {
       await deleteLocation(id);
-      toast.success("Xóa thành công");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: t("successTitle"),
+        description: t("successDesc"),
+      })
       if (data?.length === 1 && pageIndex > 0) setPageIndex((prev) => prev - 1);
       else refetch();
     } catch {
-      toast.error("Failed to delete location");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 ",
+        variant: "destructive",
+        title: t("errorTitle"),
+        description: t("errorDesc"),
+
+      })
     }
   };
 
   return (
     <CrudPageWrapper
-      title="Location Management"
+      title={a("ma")}
       search={search}
       onSearchChange={setSearch}
       createButton={
         <CreateDialogForm
-          title="Add Location "
-          description="Create a new location"
+          title={a("add")}
+          
           triggerText=""
           triggerIcon={<PlusCircleIcon className="w-10 h-10" />}
           schema={locationSchema}
@@ -85,8 +105,8 @@ export default function LocationPage() {
             refetch();
           }}
           fields={[
-            { type: "text", name: "locationName", label: "Location Name" },
-            { type: "text", name: "address", label: "Address" },
+            { type: "text", name: "locationName", label: a("locationName") },
+            { type: "text", name: "address", label: a("address") },
           ]}
         />
       }

@@ -140,7 +140,13 @@ export default function OrderPage() {
                   setIsCashDialogOpen(true);
                 
                   refetch();
-                } else {
+                }else if (response.status === 400 ) {
+                  // Nếu lỗi do couponCode không hợp lệ, dùng setError để hiển thị lỗi
+                  // setError("couponCode", {
+                  //   type: "manual",
+                  //   message: "Không tìm thấy couponCode.",
+                  // });
+                }  else {
                   console.error("Unexpected response:", data);
                   toast.error("Failed to create order: No payment link or order code.");
                 }
@@ -181,6 +187,7 @@ export default function OrderPage() {
                 name: "couponCode",
                 label: "Coupon Code",
                 placeholder: "Enter coupon code (optional)",
+                
               },
               {
                 type: "select",

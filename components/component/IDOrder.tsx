@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import AxiosAPI from "@/configs/axios"
 import { Loader2 } from "lucide-react"
 import { FaEye } from "react-icons/fa"
+import { Container, Skeleton, Stack, Text } from "@mantine/core"
 
 
 const ViewDetailOrder = ({ id }: { id: number }) => {
@@ -41,20 +42,33 @@ const ViewDetailOrder = ({ id }: { id: number }) => {
         </DialogHeader>
 
         {loading ? (
-          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <Loader2 className="animate-spin h-4 w-4" /> <span>Đang tải...</span>
-          </div>
+           <Skeleton height={8} mt={6} width="70%" radius="xl" />
         ) : order ? (
-          <div className="space-y-2 text-sm">
-            <p><strong>ID:</strong> {order.id}</p>
-            <p><strong>code:</strong> {order.code}</p>
-          
-            <p><strong>couponCode:</strong> {order.couponCode}</p>
-            <p><strong>Booth Name:</strong> {order.boothName}</p>
-            <p><strong>phone:</strong> {order.phone}</p>
-            <p><strong>sessionCode:</strong> {order.sessionCode}</p>
-            <p><strong>Created At:</strong> {new Date(order.createdAt).toLocaleString()}</p>
-          </div>
+          <Container size="xs" mt={20}>
+          <Stack gap="xs">
+            <Text size="sm" fw={500}>
+              <strong>ID:</strong> {order.id}
+            </Text>
+            <Text size="sm" fw={500}>
+              <strong>Code:</strong> {order.code}
+            </Text>
+            <Text size="sm" fw={500}>
+              <strong>Coupon Code:</strong> {order.couponCode}
+            </Text>
+            <Text size="sm" fw={500}>
+              <strong>Booth Name:</strong> {order.boothName}
+            </Text>
+            <Text size="sm" fw={500}>
+              <strong>Phone:</strong> {order.phone}
+            </Text>
+            <Text size="sm" fw={500}>
+              <strong>Session Code:</strong> {order.sessionCode}
+            </Text>
+            <Text size="sm" fw={500}>
+              <strong>Created At:</strong> {new Date(order.createdAt).toLocaleString()}
+            </Text>
+          </Stack>
+        </Container>
         ) : (
           <div className="text-sm text-red-500">Không thể tải dữ liệu chi tiết</div>
         )}

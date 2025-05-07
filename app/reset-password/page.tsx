@@ -22,32 +22,15 @@ const ResetPasswordPage = () => {
   const router = useRouter();
 
   const rawToken = searchParams.get("token") || "";
+  const finalToken = decodeURIComponent(rawToken);
   const email = decodeURIComponent(searchParams.get("email") || "");
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const restoreSpecialChars = (encodedToken: string) => {
-    const decodedToken = decodeURIComponent(encodedToken);
-    const specialChars: Record<string, string> = {
-      "%20": " ", "%2B": "+", "%3D": "=", "%2F": "/", 
-      "%40": "@", "%3F": "?", "%26": "&",
-    };
-    let restoredToken = decodedToken;
-    for (const [encoded, original] of Object.entries(specialChars)) {
-      restoredToken = restoredToken.replace(new RegExp(encoded, "g"), original);
-    }
-    return restoredToken;
-  };
-
-  // Token cuối cùng
-  const finalToken = restoreSpecialChars(rawToken);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    
 
     if (password !== confirmPassword) {
       toast.error("Passwords do not match!");
@@ -59,10 +42,10 @@ const ResetPasswordPage = () => {
 
       const res = await AxiosAPI.post("/api/Identity/reset-password", {
         email,
-        token:finalToken,
+        token: finalToken,
         newPassword: password,
       });
-      // console.log(res);
+
       if (res.status === 200) {
         toast.success("Password updated successfully!");
         router.replace("/");

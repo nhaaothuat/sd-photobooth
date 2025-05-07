@@ -6,6 +6,7 @@ import AxiosAPI from "@/configs/axios"
 import { Loader2 } from "lucide-react"
 import { FaEye } from "react-icons/fa"
 import { Card, Divider, Group, Skeleton, Text } from "@mantine/core"
+import { useTranslations } from "next-intl"
 
 
 
@@ -13,7 +14,7 @@ const ViewDetailLocation = ({ id }: { id: number }) => {
   const [location, setLocation] = useState<Location | null>(null)
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-
+const t = useTranslations("manager")
   const fetchDetail = async () => {
     try {
       setLoading(true)
@@ -34,12 +35,12 @@ const ViewDetailLocation = ({ id }: { id: number }) => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <DialogTrigger className="border-green-500" asChild>
         <Button variant="outline"><FaEye /></Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Chi tiết </DialogTitle>
+          <DialogTitle>{t("de")} </DialogTitle>
         </DialogHeader>
 
         {loading ? (
@@ -53,35 +54,35 @@ const ViewDetailLocation = ({ id }: { id: number }) => {
             className="bg-white dark:bg-[#1f1f1f] border border-gray-200 dark:border-[#333] transition-all"
           >
             <Text size="lg" fw={600} className="mb-2 text-gray-900 dark:text-white">
-              Thông tin địa điểm
+              {t("info")}
             </Text>
 
             <Divider className="mb-4 dark:border-[#444]" />
 
             <Group justify="space-between" className="mb-2">
-              <Text size="sm" className="text-gray-500 dark:text-gray-400">ID:</Text>
+              <Text size="sm" className="text-gray-500 dark:text-gray-400">{t("id")}:</Text>
               <Text size="sm" fw={500} className="text-gray-900 dark:text-gray-100">{location.id}</Text>
             </Group>
 
             <Group justify="space-between" className="mb-2">
-              <Text size="sm" className="text-gray-500 dark:text-gray-400">Location Name:</Text>
+              <Text size="sm" className="text-gray-500 dark:text-gray-400">{t("locationName")}:</Text>
               <Text size="sm" fw={500} className="text-gray-900 dark:text-gray-100">{location.locationName}</Text>
             </Group>
 
             <Group justify="space-between" className="mb-2">
-              <Text size="sm" className="text-gray-500 dark:text-gray-400">Address:</Text>
+              <Text size="sm" className="text-gray-500 dark:text-gray-400">{t("address")}:</Text>
               <Text size="sm" fw={500} className="text-gray-900 dark:text-gray-100">{location.address}</Text>
             </Group>
 
             <Group justify="space-between">
-              <Text size="sm" className="text-gray-500 dark:text-gray-400">Created At:</Text>
+              <Text size="sm" className="text-gray-500 dark:text-gray-400">{t("createdAt")}:</Text>
               <Text size="sm" fw={500} className="text-gray-900 dark:text-gray-100">
                 {new Date(location.createdAt).toLocaleString()}
               </Text>
             </Group>
           </Card>
         ) : (
-          <div className="text-sm text-red-500">Không thể tải dữ liệu chi tiết</div>
+          <div className="text-sm text-red-500">{t("none")}</div>
         )}
       </DialogContent>
     </Dialog>

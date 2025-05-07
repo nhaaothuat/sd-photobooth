@@ -12,7 +12,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { SessionProvider } from "next-auth/react";
 import AuthWrapper from "@/hocs/auth-wrapper";
-import { ToastContainer } from "react-toastify";
+import { Toaster } from "@/components/ui/toaster"
 import Providers from "@/providers/providers";
 
 const geistSans = Outfit({
@@ -63,7 +63,7 @@ export default async function RootLayout({
               <SessionProvider >
                 <AuthWrapper>
                   {children}
-                  <ToastContainer />
+                  <Toaster />
                 </AuthWrapper>
               </SessionProvider>
             </MantineProvider>

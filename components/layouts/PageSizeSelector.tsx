@@ -9,7 +9,7 @@ export const PageSizeSelector = ({
 }: PageSizeSelectorProps) => {
   return (
     <div className="flex items-center justify-end gap-2">
-      <label>Rows per page:</label>
+     
       <select
         className="border px-2 py-1 rounded"
         value={value}

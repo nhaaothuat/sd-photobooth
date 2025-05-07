@@ -2,6 +2,7 @@ import React, { JSX, ReactNode } from "react";
 import { SharedTable } from "@/components/layouts/SharedTable";
 import { SearchInput } from "./SearchInput";
 import { PageSizeSelector } from "./PageSizeSelector";
+import { useTranslations } from "next-intl";
 
 
 export interface CrudPageWrapperProps<T> {
@@ -37,6 +38,7 @@ function CrudPageWrapper<T>({
   onPageChange,
   onPageSizeChange,
 }: CrudPageWrapperProps<T>) {
+  const t = useTranslations("common");
   return (
     <div className="space-y-4">
       {title && <h2 className="text-2xl font-semibold">{title}</h2>}
@@ -45,7 +47,7 @@ function CrudPageWrapper<T>({
           <SearchInput
             value={search ?? ""}
             onChange={onSearchChange ?? (() => {})}
-            placeholder="Search..."
+            placeholder={t("search")}
           />
         )}
 

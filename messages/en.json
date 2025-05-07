@@ -47,5 +47,43 @@
     "sessionCode": "Session Code",
     "membershipCard": "Membership Card",
     "photoHistory": "Photo History"
+  },
+  "toast":{
+    "successTitle": "Success",
+    "successDesc": "Your action was completed successfully.",
+    "errorTitle": "Something went wrong",
+    "errorDesc": "We couldn't complete your request. Please try again."
+  },
+  "manager":{
+    "areYouSureTitle": "Are you sure?",
+    "areYouSureDesc": "This action cannot be undone. Please confirm to proceed.",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "id": "ID",
+    "locationName": "Location Name",
+    "address": "Address",
+    "createdAt": "Created At",
+    "actions": "Actions",
+    "none":"Unable to load detailed data",
+    "info":"Location Information",
+    "de":"Detail",
+    "ma":"Location Management",
+    "add":"Add Location",
+    "editTitle": "Edit Location",
+    "nameLabel": "Location Name",
+    "addressLabel": "Address",
+    
+    "update": "Update",
+    
+    "name": "Name",
+    "code": "Code",
+    "discount": "Discount",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "isActive": "Is Active"
+    
+  },
+  "common":{
+    "search":"Search"
   }
 }
