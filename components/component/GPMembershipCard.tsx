@@ -12,14 +12,20 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import AxiosAPI from "@/configs/axios";
-import { toast } from "react-toastify";
-import { BookUser } from "lucide-react";
+
+
 import { LevelMembership, MembershipCard } from "@/types/type";
+import { CiCreditCard2 } from "react-icons/ci";
+import { useTranslations } from "next-intl";
+import { useToast } from "@/hooks/use-toast";
 
 const EditMembershipCard = ({ id, onUpdated }: { id: number; onUpdated?: () => void }) => {
   const [opened, { open, close }] = useDisclosure(false);
   const [loading, setLoading] = useState(false);
   const [levels, setLevels] = useState<LevelMembership[]>([]);
+  const t = useTranslations("staff");
+  const a = useTranslations("toast");
+  const { toast } = useToast();
   const [form, setForm] = useState({
     levelMemberShipId: 0,
     description: "",
@@ -27,14 +33,20 @@ const EditMembershipCard = ({ id, onUpdated }: { id: number; onUpdated?: () => v
     isActive: false,
   });
 
-  // Tải danh sách cấp độ khi component mount
+
   useEffect(() => {
     const fetchLevels = async () => {
       try {
         const res = await AxiosAPI.get<LevelMembership[]>("/api/LevelMemberShip");
         setLevels(res.data as any);
       } catch (err) {
-        toast.error("Không thể tải danh sách cấp độ");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 ",
+          variant: "destructive",
+          title: a("errorTitle"),
+          description: a("errorDesc"),
+  
+        })
         console.error(err);
       }
     };
@@ -42,7 +54,7 @@ const EditMembershipCard = ({ id, onUpdated }: { id: number; onUpdated?: () => v
     fetchLevels();
   }, []);
 
-  // Tải dữ liệu thẻ thành viên khi modal mở
+
   useEffect(() => {
     if (!opened) return;
 
@@ -51,7 +63,7 @@ const EditMembershipCard = ({ id, onUpdated }: { id: number; onUpdated?: () => v
         setLoading(true);
         const res = await AxiosAPI.get<MembershipCard>(`/api/MembershipCard/${id}`);
         const data = res.data;
-        
+
         setForm({
           levelMemberShipId: data?.levelMemberShip?.id ?? 0,
           description: data?.description ?? "",
@@ -59,7 +71,13 @@ const EditMembershipCard = ({ id, onUpdated }: { id: number; onUpdated?: () => v
           isActive: data?.isActive ?? true,
         });
       } catch (err) {
-        toast.error("Lỗi khi lấy thông tin thẻ thành viên");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 ",
+          variant: "destructive",
+          title: a("errorTitle"),
+          description: a("errorDesc"),
+  
+        })
         console.error(err);
       } finally {
         setLoading(false);
@@ -73,12 +91,22 @@ const EditMembershipCard = ({ id, onUpdated }: { id: number; onUpdated?: () => v
     try {
       setLoading(true);
       await AxiosAPI.put(`/api/MembershipCard/${id}`, form);
-      toast.success("Cập nhật thành công!");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: a("successTitle"),
+        description: a("successDesc"),
+      })
       close();
       onUpdated?.();
     } catch (error) {
-      toast.error("Cập nhật thất bại");
-      console.error(error);
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 ",
+        variant: "destructive",
+        title: a("errorTitle"),
+        description: a("errorDesc"),
+
+      })
+      
     } finally {
       setLoading(false);
     }
@@ -87,24 +115,24 @@ const EditMembershipCard = ({ id, onUpdated }: { id: number; onUpdated?: () => v
   const handleFormChange = (field: keyof typeof form, value: any) => {
     setForm(prev => ({
       ...prev,
-      [field]: typeof value === 'string' && field === 'levelMemberShipId' 
-        ? parseInt(value || "0") 
+      [field]: typeof value === 'string' && field === 'levelMemberShipId'
+        ? parseInt(value || "0")
         : value
     }));
   };
 
   return (
     <>
-      <Button variant="subtle" onClick={open}>
-        <BookUser size={18} />
+      <Button variant="default" onClick={open}>
+        <CiCreditCard2 />
       </Button>
 
-      <Modal opened={opened} onClose={close} title="Sửa thẻ thành viên" centered>
+      <Modal opened={opened} onClose={close} title={t("editTitle")} centered>
         <LoadingOverlay visible={loading} overlayProps={{ blur: 2 }} />
         <Stack gap="sm">
           <Select
-            label="Cấp độ thành viên"
-            placeholder="Chọn cấp độ"
+            label={t("level")}
+            placeholder={t("selectLevel")}
             data={levels.map((level) => ({
               value: level.id.toString(),
               label: level.name,
@@ -113,27 +141,27 @@ const EditMembershipCard = ({ id, onUpdated }: { id: number; onUpdated?: () => v
             onChange={(value) => handleFormChange('levelMemberShipId', value)}
           />
           <TextInput
-            label="Mô tả"
-            placeholder="Nhập mô tả"
+            label={t("description")}
+            placeholder={t("enterDescription")}
             value={form.description}
             onChange={(e) => handleFormChange('description', e.currentTarget.value)}
           />
           <NumberInput
-            label="Điểm"
+            label={t("points")}
             value={form.points}
             onChange={(val) => handleFormChange('points', val)}
           />
           <Checkbox
-            label="Kích hoạt"
+            label={t("isActive")}
             checked={form.isActive}
             onChange={(e) => handleFormChange('isActive', e.currentTarget.checked)}
           />
           <Group mt="md" justify="flex-end">
             <Button variant="outline" onClick={close}>
-              Hủy
+              {t("cancel")}
             </Button>
             <Button onClick={handleUpdate} loading={loading}>
-              Cập nhật
+              {t("update")}
             </Button>
           </Group>
         </Stack>

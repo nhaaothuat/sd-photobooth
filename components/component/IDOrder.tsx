@@ -3,7 +3,7 @@ import { Order } from "@/types/type"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import AxiosAPI from "@/configs/axios"
-import { Loader2 } from "lucide-react"
+
 import { FaEye } from "react-icons/fa"
 import { Container, Skeleton, Stack, Text } from "@mantine/core"
 
@@ -33,7 +33,7 @@ const ViewDetailOrder = ({ id }: { id: number }) => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <DialogTrigger className="border-green-500" asChild>
         <Button variant="outline"><FaEye /></Button>
       </DialogTrigger>
       <DialogContent>

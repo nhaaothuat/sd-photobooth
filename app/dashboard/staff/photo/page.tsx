@@ -2,16 +2,17 @@
 
 import React, { useCallback, useState } from "react";
 import AxiosAPI from "@/configs/axios";
-import { Indicator, SimpleGrid } from "@mantine/core";
+import { SimpleGrid, Skeleton } from "@mantine/core";
 import Image from "next/image";
 import { PhotoHistory } from "@/types/type";
+import { useTranslations } from "next-intl";
 
 const ByPhotoHistory = () => {
   const [inputId, setInputId] = useState<string>("");
   const [photos, setPhotos] = useState<PhotoHistory[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-
+  const t = useTranslations("staff");
   const fetchPhotoHistory = useCallback(async () => {
     if (!inputId.trim()) {
       setError("Please enter a valid ID");
@@ -32,15 +33,15 @@ const ByPhotoHistory = () => {
 
       const processedData = Array.isArray(data)
         ? data.map((item, index) => ({
-            ...item,
-            id: item.id || `photo-${index}`,
-            url: item.url?.replace(/\s+/g, ""),
-          }))
+          ...item,
+          id: item.id || `photo-${index}`,
+          url: item.url?.replace(/\s+/g, ""),
+        }))
         : [];
 
       setPhotos(processedData);
     } catch (err) {
-      console.error("Failed to fetch photo history", err);
+      
       setError("No photo history found for this ID");
       setPhotos([]);
     } finally {
@@ -55,39 +56,54 @@ const ByPhotoHistory = () => {
   };
 
   return (
-    <div className="p-4 max-w-4xl mx-auto">
-      <div className="flex gap-2 mb-4">
+    <div className="px-4 py-6 max-w-6xl mx-auto">
+
+      <div className="flex flex-col sm:flex-row gap-4 items-center mb-6">
         <input
           type="text"
-          className="flex-1 border border-gray-300 rounded p-2"
-          placeholder="Enter ID"
+          className="w-full sm:w-auto flex-1 border border-gray-300 rounded-md px-4 py-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder={t("enterUserId")}
           value={inputId}
           onChange={(e) => setInputId(e.target.value)}
           onKeyDown={handleKeyDown}
         />
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          className="bg-blue-600 text-white text-sm font-semibold px-6 py-3 rounded-md hover:bg-blue-700 transition disabled:opacity-50 shadow"
           onClick={fetchPhotoHistory}
           disabled={isLoading}
         >
-          {isLoading ? "Loading..." : "Search"}
+          {isLoading ? t("loading") : t("search")}
         </button>
       </div>
 
-      {error && <p className="text-red-500 mb-4">{error}</p>}
 
-      {isLoading ? (
-        <p className="text-gray-500">Loading...</p>
-      ) : photos.length > 0 ? (
-        <SimpleGrid cols={{ base: 2, sm: 4, md: 6 }} spacing="lg">
+
+      {error && (
+        <div className="mb-4 text-red-600 text-sm bg-red-100 p-3 rounded-md border border-red-300">
+          {error}
+        </div>
+      )}
+
+
+      {isLoading && (
+        <Skeleton height={8} mt={6} width="70%" radius="xl" />
+      )}
+
+
+      {!isLoading && photos.length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
           {photos.map((photo) => (
-            <div key={photo.id} className="flex flex-col items-center">
-              <div className="relative w-[100px] h-[100px]">
+            <div
+              key={photo.id}
+              className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center p-3"
+            >
+              <div className="relative w-full aspect-square">
                 <Image
                   src={photo.url}
-                  alt={`${photo.photoStyleName} style photo`}
+                  alt={photo.photoStyleName}
                   fill
-                  className="object-cover rounded-lg"
+                  unoptimized
+                  className="object-cover rounded-md"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.onerror = null;
@@ -95,14 +111,23 @@ const ByPhotoHistory = () => {
                   }}
                 />
               </div>
-              <p className="mt-2 text-sm text-center">{photo.photoStyleName}</p>
+              <p className="mt-2 text-sm text-gray-800 font-medium text-center truncate w-full">
+                {photo.photoStyleName}
+              </p>
             </div>
           ))}
-        </SimpleGrid>
-      ) : inputId && !error ? (
-        <p className="text-gray-500">No Photo History found!</p>
-      ) : null}
+        </div>
+
+      )}
+
+     
+      {!isLoading && inputId && !error && photos.length === 0 && (
+        <div className="text-center text-gray-500 mt-4 text-sm">
+          Không tìm thấy lịch sử ảnh nào.
+        </div>
+      )}
     </div>
+
   );
 };
 

@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { DefaultValues, FieldValues, useForm } from "react-hook-form";
+import { DefaultValues, FieldValues, Path, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { memo, ReactNode, useState } from "react";
 import { ZodType } from "zod";
@@ -79,6 +79,7 @@ const CreateDialogForm = <T extends FieldValues>({
   schema,
   defaultValues,
   fields,
+  
   onSubmit,
   onSuccess,
 }: CreateDialogFormProps<T>) => {
@@ -91,6 +92,7 @@ const CreateDialogForm = <T extends FieldValues>({
     handleSubmit,
     setValue,
     watch,
+    setError,
     reset,
     formState: { errors },
   } = useForm<T>({
@@ -102,23 +104,53 @@ const CreateDialogForm = <T extends FieldValues>({
     try {
       setLoading(true);
       await onSubmit(values);
-      toast({
-        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
-        title:t("successTitle"),
-        description: t("successDesc"),
-      })
+
+      
+      // toast({
+      //   className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+      //   title:t("successTitle"),
+      //   description: t("successDesc"),
+      // })
       reset();
       setIsOpen(false);
       onSuccess?.();
     } catch (error: any) {
-      console.error(error);
-      toast({
-        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 ",
-        variant: "destructive",
-        title: t("errorTitle"),
-        description: t("errorDesc"),
-       
-      })
+      if (error?.response?.status === 400) {
+        const errorData = error.response.data;
+        
+        // Handle field-specific errors
+        if (errorData.field) {
+          setError(errorData.field as Path<T>, {
+            type: "server",
+            message: errorData.message || "Invalid input",
+          });
+        } 
+        // Handle multiple validation errors
+        else if (typeof errorData === 'object') {
+          Object.entries(errorData).forEach(([field, message]) => {
+            setError(field as Path<T>, {
+              type: "server",
+              message: message as string,
+            });
+          });
+        }
+        // Handle general validation error
+        else {
+          toast({
+            className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+            variant: "destructive",
+            title: t("errorTitle"),
+            description: errorData?.message || t("errorDesc"),
+          });
+        }
+      } else {
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          variant: "destructive",
+          title: t("errorTitle"),
+          description: t("errorDesc"),
+        });
+      }
     } finally {
       setLoading(false);
     }

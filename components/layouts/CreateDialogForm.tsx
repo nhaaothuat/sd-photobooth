@@ -12,6 +12,7 @@ type CreateDialogFormProps = {
   fields: FieldConfig[];
   schema: z.ZodType<any>;
   onSubmit: (data: any) => Promise<void>;
+  
   triggerIcon: ReactNode;
   triggerText?: string;
 };
@@ -21,6 +22,7 @@ function CreateDialogForm({
   fields,
   schema,
   onSubmit,
+  
   triggerIcon,
   triggerText,
 }: CreateDialogFormProps) {
@@ -29,9 +31,30 @@ function CreateDialogForm({
   });
 
   const onSubmitInternal = async (data: any) => {
-    await onSubmit(data);
-    form.reset();
+    try {
+      await onSubmit(data);
+      form.reset();
+    } catch (error: any) {
+      if (error?.response?.status === 400) {
+        // Handle validation errors from the server
+        const serverErrors = error.response.data;
+        Object.keys(serverErrors).forEach((field) => {
+          form.setError(field, {
+            type: 'server',
+            message: serverErrors[field]
+          });
+        });
+      } else {
+        // Handle other errors
+        console.error('An error occurred:', error);
+      }
+    }
   };
+
+ 
+
+
+
 
   return (
     <Dialog>

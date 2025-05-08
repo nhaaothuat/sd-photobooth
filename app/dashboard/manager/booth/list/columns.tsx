@@ -73,8 +73,9 @@ export const columns = (
         return (
           <div className="flex gap-2 justify-center">
             <UpdateBooth id={id} onUpdateSuccess={refetchData} />
-            <DeletePayment id={id} onDelete={onDelete} />
             <ViewDetailBooth id={id} />
+            <DeletePayment id={id} onDelete={onDelete} />
+          
           </div>
         )
       },

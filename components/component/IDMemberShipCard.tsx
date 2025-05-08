@@ -4,20 +4,23 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button"
 import AxiosAPI from "@/configs/axios"
 import { Loader2 } from "lucide-react"
+import { FaEye } from "react-icons/fa"
+import { useTranslations } from "next-intl"
+import { Skeleton } from "@mantine/core"
 
 
 const ViewDetailMembershipCard = ({ id }: { id: number }) => {
   const [member, setMember] = useState<MembershipCard | null>(null)
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-
+const t = useTranslations("staff")
   const fetchDetail = async () => {
     try {
       setLoading(true)
       const response = await AxiosAPI.get<MembershipCard>(`/api/MembershipCard/${id}`)
       setMember(response.data)
     } catch (error) {
-      console.error("Lỗi khi lấy dữ liệu chi tiết", error)
+     
       setMember(null)
     } finally {
       setLoading(false)
@@ -31,37 +34,67 @@ const ViewDetailMembershipCard = ({ id }: { id: number }) => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline">Xem</Button>
+      <DialogTrigger className="border-green-500" asChild>
+        <Button variant="outline">
+          <FaEye />
+        </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="rounded-2xl p-6 shadow-xl">
         <DialogHeader>
-          <DialogTitle>Chi tiết </DialogTitle>
+          <DialogTitle className="text-xl font-semibold tracking-tight">
+          {t("memberDetail")}
+          </DialogTitle>
         </DialogHeader>
 
         {loading ? (
-          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <Loader2 className="animate-spin h-4 w-4" /> <span>Đang tải...</span>
-          </div>
+          <Skeleton height={8} mt={6} width="70%" radius="xl" />
         ) : member ? (
-          <div className="space-y-2 text-sm">
-            <p><strong>ID:</strong> {member.id}</p>
-            <p><strong>Current Point:</strong> {member.points}</p>
-            <p><strong>Description:</strong> {member.description}</p>
-            {/* <p><strong>URL:</strong> {frame.frameUrl}</p> */}
-            <p><strong>Name:</strong> {member.customer.fullName}</p>
-            <p><strong>email:</strong> {member.customer.email}</p>
-            
-            <p><strong>Target LevelMembership</strong> {member.levelMemberShip.name}</p>
-            <p><strong>Point of LevelMembership:</strong> {member.levelMemberShip.point}</p>
-            <p><strong>isActive:</strong> {member.isActive ? "Yes" : "No"}</p>
-            <p><strong>Created At:</strong> {new Date(member.createdAt).toLocaleString()}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6 mt-4 text-sm text-gray-800">
+            <div className="flex flex-col">
+              <span className="text-xs text-gray-500">{t("id")}</span>
+              <span className="font-medium">{member.id}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs text-gray-500">{t("currentPoint")}</span>
+              <span className="font-medium">{member.points}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs text-gray-500">{t("description")}</span>
+              <span className="font-medium">{member.description}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs text-gray-500">{t("name")}</span>
+              <span className="font-medium">{member.customer.fullName}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs text-gray-500">{t("email")}</span>
+              <span className="font-medium">{member.customer.email}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs text-gray-500">{t("targetLevel")}</span>
+              <span className="font-medium">{member.levelMemberShip.name}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs text-gray-500">{t("levelPoints")}</span>
+              <span className="font-medium">{member.levelMemberShip.point}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs text-gray-500">{t("active")}</span>
+              <span className="font-medium">{member.isActive ? t("yes") : t("no")}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs text-gray-500">{t("createdAt")}</span>
+              <span className="font-medium">
+                {new Date(member.createdAt).toLocaleString()}
+              </span>
+            </div>
           </div>
         ) : (
-          <div className="text-sm text-red-500">Không thể tải dữ liệu chi tiết</div>
+          <div className="text-sm text-red-500 mt-4">{t("failedToLoad")}</div>
         )}
       </DialogContent>
     </Dialog>
+
   )
 }
 

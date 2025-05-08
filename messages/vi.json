@@ -28,8 +28,7 @@
     "photoStyle": "Kiểu ảnh",
     "settings": "Cài đặt",
     "profile": "Hồ sơ",
-  
-   
+
     "location": "Địa điểm",
     "coupon": "Mã giảm giá",
     "order": "Đơn hàng",
@@ -44,8 +43,7 @@
     "getByCoupon": "Lấy theo mã giảm giá",
     "getByTypeSession": "Lấy theo loại phiên",
     "transaction": "Giao dịch",
-  
-    
+
     "staffDashboard": "Bảng điều khiển nhân viên",
     "sessionCode": "Mã phiên chụp",
     "membershipCard": "Thẻ thành viên",
@@ -57,7 +55,7 @@
     "errorTitle": "Có gì đó không ổn",
     "errorDesc": "Chúng tôi không thể hoàn thành yêu cầu của bạn. Vui lòng thử lại."
   },
-  "manager":{
+  "manager": {
     "areYouSureTitle": "Bạn có chắc chắn?",
     "areYouSureDesc": "Hành động này không thể hoàn tác. Vui lòng xác nhận để tiếp tục.",
     "cancel": "Hủy bỏ",
@@ -67,28 +65,158 @@
     "address": "Địa chỉ",
     "createdAt": "Ngày tạo",
     "actions": "Hành động",
-    "none":"Không thể tải dữ liệu chi tiết",
-    "info":"Thông tin địa điểm",
-    "de":"Chi tiết",
-    "ma":"Quản lý địa điểm",
-    "add":"Thêm địa điểm",
+    "none": "Không thể tải dữ liệu chi tiết",
+    "info": "Thông tin địa điểm",
+    "de": "Chi tiết",
+    "ma": "Quản lý địa điểm",
+    "add": "Thêm địa điểm",
     "editTitle": "Chỉnh sửa Địa điểm",
     "nameLabel": "Tên địa điểm",
     "addressLabel": "Địa chỉ",
-    
+
     "update": "Cập nhật",
-    
+
     "name": "Tên",
     "code": "Mã",
     "discount": "Giảm giá",
     "startDate": "Ngày bắt đầu",
     "endDate": "Ngày kết thúc",
     "isActive": "Hoạt động"
-    
-   
-    
   },
-  "common":{
-    "search":"Tìm kiếm"
+  "common": {
+    "search": "Tìm kiếm"
+  },
+  "staff": {
+    "id": "ID",
+    "fullName": "Họ và tên",
+    "userName": "Tên đăng nhập",
+    "email": "Email",
+    "gender": "Giới tính",
+    "birthDate": "Ngày sinh",
+    "membershipLevel": "Hạng thành viên",
+    "banned": "Bị khóa",
+    "genderMale": "Nam",
+    "genderFemale": "Nữ",
+    "genderOther": "Không xác định",
+    "statusActive": "Hoạt động",
+    "statusInactive": "Không hoạt động",
+    "ID": "Mã",
+    "Code": "Mã phiên",
+    "Expired": "Hết hạn",
+    "OrderID": "Mã đơn hàng",
+    "AbleTakenNumber": "Số lượt còn lại",
+    "IsActive": "Trạng thái",
+    "CreatedAt": "Ngày tạo",
+    "Actions": "Thao tác",
+    "Active": "Hoạt động",
+    "Inactive": "Không hoạt động",
+    "detailTitle": "Chi tiết phiên thanh toán",
+    "sesion": "Quản lý phiên",
+    "code": "Mã phiên",
+    "expired": "Ngày hết hạn",
+    "orderId": "Mã đơn hàng",
+    "status": "Trạng thái",
+    "active": "✔️ Đang hoạt động",
+    "inactive": "❌ Không hoạt động",
+    "createdAt": "Ngày tạo",
+    "loadError": "Không thể tải dữ liệu chi tiết",
+    "member": "Quản lý thẻ thành viên",
+    "name": "Tên",
+    "description": "Mô tả",
+    "customerName": "Tên khách hàng",
+    "customerEmail": "Email khách hàng",
+    "points": "Điểm",
+    "level": "Hạng thành viên",
+    "isActive": "Kích hoạt",
+    "yes": "Có",
+    "no": "Không",
+    "noName": "Không có tên",
+    "noEmail": "Không có email",
+    "actions": "Hành động",
+    "editTitle": "Sửa thẻ thành viên",
+
+    "selectLevel": "Chọn cấp độ",
+
+    "enterDescription": "Nhập mô tả",
+
+    "cancel": "Hủy",
+    "update": "Cập nhật",
+    "upgradeMember": "Nâng cấp thành viên",
+
+    "enterUserEmail": "Nhập email người dùng",
+
+    "confirmUpgrade": "Xác nhận nâng cấp",
+    "memberDetail": "Chi tiết thành viên",
+    "loading": "Đang tải...",
+    "failedToLoad": "Không thể tải dữ liệu chi tiết",
+
+    "currentPoint": "Điểm hiện tại",
+
+    "targetLevel": "Cấp độ mục tiêu",
+    "levelPoints": "Điểm của cấp độ",
+    "enterUserId": "Nhập ID người dùng",
+    "search": "Tìm kiếm",
+
+    "noPhotoHistory": "Không tìm thấy lịch sử ảnh nào.",
+    "customerInfo": "Thông tin khách hàng",
+    "inputEmailPlaceholder": "Nhập email khách hàng",
+
+    "error": "Lỗi",
+
+    "username": "Tên người dùng",
+
+    "phone": "Số điện thoại",
+
+    "male": "Nam",
+    "female": "Nữ",
+    "other": "Khác",
+
+    "role": "Vai trò",
+    "isBanned": "Bị cấm",
+
+    "notAvailable": "Chưa có",
+    
+
+
+    "accountCustomerManagement": "Quản lý khách hàng",
+    "addCustomer": "Thêm khách hàng",
+    
+    "phoneNumber": "Số điện thoại",
+    "password": "Mật khẩu",
+    
+
+    "profile": "Hồ sơ",
+   
+    "nA": "N/A",
+
+    "updateProfile": "Cập nhật hồ sơ",
+    "updateProfileDescription": "Thay đổi thông tin cá nhân của bạn bên dưới.",
+   
+    "saveChanges": "Lưu thay đổi",
+    "saving": "Đang lưu...",
+
+
+    "editProfile": "Chỉnh sửa hồ sơ",
+    "editProfileDescription": "Thực hiện thay đổi hồ sơ của bạn ở đây. Nhấn lưu khi bạn hoàn tất.",
+    "picture": "Hình ảnh",
+
+    "title": "Doanh thu cá nhân",
+    "placeholder": "Chọn thời gian",
+    "day": "Ngày",
+    "month": "Tháng",
+    "quarter": "Quý",
+    "year": "Năm",
+    "noData": "Không có dữ liệu",
+  
+   
+    "amount": "Tổng tiền",
+   
+    "sessionCode": "Mã phiên",
+    "couponCode": "Mã giảm giá",
+    "boothName": "Gian hàng",
+    
+    "unknown": "Không rõ"
+
+    
   }
 }

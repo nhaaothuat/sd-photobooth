@@ -3,13 +3,14 @@ import React, { useState } from "react";
 
 import AxiosAPI from "@/configs/axios";
 import { User } from "@/types/type";
+import { useTranslations } from "next-intl";
 
 const ViewDetailCustomer = () => {
   const [email, setEmail] = useState("");
   const [customer, setCustomer] = useState<User | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const  t  = useTranslations("staff");
   const handleFetchCustomer = async () => {
     setLoading(true);
     setError("");
@@ -20,9 +21,9 @@ const ViewDetailCustomer = () => {
         `/api/User/detail?email=${encodeURIComponent(email)}`
       );
 
-     
+
       if (!response.data || !response.data.id) {
-        throw new Error("NOT_FOUND"); 
+        throw new Error("NOT_FOUND");
       }
 
       setCustomer(response.data);
@@ -44,73 +45,85 @@ const ViewDetailCustomer = () => {
   };
 
   return (
-    <div className="p-4 max-w-xl mx-auto bg-white rounded shadow">
-      <h2 className="text-xl font-semibold mb-4">Xem thông tin khách hàng</h2>
-      <div className="flex gap-2 mb-4">
+    <div className="p-6 max-w-2xl mx-auto bg-white rounded-2xl shadow-md border border-gray-200">
+      <h2 className="text-2xl font-semibold mb-6 text-gray-800 tracking-tight">
+      {t('customerInfo')}
+      </h2>
+
+      <div className="flex gap-3 mb-6">
         <input
           type="email"
-          className="border p-2 flex-1 rounded"
-          placeholder="Nhập email khách hàng"
+          className="flex-1 border border-gray-300 bg-white text-gray-900 px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          placeholder={t('inputEmailPlaceholder')}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           disabled={loading}
         />
         <button
           onClick={handleFetchCustomer}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
+          className="px-5 py-2 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-500 disabled:bg-gray-300 transition"
           disabled={loading || !email}
         >
-          {loading ? "Đang tải..." : "Tìm"}
+          {loading ? t('loading') : t('search')}
         </button>
       </div>
 
-      {loading && <div className="p-4 text-center">Đang tải dữ liệu...</div>}
-
-     
       {error && (
-        <div className="p-4 border border-red-200 rounded bg-red-50 text-red-600">
+        <div className="p-4 border border-red-300 bg-red-100 text-red-700 rounded-xl">
           {error}
         </div>
       )}
 
-     
       {!error && customer && (
-        <div className="border-t pt-4 space-y-2">
-          <p>
-            <strong>ID:</strong> {customer.id}
+        <div className="border-t pt-6 mt-4 space-y-3 text-gray-800">
+          <p className="flex justify-between">
+            <span className="font-medium text-gray-600">{t('id')}:</span>
+            <span>{customer.id}</span>
           </p>
-          <p>
-            <strong>Họ tên:</strong> {customer.fullName || "Chưa có"}
+          <p className="flex justify-between">
+            <span className="font-medium text-gray-600">{t('fullName')}:</span>
+            <span>{customer.fullName || "Chưa có"}</span>
           </p>
-          <p>
-            <strong>Tên người dùng:</strong> {customer.userName}
+          <p className="flex justify-between">
+            <span className="font-medium text-gray-600">{t('username')}:</span>
+            <span>{customer.userName}</span>
           </p>
-          <p>
-            <strong>Email:</strong> {customer.email}
+          <p className="flex justify-between">
+            <span className="font-medium text-gray-600">{t('email')}:</span>
+            <span>{customer.email}</span>
           </p>
-          <p>
-            <strong>Số điện thoại:</strong> {customer.phoneNumber || "Chưa có"}
+          <p className="flex justify-between">
+            <span className="font-medium text-gray-600">{t('phone')}:</span>
+            <span>{customer.phoneNumber || "Chưa có"}</span>
           </p>
-          <p>
-            <strong>Giới tính:</strong>{" "}
-            {customer.gender === 0
-              ? "Nam"
-              : customer.gender === 1
-              ? "Nữ"
-              : "Khác"}
+          <p className="flex justify-between">
+            <span className="font-medium text-gray-600">{t('gender')}:</span>
+            <span>
+              {customer.gender === 0
+                ? t('male')
+                : customer.gender === 1
+                  ? t('female')
+                  : t('other')}
+            </span>
           </p>
-          <p>
-            <strong>Ngày sinh:</strong> {customer.birthDate || "Chưa có"}
+          <p className="flex justify-between">
+            <span className="font-medium text-gray-600">{t('birthDate')}:</span>
+            <span>{customer.birthDate || t('notAvailable')}</span>
           </p>
-          <p>
-            <strong>Vai trò:</strong> {customer.role}
+          <p className="flex justify-between">
+            <span className="font-medium text-gray-600">{t('role')}:</span>
+            <span>{customer.role}</span>
           </p>
-          <p>
-            <strong>Bị cấm:</strong> {customer.isBanned ? "Có" : "Không"}
+          <p className="flex justify-between">
+            <span className="font-medium text-gray-600">{t('isBanned')}:</span>
+            <span>{customer.isBanned ? t('yes') : t('no')}</span>
           </p>
         </div>
       )}
     </div>
+
+
+
   );
 };
 

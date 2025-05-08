@@ -30,7 +30,7 @@ const ViewDetailTypeSessionProduct = ({ id }: { id: number }) => {
 
      return (
           <Dialog open={open} onOpenChange={setOpen}>
-               <DialogTrigger asChild>
+               <DialogTrigger className="border-green-500" asChild>
                     <Button variant="outline"><FaEye /></Button>
                </DialogTrigger>
                <DialogContent>

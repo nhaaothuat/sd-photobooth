@@ -48,13 +48,13 @@
     "membershipCard": "Membership Card",
     "photoHistory": "Photo History"
   },
-  "toast":{
+  "toast": {
     "successTitle": "Success",
     "successDesc": "Your action was completed successfully.",
     "errorTitle": "Something went wrong",
     "errorDesc": "We couldn't complete your request. Please try again."
   },
-  "manager":{
+  "manager": {
     "areYouSureTitle": "Are you sure?",
     "areYouSureDesc": "This action cannot be undone. Please confirm to proceed.",
     "cancel": "Cancel",
@@ -64,26 +64,143 @@
     "address": "Address",
     "createdAt": "Created At",
     "actions": "Actions",
-    "none":"Unable to load detailed data",
-    "info":"Location Information",
-    "de":"Detail",
-    "ma":"Location Management",
-    "add":"Add Location",
+    "none": "Unable to load detailed data",
+    "info": "Location Information",
+    "de": "Detail",
+    "ma": "Location Management",
+    "add": "Add Location",
     "editTitle": "Edit Location",
     "nameLabel": "Location Name",
     "addressLabel": "Address",
-    
+
     "update": "Update",
-    
+
     "name": "Name",
     "code": "Code",
     "discount": "Discount",
     "startDate": "Start Date",
     "endDate": "End Date",
     "isActive": "Is Active"
-    
   },
-  "common":{
-    "search":"Search"
+  "common": {
+    "search": "Search"
+  },
+  "staff": {
+    "id": "ID",
+    "fullName": "Full Name",
+    "userName": "User Name",
+    "email": "Email",
+    "gender": "Gender",
+    "birthDate": "Birth Date",
+    "membershipLevel": "Membership Level",
+    "banned": "Banned",
+    "genderMale": "Male",
+    "genderFemale": "Female",
+    "genderOther": "Other",
+    "statusActive": "Active",
+    "statusInactive": "Inactive",
+    "ID": "ID",
+    "Code": "Code",
+    "Expired": "Expired",
+    "OrderID": "Order ID",
+    "AbleTakenNumber": "Able Taken Number",
+    "IsActive": "Is Active",
+    "CreatedAt": "Created At",
+    "Actions": "Actions",
+    "Active": "Active",
+    "Inactive": "Inactive",
+    "detailTitle": "Payment Session Details",
+    "sesion": "Session Management",
+    "code": "Session Code",
+    "expired": "Expired",
+    "orderId": "Order ID",
+    "status": "Status",
+    "active": "✔️ Active",
+    "inactive": "❌ Inactive",
+    "createdAt": "Created At",
+    "loadError": "Unable to load session details",
+
+    "name": "Name",
+    "description": "Description",
+    "customerName": "Customer Name",
+    "customerEmail": "Customer Email",
+    "points": "Points",
+    "level": "Membership Level",
+    "isActive": "Is Active",
+    "yes": "Yes",
+    "no": "No",
+    "noName": "No Name",
+    "noEmail": "No Email",
+    "actions": "Actions",
+    "editTitle": "Edit Membership Card",
+    "member": "Membership Card Management",
+    "selectLevel": "Select level",
+
+    "enterDescription": "Enter description",
+
+    "cancel": "Cancel",
+    "update": "Update",
+    "upgradeMember": "Upgrade Member",
+
+    "enterUserEmail": "Enter user email",
+
+    "confirmUpgrade": "Confirm Upgrade",
+    "memberDetail": "Member Detail",
+    "loading": "Loading...",
+    "failedToLoad": "Failed to load member details",
+
+    "currentPoint": "Current Point",
+
+    "targetLevel": "Target Level",
+    "levelPoints": "Level Points",
+    "enterUserId": "Enter user ID",
+    "search": "Search",
+
+    "noPhotoHistory": "No photo history found.",
+    "customerInfo": "Customer Information",
+    "inputEmailPlaceholder": "Enter customer email",
+
+    "error": "Error",
+
+    "username": "Username",
+
+    "phone": "Phone Number",
+
+    "male": "Male",
+    "female": "Female",
+    "other": "Other",
+
+    "role": "Role",
+    "isBanned": "Banned",
+
+    "notAvailable": "Not Available",
+
+    "accountCustomerManagement": "Account Customer Management",
+    "addCustomer": "Add Customer",
+
+    "phoneNumber": "Phone Number",
+    "password": "Password",
+
+    "profile": "Profile",
+
+    "nA": "N/A",
+
+    "updateProfile": "Update Profile",
+    "updateProfileDescription": "Change your personal information below.",
+
+    "saveChanges": "Save Changes",
+    "saving": "Saving...",
+
+    "editProfile": "Edit profile",
+    "editProfileDescription": "Make changes to your profile here. Click save when you're done.",
+    "picture": "Picture",
+
+    "title": "Personal Revenue",
+    "placeholder": "Select time period",
+    "day": "Day",
+    "month": "Month",
+    "quarter": "Quarter",
+    "year": "Year",
+    "noData": "No data"
   }
 }

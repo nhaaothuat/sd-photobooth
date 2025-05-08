@@ -3,42 +3,26 @@ import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Text } from "@mantine/core";
-import { useSession } from "next-auth/react";
-import AxiosAPI from "@/configs/axios";
+
+
 import GPAvatar from "@/components/component/GPAvatar";
 import GPProfile from "@/components/component/GPProfile";
 
-interface User {
-  id: string;
-  avatar: string | null;
-  fullName: string | null;
-  userName: string;
-  email: string;
-  phoneNumber: string;
-  gender: number;
-  birthDate: string | null;
-}
+import { useUserStore } from "@/hooks/userStore";
+import { useTranslations } from "next-intl";
+
 
 const ProfilePage = () => {
-  const { data: session } = useSession();
-  const [user, setUser] = useState<User | null>(null);
 
-  const fetchUsers = async () => {
-    try {
-      const response = await AxiosAPI.get<User>("/api/Identity/profile");
-      setUser(response.data);
-    } catch (err) {
-      console.error("Lỗi API:", err);
-    }
-  };
-
+  const { user, fetchUser } = useUserStore();
+  const  t  = useTranslations("staff");
   useEffect(() => {
-    fetchUsers();
+    fetchUser();
   }, []);
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Profile</CardTitle>
+        <CardTitle className="text-2xl font-bold">{t('profile')}</CardTitle>
       </CardHeader>
       <CardContent>
         {user && (
@@ -53,22 +37,22 @@ const ProfilePage = () => {
                 <div>
                   <Text className="font-sans font-semibold">
                     {" "}
-                    {session?.user?.name}
+                    {user.userName}
                   </Text>
                   <Text className="font-sans font-normal text-slate-400">
                     {" "}
-                    {session?.user?.role} | {user.email}
+                    {user.role} | {user.email}
                   </Text>
                 </div>
               </div>
 
-              <GPAvatar onUpdateSuccess={fetchUsers} />
+              <GPAvatar onUpdateSuccess={fetchUser} />
             </Card>
 
             <Card className=" my-5">
               <CardHeader>
-                {/* <CardTitle>Personal Information</CardTitle> */}
-                <GPProfile onUpdateSuccess={fetchUsers} />
+               
+                <GPProfile onUpdateSuccess={fetchUser} />
               </CardHeader>
               <CardContent>
                 <div className="flex items-end justify-between ">
@@ -78,7 +62,7 @@ const ProfilePage = () => {
                         className="font-sans font-semibold text-gray-500"
                         size="lg"
                       >
-                        Full Name
+                       {t('fullName')}
                       </Text>
                       <Text className="font-sans font-medium" size="sm">
                         {user.fullName || "N/A"}
@@ -90,10 +74,10 @@ const ProfilePage = () => {
                         className="font-sans font-semibold text-gray-500"
                         size="lg"
                       >
-                        Phone Number
+                        {t('phoneNumber')}
                       </Text>
                       <Text className="font-sans font-medium" size="sm">
-                        {user.phoneNumber || "N/A"}
+                        {user.phoneNumber ||  t('nA')}
                       </Text>
                     </div>
                   </div>
@@ -103,15 +87,15 @@ const ProfilePage = () => {
                     className="font-sans font-semibold text-gray-500"
                     size="lg"
                   >
-                    Gender
+                    {t('gender')}
                   </Text>
                   <Text className="font-sans font-medium" size="sm">
                     {" "}
                     {user.gender === 0
-                      ? "Nam"
+                      ? t('male')
                       : user.gender === 1
-                      ? "Nữ"
-                      : "Other"}
+                        ? t('female')
+                        : t('other')}
                   </Text>
                 </div>
                 <div className="pt-2">
@@ -119,12 +103,12 @@ const ProfilePage = () => {
                     className="font-sans font-semibold text-gray-500"
                     size="lg"
                   >
-                    Birth Date
+                     {t('birthDate')}
                   </Text>
                   <Text className="font-sans font-medium" size="sm">
                     {user.birthDate
                       ? new Date(user.birthDate).toLocaleDateString()
-                      : "N/A"}
+                      : t('nA')}
                   </Text>
                 </div>
               </CardContent>

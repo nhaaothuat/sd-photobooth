@@ -206,8 +206,8 @@ const UpdateCoupon = ({ couponId, onUpdateSuccess }: UpdateCouponProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline"><FaPen /></Button>
+      <DialogTrigger className="border-blue-500" asChild>
+        <Button  variant="outline"><FaPen /></Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] max-h-[80vh] overflow-y-auto">
         <DialogHeader>

@@ -46,11 +46,11 @@ const DashboardCard = () => {
         AxiosAPI.get("/api/Dashboard/statictis-revenue", config),
         AxiosAPI.get("/api/Dashboard/statictis-deposit", config), // New API for deposit
       ]) as [
-        { data: { totalOrder: number; totalOrderPrev: number } },
-        { data: { totalUser: number; totalUserPrev: number } },
-        { data: { totalRevenue: number; totalRevenuePrev: number } },
-        { data: { totalDeposit: number; totalDepositPrev: number } } // Deposit response
-      ];
+          { data: { totalOrder: number; totalOrderPrev: number } },
+          { data: { totalUser: number; totalUserPrev: number } },
+          { data: { totalRevenue: number; totalRevenuePrev: number } },
+          { data: { totalDeposit: number; totalDepositPrev: number } } // Deposit response
+        ];
       console.log(order.data, user.data, revenue.data, deposit.data);
       setData([order.data, user.data, revenue.data, deposit.data]);
     } catch (error) {
@@ -95,22 +95,22 @@ const DashboardCard = () => {
 
   return (
     <div className="pb-4">
-     <Select
-  value={dateFilter !== null ? dateFilter.toString() : null}
-  onChange={(value) => {
-    if (value !== null && !isNaN(Number(value))) {
-      setDateFilter(Number(value));
-    }
-  }}
-  data={[
-    { value: "0", label: "Ngày" },
-    { value: "1", label: "Tháng" },
-    { value: "2", label: "Quý" },
-    { value: "3", label: "Năm" },
-  ]}
-  className="mb-4 max-w-xs"
-  placeholder="Chọn thời gian"
-/>
+      <Select
+        value={dateFilter !== null ? dateFilter.toString() : null}
+        onChange={(value) => {
+          if (value !== null && !isNaN(Number(value))) {
+            setDateFilter(Number(value));
+          }
+        }}
+        data={[
+          { value: "0", label: "Ngày" },
+          { value: "1", label: "Tháng" },
+          { value: "2", label: "Quý" },
+          { value: "3", label: "Năm" },
+        ]}
+        className="mb-4 max-w-xs"
+        placeholder="Chọn thời gian"
+      />
 
 
       <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="lg">
@@ -146,15 +146,19 @@ const DashboardCard = () => {
                   color={stat.diff >= 0 ? "teal" : "red"}
                   variant="light"
                   size="sm"
-                  className="min-w-[80px] h-[26px] flex items-center justify-center"
+                  className="h-[26px] flex items-center justify-center"
                 >
-                  {stat.diff >= 0 ? "+" : ""}
-                  {stat.diff.toFixed(2)}%
-                  <DiffIcon size={14} />
+
+                  <Group gap={4}>
+                    {stat.diff >= 0 ? "+" : ""}
+                    {stat.diff.toFixed(2)}%
+                    <DiffIcon size={14} />
+                  </Group>
+
                 </Badge>
               </Group>
 
-             
+
             </Paper>
           );
         })}

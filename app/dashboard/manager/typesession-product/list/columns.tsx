@@ -65,10 +65,11 @@ export const columns = (
     {
       id: "actions",
       header: () => <div className="text-center">Actions</div>,
+      size: 500,
       cell: ({ row }) => (
 
         <Group justify="center" gap={"xs"}>
-          <UpdateTypeSessionProduct id={row.original.id} onUpdateSuccess={refetchData} />;
+          <UpdateTypeSessionProduct id={row.original.id} onUpdateSuccess={refetchData} />
           <ViewDetailTypeSessionProduct id={row.original.id} />
           <DeletePayment id={row.original.id} onDelete={onDelete} />
         </Group>

@@ -11,6 +11,7 @@ import { getCustomerList } from "@/services/user";
 import { customerSchema } from "@/types/schema/user";
 import { Icon360View, IconPlus } from "@tabler/icons-react";
 import { PlusCircleIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 const CreateDialogForm = dynamic(
   () =>
@@ -37,7 +38,7 @@ const CrudPageWrapper = dynamic(
 export default function AccountCustomerPage() {
   const [pageSize, setPageSize] = useState(5);
   const [pageIndex, setPageIndex] = useState(0);
-
+  const  t  = useTranslations("staff");
   const { data, totalItems, isLoading, refetch } = usePaginatedQuery<User>({
     queryKey: "booths",
     pageIndex,
@@ -49,11 +50,11 @@ export default function AccountCustomerPage() {
 
   return (
     <CrudPageWrapper
-      title="Account Customer Management"
+      title={t('accountCustomerManagement')}
       isSearchable={false}
       createButton={
         <CreateDialogForm
-          title="Add Customer"
+          title={t('addCustomer')}
           triggerText=""
           triggerIcon={<PlusCircleIcon className="w-10 h-10" />}
           schema={customerSchema}
@@ -61,42 +62,42 @@ export default function AccountCustomerPage() {
             {
               type: "text",
               name: "userName",
-              label: "Username",
+              label: t('username'),
             },
             {
               type: "text",
               name: "email",
-              label: "Email",
+              label: t('email'),
             },
             {
               type: "text",
               name: "phoneNumber",
-              label: "Phone Number",
+              label:  t('phoneNumber'),
             },
             {
               type: "text",
               name: "password",
-              label: "Password",
+              label: t('password'),
             },
             {
               type: "text",
               name: "fullName",
-              label: "Full Name",
+              label: t('fullName'),
             },
             {
               type: "select",
               name: "gender",
-              label: "Gender",
+              label:  t('gender'),
               options: [
-                { label: "Male", value: "0" },
-                { label: "Female", value: "1" },
-                { label: "Other", value: "2" },
+                { label: t('male'), value: "0" },
+                { label: t('female'), value: "1" },
+                { label: t('other'), value: "2" },
               ],
             },
             {
               type: "date",
               name: "birthDate",
-              label: "Birth Date",
+              label: t('birthDate'),
             },
           ]}
           onSubmit={async (values) => {

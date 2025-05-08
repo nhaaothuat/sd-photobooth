@@ -20,21 +20,25 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import AxiosAPI from "@/configs/axios"
+import { useToast } from "@/hooks/use-toast"
 import { Pencil } from "lucide-react"
+import { useTranslations } from "next-intl"
 import { useState } from "react"
-import { toast } from "react-toastify"
+
 
 const GPProfile: React.FC<{ onUpdateSuccess: () => void }> = ({ onUpdateSuccess }) => {
   const [form, setForm] = useState({
     fullName: "",
-    email: "",
+
     phoneNumber: "",
     gender: 0,
     birthDate: new Date().toISOString().slice(0, 10),
   })
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
-
+  const t = useTranslations("staff");
+  const { toast } = useToast();
+  const a = useTranslations("toast");
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
@@ -47,12 +51,22 @@ const GPProfile: React.FC<{ onUpdateSuccess: () => void }> = ({ onUpdateSuccess 
     try {
       setLoading(true)
       await AxiosAPI.patch("/api/Identity/update-profile", form)
-      toast.success("Cập nhật thông tin thành công")
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: a("successTitle"),
+        description: a("successDesc"),
+      })
       onUpdateSuccess()
       setOpen(false)
     } catch (err) {
-      console.error(err)
-      toast.error("Có lỗi xảy ra khi cập nhật thông tin")
+
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 ",
+        variant: "destructive",
+        title: a("errorTitle"),
+        description: a("errorDesc"),
+
+      })
     } finally {
       setLoading(false)
     }
@@ -61,46 +75,55 @@ const GPProfile: React.FC<{ onUpdateSuccess: () => void }> = ({ onUpdateSuccess 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="lg" className="flex items-center">
-          <Pencil className="w-10 h-10" />
+        <Button variant="outline" size="icon" className="rounded-full p-2 shadow-md hover:bg-muted ">
+          <Pencil className="w-5 h-5" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[500px] rounded-2xl shadow-xl">
         <DialogHeader>
-          <DialogTitle>Edit Profile</DialogTitle>
-          <DialogDescription>
-            Cập nhật thông tin cá nhân tại đây.
+          <DialogTitle className="text-2xl font-bold">{t('updateProfile')}</DialogTitle>
+          <DialogDescription className="text-sm text-muted-foreground">
+            {t('updateProfileDescription')}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-4 py-4">
+        <div className="grid gap-6 py-4">
           <div className="grid gap-2">
-            <Label htmlFor="fullName">Full Name</Label>
-            <Input name="fullName" value={form.fullName} onChange={handleChange} />
+            <Label htmlFor="fullName" className="font-semibold">{t('fullName')}</Label>
+            <Input
+              name="fullName"
+              placeholder={t('fullName')}
+              value={form.fullName}
+              onChange={handleChange}
+            />
           </div>
+
           <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input name="email" value={form.email} onChange={handleChange} />
+            <Label htmlFor="phoneNumber" className="font-semibold">{t('phoneNumber')}</Label>
+            <Input
+              name="phoneNumber"
+              placeholder={t('phoneNumber')}
+              value={form.phoneNumber}
+              onChange={handleChange}
+            />
           </div>
+
           <div className="grid gap-2">
-            <Label htmlFor="phoneNumber">Phone Number</Label>
-            <Input name="phoneNumber" value={form.phoneNumber} onChange={handleChange} />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="gender">Gender</Label>
+            <Label htmlFor="gender" className="font-semibold">{t('gender')}</Label>
             <Select value={form.gender.toString()} onValueChange={handleGenderChange}>
               <SelectTrigger>
-                <SelectValue placeholder="Chọn giới tính" />
+                <SelectValue placeholder={t('gender')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="0">Nam</SelectItem>
-                <SelectItem value="1">Nữ</SelectItem>
-                <SelectItem value="2">Khác</SelectItem>
+                <SelectItem value="0">{t('male')}</SelectItem>
+                <SelectItem value="1">{t('female')}</SelectItem>
+                <SelectItem value="2">{t('other')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
+
           <div className="grid gap-2">
-            <Label htmlFor="birthDate">Birth Date</Label>
+            <Label htmlFor="birthDate" className="font-semibold">{t('birthDate')}</Label>
             <Input
               name="birthDate"
               type="date"
@@ -111,12 +134,17 @@ const GPProfile: React.FC<{ onUpdateSuccess: () => void }> = ({ onUpdateSuccess 
         </div>
 
         <DialogFooter>
-          <Button onClick={handleSubmit} disabled={loading}>
-            {loading ? "Đang lưu..." : "Lưu thay đổi"}
+          <Button
+            onClick={handleSubmit}
+            disabled={loading}
+            className="w-full bg-primary text-white hover:bg-primary/90 transition"
+          >
+            {loading ? t('saving') : t('saveChanges')}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
+
   )
 }
 

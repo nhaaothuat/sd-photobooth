@@ -14,7 +14,9 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import AxiosAPI from "@/configs/axios"
+import { useToast } from "@/hooks/use-toast"
 import { Pencil } from "lucide-react"
+import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { toast } from "react-toastify"
 
@@ -26,6 +28,9 @@ const GPAvatar:React.FC<GPAvatarProps> = ({onUpdateSuccess}) => {
      const [file, setFile] = useState<File | null>(null)
      const [loading, setLoading] = useState(false)
      const [open, setOpen] = useState(false)
+     const { toast } = useToast();
+     const a = useTranslations("toast")
+     const t = useTranslations("staff")
      const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
           const selected = e.target.files?.[0] || null
           setFile(selected)
@@ -47,12 +52,22 @@ const GPAvatar:React.FC<GPAvatarProps> = ({onUpdateSuccess}) => {
             })
       
             
-            toast.success("Update success")
+            toast({
+               className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+               title: a("successTitle"),
+               description: a("successDesc"),
+             })
             onUpdateSuccess()
             setOpen(false)
           } catch (err) {
-            console.error(err)
-            toast.error("Something went wrong while updating avatar")
+          
+            toast({
+               className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 ",
+               variant: "destructive",
+               title: a("errorTitle"),
+               description: a("errorDesc"),
+       
+             })
           } finally {
             setLoading(false)
           }
@@ -67,20 +82,20 @@ const GPAvatar:React.FC<GPAvatarProps> = ({onUpdateSuccess}) => {
                </DialogTrigger>
                <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                         <DialogTitle>Edit profile</DialogTitle>
+                         <DialogTitle>{t('editProfile')}</DialogTitle>
                          <DialogDescription>
-                              Make changes to your profile here. Click save when you're done.
+                         {t('editProfileDescription')}
                          </DialogDescription>
                     </DialogHeader>
 
                     <div className="grid w-full max-w-sm items-center gap-1.5">
-                         <Label htmlFor="picture">Picture</Label>
+                         <Label htmlFor="picture">{t('picture')}</Label>
                          <Input id="picture" type="file" onChange={handleFileChange} />
                     </div>
 
                     <DialogFooter>
                          <Button onClick={handleSubmit} disabled={loading}>
-                              {loading ? "Saving..." : "Save changes"}
+                              {loading ? t('saving') : t('saveChanges')}
                          </Button>
 
                     </DialogFooter>

@@ -2,60 +2,57 @@
 
 import EditMembershipCard from "@/components/component/GPMembershipCard";
 import ViewDetailMembershipCard from "@/components/component/IDMemberShipCard";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import { MembershipCard } from "@/types/type";
+import { Group } from "@mantine/core";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { useTranslations } from "next-intl";
+
 
 export const columns = (
-  refetchData: () => void
-): ColumnDef<MembershipCard>[] => [
+  refetchData: () => void,
+  t: ReturnType<typeof useTranslations>
+): ColumnDef<MembershipCard>[] => {
+  
+  return [
   {
     accessorKey: "id",
-    header: () => <div className="text-center">ID</div>,
+    header: () => <div className="text-center">{t("id")}</div>,
     cell: ({ row }) => <div className="text-center">{row.getValue("id")}</div>,
   },
   {
     accessorKey: "name",
-    header: () => <div className="text-center">Name</div>,
+    header: () => <div className="text-center">{t("name")}</div>,
     cell: ({ row }) => (
       <div className="text-center">{row.getValue("name")}</div>
     ),
   },
   {
     accessorKey: "description",
-    header: () => <div className="text-center">Description</div>,
+    header: () => <div className="text-center">{t("description")}</div>,
     cell: ({ row }) => (
       <div className="text-center">{row.getValue("description")}</div>
     ),
   },
   {
     accessorKey: "customer.fullName",
-    header: () => <div className="text-center">Customer Name</div>,
+    header: () => <div className="text-center">{t("customerName")}</div>,
     cell: ({ row }) => {
       const name = row.original.customer.fullName;
-      return <div className="text-center">{name || "No Name"}</div>;
+      return <div className="text-center">{name || t("noName")}</div>;
     },
   },
   {
     accessorKey: "customer.email",
-    header: () => <div className="text-center">Customer Email</div>,
+    header: () => <div className="text-center">{t("customerEmail")}</div>,
     cell: ({ row }) => {
       const email = row.original.customer.email;
-      return <div className="text-center">{email || "No Email"}</div>;
+      return <div className="text-center">{email || t("noEmail")}</div>;
     },
   },
   {
     accessorKey: "points",
-    header: () => <div className="text-center">Points</div>,
+    header: () => <div className="text-center">{t("points")}</div>,
     cell: ({ row }) => (
       <div className="text-center">{row.getValue("points")}</div>
     ),
@@ -63,60 +60,37 @@ export const columns = (
 
   {
     accessorKey: "levelMemberShip",
-    header: () => <div className="text-center">Level Membership</div>,
+    header: () => <div className="text-center">{t("level")}</div>,
     cell: ({ row }) => {
       const name = row.original.levelMemberShip.name;
-      return <div className="text-center">{name || "No Name"}</div>;
+      return <div className="text-center">{name || t("noName")}</div>;
     },
   },
 
   {
     accessorKey: "isActive",
-    header: () => <div className="text-center">Is Active</div>,
+    header: () => <div className="text-center">{t("isActive")}</div>,
     cell: ({ row }) => (
       <div className="text-center">
-        {row.getValue("isActive") ? "Yes" : "No"}
+        {row.getValue("isActive") ? t("yes") : t("no")}
       </div>
     ),
   },
   {
-    id: "edit",
-    header: () => <div className="text-center">Edit</div>,
-    cell: ({ row }) => {
-      const id = row.original.id;
-      return <EditMembershipCard id={id} onUpdated={refetchData} />;
-    },
-  },
-
-  {
     id: "actions",
-    enableHiding: false,
+    header: () => <div className="text-center min-w-[150px]">{t("actions")}</div>,
     cell: ({ row }) => {
       const id = row.original.id;
-      const sticker = row.original;
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="center">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-            <DropdownMenuSeparator />
-            {/* <DropdownMenuItem asChild>
-                                        <DeletePayment id={id} onDelete={onDelete} />
-                                   </DropdownMenuItem>
-
-                                   */}
-
-            <DropdownMenuItem asChild>
-              <ViewDetailMembershipCard id={id} />
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+        <Group justify="center" gap="xs">
+          <EditMembershipCard id={id} onUpdated={refetchData} />
+          <ViewDetailMembershipCard id={id} />
+        </Group>
+      
+    );
     },
   },
+
+ 
 ];
+}

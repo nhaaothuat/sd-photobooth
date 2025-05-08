@@ -8,6 +8,7 @@ import { Session } from "@/types/type";
 import { usePaginatedQuery } from "@/hooks/usePaginatedQuery";
 import { useDebounce } from "@/hooks/useDebounce";
 import { getSession } from "@/services/session";
+import { useTranslations } from "next-intl";
 
 const CrudPageWrapper = dynamic(
   () =>
@@ -26,7 +27,7 @@ const SessionPage = () => {
 
   const [pageSize, setPageSize] = useState(5);
   const [pageIndex, setPageIndex] = useState(0);
-
+  const t = useTranslations("staff");
   const { data, totalItems, isLoading, refetch } = usePaginatedQuery<Session>({
     queryKey: "sessions",
     pageIndex,
@@ -37,11 +38,11 @@ const SessionPage = () => {
     },
   });
 
-  const memoizedColumns = useMemo(() => columns(), []);
+  const memoizedColumns = useMemo(() => columns(t), [t]);
 
   return (
     <CrudPageWrapper
-      title="Session Management"
+      title={t("sesion")}
       isSearchable
       search={search}
       onSearchChange={setSearch}

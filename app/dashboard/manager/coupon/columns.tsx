@@ -1,15 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Coupon } from "@/types/type";
-import { MoreHorizontal } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import DeletePayment from "@/components/component/DeletePayment";
 import ViewDetailCoupon from "@/components/component/IDCoupon";
 import UpdateCoupon from "@/components/component/GPCoupon";

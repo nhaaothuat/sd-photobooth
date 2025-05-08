@@ -1,7 +1,10 @@
+
 import { CustomAxiosResponse } from "@/types/axios-response";
 import axios from "axios";
 
+
 const handleAxiosError = <T>(error: unknown): CustomAxiosResponse<T> => {
+ 
   console.error("❌ Axios Error:", error);
   if (axios.isAxiosError(error)) {
     console.error(
@@ -9,6 +12,7 @@ const handleAxiosError = <T>(error: unknown): CustomAxiosResponse<T> => {
       error.response?.status,
       error.response?.data
     );
+    
     return {
       data: error.response?.data || null,
       status: error.response?.status || 500,
