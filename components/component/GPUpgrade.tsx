@@ -45,22 +45,21 @@ const GPUpgradeLevel = ({ onUpdateSuccess }: { onUpdateSuccess: () => void }) =>
       const res = await AxiosAPI.put("/api/MembershipCard/upgrade-level", {
         email: trimmedEmail,
       });
-      if (res.status == 400 || res.status == 404) {
-        toast({
-          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
-          variant: "destructive",
-          title: "Error",
-          description: "Your information is incorrect or information cannot be found.",
-        });
-      } else {
-        toast({
-          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
-          title: a("successTitle"),
-          description: a("successDesc"),
-        });
+      if (res.status === 400) {
+        throw new Error("Thông tin không hợp lệ.");
+      }
+  
+      if (res.status === 404) {
+        const err = new Error("Email không tồn tại");
+        (err as any).customDescription = "Vui lòng kiểm tra lại email.";
+        throw err;
       }
 
-
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: a("successTitle"),
+        description: a("successDesc"),
+      });
 
       handleClose();
       onUpdateSuccess();

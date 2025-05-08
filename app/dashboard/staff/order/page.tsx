@@ -121,92 +121,67 @@ export default function OrderPage() {
             schema={orderSchema}
             onSubmit={async (values) => {
               try {
-                const response = await AxiosAPI.post("api/Order/dashboard", {
-                  ...values,
-                });
-                console.log(response, "response")
-                if (response.status == 400) {
-                  toast({
-                    className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 ",
-                    variant: "destructive",
-                    title: "Error",
-                    // title: t("errorTitle"),
-                    // description: t("errorDesc"),
-
-                  })
-
-                }
+                const response = await AxiosAPI.post("api/Order/dashboard", values);
                 const data = response.data as OrderResponse;
-                console.log(JSON.stringify(data), "data")
-                if (!data || (!data.paymentLink && !data.code)) {
 
-
+                if (!data?.paymentLink && !data?.code) {
                   toast({
-                    className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 ",
+                    className: "top-0 right-0 fixed md:max-w-[420px] md:top-4 md:right-4",
                     variant: "destructive",
-                    // title: t("errorTitle"),
-                    // description: t("errorDesc"),
-                  })
-                  throw new Error("Invalid coupon");
-
+                    title: "Invalid coupon response",
+                    description: "Coupon code is invalid or no response data is available.",
+                  });
+                  throw new Error("Invalid coupon response");
                 }
 
-                const selectedPaymentMethod = paymentMethods.find(
-                  (method) => method.id === values.paymentMethodId
+                const selectedMethod = paymentMethods.find(
+                  (m) => m.id === values.paymentMethodId
                 );
+                const methodName = selectedMethod?.methodName.toLowerCase();
 
-                const isBanking = selectedPaymentMethod?.methodName.toLowerCase() === "banking";
-                const isCash = selectedPaymentMethod?.methodName.toLowerCase() === "cash";
-
-                if (isBanking && data.paymentLink) {
+                if (methodName === "banking" && data.paymentLink) {
                   setPaymentLink(data.paymentLink);
                   setIsDialogOpen(true);
-
                   refetch();
-                } else if (isCash && data.code) {
-                  const sessionResponse = await AxiosAPI.post(
-                    `/api/Session/${data.code}`, {}
-                  );
-                  const sessionData = sessionResponse.data;
-
-
-                  setCashOrderInfo({
-                    orderCode: data.code,
-                    sessionInfo: sessionData,
-                  });
-                  setIsCashDialogOpen(true);
-
-                  refetch();
-                }
-                else {
-                  console.error("Unexpected response:", data);
-                  toast({
-                    className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 ",
-                    variant: "destructive",
-                    // title: t("errorTitle"),
-                    // description: t("errorDesc"),
-
-                  })
-                }
-
-              } catch (error: any) {
-                console.error(error, "kkk")
-                if (error?.response?.data?.message?.toLowerCase().includes("coupon")) {
-                  toast({
-                    variant: "destructive",
-                    title: "Lỗi Mã Giảm Giá",
-                    description: "Mã giảm giá không hợp lệ hoặc đã hết hạn",
-                  });
                   return;
                 }
+
+                if (methodName === "cash" && data.code) {
+                  const sessionRes = await AxiosAPI.post(`/api/Session/${data.code}`, {});
+                  setCashOrderInfo({
+                    orderCode: data.code,
+                    sessionInfo: sessionRes.data,
+                  });
+                  setIsCashDialogOpen(true);
+                  refetch();
+                  return;
+                }
+
                 toast({
-                  className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 ",
+                  className: "top-0 right-0 fixed md:max-w-[420px] md:top-4 md:right-4",
                   variant: "destructive",
-                  description: error?.response?.data?.message ||
-                    (error instanceof Error ? error.message : "Lỗi không xác định"),
+                  title: "Error",
+                  description: "Invalid response from server.",
+                });
+                throw new Error("Unhandled server response");
+
+              } catch (error: any) {
+                console.error("Submit error:", error);
+
+
+
+                toast({
+                  className: "top-0 right-0 fixed md:max-w-[420px] md:top-4 md:right-4",
+                  variant: "destructive",
+                  title: "Error",
+                  description:
+                    error?.response?.data?.message ||
+                    (error instanceof Error ? error.message : "Unknown error"),
                 });
               }
             }}
+
+
 
 
 
