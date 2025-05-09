@@ -16,6 +16,7 @@ import { FrameStyle } from "@/types/type";
 import DeletePayment from "@/components/component/DeletePayment";
 import ViewDetailFrameStyle from "@/components/component/IDFrameStyle";
 import UpdateFrameStyle from "@/components/component/GPFrameStyle";
+import { Group } from "@mantine/core";
 
 const DateCell = ({ value }: { value: string }) => {
   const date = new Date(value);
@@ -56,18 +57,7 @@ export const columns = (
         </div>
       ),
     },
-    {
-      id: "edit",
-      header: () => <div className="text-center">Edit</div>,
-      cell: ({ row }) => {
-        const id = row.original.id;
-        return (
-          <div className="text-center">
-            <UpdateFrameStyle id={id} onUpdated={refetchData} />
-          </div>
-        );
-      },
-    },
+   
 
     {
       accessorKey: "createdAt",
@@ -78,37 +68,18 @@ export const columns = (
     },
     {
       id: "actions",
-      enableHiding: false,
+      header: () => <div className="text-center">Action</div>,
       cell: ({ row }) => {
         const id = row.original.id;
-        const framestyle = row.original;
+       
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <MoreHorizontal />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="center">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              {/* <DropdownMenuItem onClick={() => navigator.clipboard.writeText(payment.id.toString())}>
-                             Copy Sticker ID
-                        </DropdownMenuItem> */}
-              {/* <DropdownMenuSeparator /> */}
+          <Group>
+            <DeletePayment id={id} onDelete={onDelete} />
+            <ViewDetailFrameStyle id={id} />
+            <UpdateFrameStyle id={id} onUpdated={refetchData} />
+          </Group>
 
-              <DropdownMenuItem asChild>
-                <DeletePayment id={id} onDelete={onDelete} />
-              </DropdownMenuItem>
 
-              <DropdownMenuItem asChild>
-                <ViewDetailFrameStyle id={id} />
-              </DropdownMenuItem>
-
-              <DropdownMenuItem asChild>
-                {/* <UpdateFrame id={id}  onUpdated={refetchData} /> */}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
         );
       },
     },

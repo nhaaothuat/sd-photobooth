@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AxiosAPI from "@/configs/axios";
 import { toast } from "react-toastify";
+import { FaPlus } from "react-icons/fa";
 
 const formSchema = z.object({
   name: z.string().min(1, "Sticker name is required"),
@@ -93,7 +94,7 @@ const AddSticker: React.FC<AddStickerProps> = ({ onAddSuccess }) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Add Sticker</Button>
+        <Button variant="outline"><FaPlus /></Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>

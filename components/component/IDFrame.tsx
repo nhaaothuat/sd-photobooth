@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import AxiosAPI from "@/configs/axios"
 import { Loader2 } from "lucide-react"
 import Image from "next/image"
+import { Skeleton } from "@mantine/core"
+import { FaEye } from "react-icons/fa"
 
 const ViewDetailFrame = ({ id }: { id: number }) => {
   const [frame, setFrame] = useState<Frame | null>(null)
@@ -32,7 +34,7 @@ const ViewDetailFrame = ({ id }: { id: number }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Xem</Button>
+        <Button variant="outline"><FaEye /></Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -40,9 +42,7 @@ const ViewDetailFrame = ({ id }: { id: number }) => {
         </DialogHeader>
 
         {loading ? (
-          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <Loader2 className="animate-spin h-4 w-4" /> <span>Đang tải...</span>
-          </div>
+         <Skeleton height={8} mt={6} width="70%" radius="xl" />
         ) : frame ? (
           <div className="space-y-2 text-sm">
             <p><strong>ID:</strong> {frame.id}</p>

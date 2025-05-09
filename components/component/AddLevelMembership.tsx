@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import AxiosAPI from "@/configs/axios";
 import { toast } from "react-toastify";
+import { FaPlus } from "react-icons/fa";
 
 const levelMembershipSchema = z.object({
   name: z.string().min(1, "Tên là bắt buộc"),
@@ -79,7 +80,7 @@ const AddLevelMembership = ({ onSuccess }: { onSuccess?: () => void }) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Thêm cấp độ thành viên</Button>
+        <Button variant="outline"><FaPlus /></Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px] max-h-[80vh] overflow-y-auto">
         <DialogHeader>

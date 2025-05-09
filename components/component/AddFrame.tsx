@@ -129,7 +129,7 @@ const AddFrame = ({ onSuccess }: { onSuccess: () => void }) => {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline">
-          <PlusCircle className="mr-2 h-4 w-4" /> Add Frame
+          <PlusCircle /> 
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">

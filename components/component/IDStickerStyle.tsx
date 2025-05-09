@@ -3,7 +3,9 @@ import { StickerStyle } from "@/types/type"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import AxiosAPI from "@/configs/axios"
-import { Loader2 } from "lucide-react"
+import { Skeleton, Paper, Text, Title, Stack } from "@mantine/core"
+import { FaEye } from "react-icons/fa"
+
 const ViewDetailStickerStyle = ({ id }: { id: number }) => {
   const [stickerStyle, setStickerStyle] = useState<StickerStyle | null>(null)
   const [open, setOpen] = useState(false)
@@ -15,7 +17,7 @@ const ViewDetailStickerStyle = ({ id }: { id: number }) => {
       const response = await AxiosAPI.get<StickerStyle>(`/api/StickerStyle/${id}`)
       setStickerStyle(response.data)
     } catch (error) {
-      console.error("Lỗi khi lấy dữ liệu chi tiết", error)
+      console.error("Error fetching details", error)
       setStickerStyle(null)
     } finally {
       setLoading(false)
@@ -26,32 +28,29 @@ const ViewDetailStickerStyle = ({ id }: { id: number }) => {
     if (open) fetchDetail()
   }, [open])
 
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Xem</Button>
+        <Button variant="outline" className="border-green-500"><FaEye /></Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Chi tiết </DialogTitle>
+          <DialogTitle>Sticker Style Details</DialogTitle>
         </DialogHeader>
 
         {loading ? (
-          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <Loader2 className="animate-spin h-4 w-4" /> <span>Đang tải...</span>
-          </div>
+          <Skeleton height={100} radius="md" />
         ) : stickerStyle ? (
-          <div className="space-y-2 text-sm">
-            <p><strong>ID:</strong> {stickerStyle.id}</p>
-            <p><strong>Method Name:</strong> {stickerStyle.stickerStyleName}</p>
-
-            <p><strong>Slot Count:</strong> {stickerStyle.description}</p>
-
-            <p><strong>Created At:</strong> {new Date(stickerStyle.createdAt).toLocaleString()}</p>
-          </div>
+          <Paper withBorder shadow="sm" p="md" radius="md">
+            <Stack gap="xs">
+              <Text size="sm"><strong>ID:</strong> {stickerStyle.id}</Text>
+              <Text size="sm"><strong>Style Name:</strong> {stickerStyle.stickerStyleName}</Text>
+              <Text size="sm"><strong>Description:</strong> {stickerStyle.description}</Text>
+              <Text size="sm"><strong>Created At:</strong> {new Date(stickerStyle.createdAt).toLocaleString()}</Text>
+            </Stack>
+          </Paper>
         ) : (
-          <div className="text-sm text-red-500">Không thể tải dữ liệu chi tiết</div>
+          <Text color="red" size="sm">Failed to load sticker style details.</Text>
         )}
       </DialogContent>
     </Dialog>

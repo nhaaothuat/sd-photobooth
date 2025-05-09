@@ -133,10 +133,7 @@ export function Component() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Usage by Channel</CardTitle>
-        <CardDescription>Dynamic view by StaticType and Channel</CardDescription>
-      </CardHeader>
+      
 
       <CardContent>
         <div className="flex flex-wrap gap-4 mb-6 items-center">

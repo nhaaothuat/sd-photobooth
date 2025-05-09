@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button"
 import AxiosAPI from "@/configs/axios"
 import { Loader2 } from "lucide-react"
+import { FaEye } from "react-icons/fa"
 
 
 const ViewDetailLevelMembership = ({ id }: { id: number }) => {
@@ -32,7 +33,7 @@ const ViewDetailLevelMembership = ({ id }: { id: number }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Xem</Button>
+        <Button className="border-green-500" variant="outline"><FaEye /></Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

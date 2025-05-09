@@ -6,6 +6,7 @@ import ViewDetailLevelMembership from "@/components/component/IDLevelMembership"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { LevelMembership } from "@/types/type"
+import { Group } from "@mantine/core"
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal } from "lucide-react"
 
@@ -59,46 +60,14 @@ export const columns = (
                cell: ({ row }) => {
                     const id = row.original.id;
                     return (
-                         <EditLevelMembership id={id} onUpdated={refetchData} />
+                         <Group>
+                              <EditLevelMembership id={id} onUpdated={refetchData} />
+                              <DeletePayment id={id} onDelete={onDelete} />
+                              <ViewDetailLevelMembership id={id} />
+                         </Group>
+
                     )
                }
           },
-          {
-               id: "actions",
-               enableHiding: false,
-               cell: ({ row }) => {
-                    const id = row.original.id
-                    const sticker = row.original;
-                    return (
-                         <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                   <Button variant="ghost" className="h-8 w-8 p-0">
 
-                                        <MoreHorizontal />
-                                   </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="center">
-                                   <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                   {/* <DropdownMenuItem onClick={() => navigator.clipboard.writeText(sticker.id.toString())}>
-                                   Copy Sticker ID
-                              </DropdownMenuItem> */}
-                                   <DropdownMenuSeparator />
-                                   <DropdownMenuItem asChild>
-                                        <DeletePayment id={id} onDelete={onDelete} />
-                                   </DropdownMenuItem>
-
-
-                                   {/* <DropdownMenuSeparator /> */}
-
-                                   {/* <DropdownMenuSeparator /> */}
-
-                                   <DropdownMenuItem asChild>
-                                        <ViewDetailLevelMembership id={id} />
-                                   </DropdownMenuItem>
-
-                              </DropdownMenuContent>
-                         </DropdownMenu>
-                    );
-               }
-          }
      ]

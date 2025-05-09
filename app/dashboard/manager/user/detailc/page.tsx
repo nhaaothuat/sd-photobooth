@@ -106,7 +106,7 @@ const ViewDetailCustomerStaff = () => {
             <strong>Vai trò:</strong> {customer.role}
           </p>
           <p>
-            <strong>Bị cấm:</strong> {customer.isBanned ? "Có" : "Không"}
+            <strong>Bị cấm:</strong> {customer.isBanned ? "Active" : "InActive"}
           </p>
         </div>
       )}

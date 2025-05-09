@@ -2,7 +2,7 @@
 
 import React, { useCallback, useState } from "react";
 import AxiosAPI from "@/configs/axios";
-import { SimpleGrid, Skeleton } from "@mantine/core";
+import {  Skeleton } from "@mantine/core";
 import Image from "next/image";
 import { PhotoHistory } from "@/types/type";
 import { useTranslations } from "next-intl";
@@ -19,17 +19,14 @@ const ByPhotoHistory = () => {
       return;
     }
 
-    const id = parseInt(inputId);
-    if (isNaN(id)) {
-      setError("ID must be a number");
-      return;
-    }
+    
 
     setIsLoading(true);
     setError(null);
 
     try {
-      const { data } = await AxiosAPI.get(`/api/PhotoHistory/manage/photo/${id}`);
+      const { data } = await AxiosAPI.get(`/api/PhotoHistory/manage/session/${inputId.trim()}`);
+      
 
       const processedData = Array.isArray(data)
         ? data.map((item, index) => ({
@@ -41,7 +38,7 @@ const ByPhotoHistory = () => {
 
       setPhotos(processedData);
     } catch (err) {
-      
+
       setError("No photo history found for this ID");
       setPhotos([]);
     } finally {
@@ -120,7 +117,7 @@ const ByPhotoHistory = () => {
 
       )}
 
-     
+
       {!isLoading && inputId && !error && photos.length === 0 && (
         <div className="text-center text-gray-500 mt-4 text-sm">
           Không tìm thấy lịch sử ảnh nào.

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { deleteStickerStyle } from "@/services/sticker-style";
 import { StickerStyle } from "@/types/type";
+import { Group } from "@mantine/core";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 
@@ -21,7 +22,10 @@ const DateCell = ({ value }: { value: string }) => {
   return <div>{date.toLocaleDateString()}</div>;
 };
 
-export const columns: ColumnDef<StickerStyle>[] = [
+export const columns = (
+  onDelete: (id: number) => Promise<void>,
+  refetchData: () => void
+): ColumnDef<StickerStyle>[] => [
     {
       accessorKey: "id",
       header: () => <div className="text-center">ID</div>,
@@ -57,43 +61,21 @@ export const columns: ColumnDef<StickerStyle>[] = [
     },
 
     {
-      id: "edit",
-      header: () => <div className="text-center">Edit</div>,
+      id: "action",
+      header: () => <div className="text-center">Action</div>,
       cell: ({ row }) => {
         const id = row.original.id;
-        // return <UpdateStickerStyle id={id} onUpdateSuccess={refetchData} />;
-        return <DeleteItem  id={id} deleteFn={deleteStickerStyle} queryKey="stickerStyles"
-       />
+
+        return (
+
+          <Group>
+            <DeletePayment id={id} onDelete={onDelete} />
+            <UpdateStickerStyle id={id} onUpdateSuccess={refetchData} />
+            <ViewDetailStickerStyle id={id} />
+          </Group>
+
+        )
       },
     },
-    // {
-    //   id: "actions",
-    //   enableHiding: false,
-    //   cell: ({ row }) => {
-    //     const id = row.original.id;
-    //     const sticker = row.original;
-    //     return (
-    //       <DropdownMenu>
-    //         <DropdownMenuTrigger asChild>
-    //           <Button variant="ghost" className="h-8 w-8 p-0">
-    //             <MoreHorizontal />
-    //           </Button>
-    //         </DropdownMenuTrigger>
-    //         <DropdownMenuContent align="center">
-    //           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-    //           {/* <DropdownMenuItem onClick={() => navigator.clipboard.writeText(sticker.id.toString())}>
-    //                                Copy Sticker ID
-    //                           </DropdownMenuItem> */}
-    //           <DropdownMenuSeparator />
-    //           <DropdownMenuItem asChild>
-    //             <DeletePayment id={id} onDelete={onDelete} />
-    //           </DropdownMenuItem>
-    //           <DropdownMenuItem asChild>
-    //             <ViewDetailStickerStyle id={id} />
-    //           </DropdownMenuItem>
-    //         </DropdownMenuContent>
-    //       </DropdownMenu>
-    //     );
-    //   },
-    // },
+
   ];

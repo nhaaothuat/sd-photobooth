@@ -22,6 +22,7 @@ import { debounce } from "lodash";
 import { toast } from "react-toastify";
 import { Label } from "@/components/ui/label";
 import AddPhotoStyle from "@/components/component/AddPhotoStyle";
+import { Skeleton } from "@mantine/core";
 
 const usePhotoStyleData = () => {
   const [data, setData] = useState<PhotoStyle[]>([]);
@@ -192,7 +193,7 @@ const PhotoStyle = () => {
     <div className="w-full space-y-4">
       <div className="flex items-center justify-between py-4">
         <Input
-          placeholder="Tìm kiếm Payment Method"
+         
           value={searchTerm}
           onChange={handleSearchChange}
           className="max-w-sm"
@@ -208,9 +209,7 @@ const PhotoStyle = () => {
               }}
             />
           </div>
-          <Label htmlFor="pageSize" className="text-sm">
-            Số hàng/trang:
-          </Label>
+          
           <select
             id="pageSize"
             value={pageSize}
@@ -227,7 +226,7 @@ const PhotoStyle = () => {
       </div>
 
       {loading ? (
-        <div className="text-sm text-muted-foreground">Đang tải dữ liệu...</div>
+        <Skeleton height={8} mt={6} width="70%" radius="xl" />
       ) : error ? (
         <div className="text-red-500 p-4">Error: {error}</div>
       ) : (

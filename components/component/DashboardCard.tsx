@@ -5,7 +5,7 @@ import {
   IconDiscount2,
   IconReceipt2,
   IconUserPlus,
-  IconWallet, // New icon for deposit
+  IconWallet,
 } from "@tabler/icons-react";
 import { Paper, Group, SimpleGrid, Text, Select, Badge, Skeleton } from "@mantine/core";
 import { useEffect, useState } from "react";
@@ -15,14 +15,14 @@ const icons = {
   user: IconUserPlus,
   revenue: IconReceipt2,
   order: IconDiscount2,
-  deposit: IconWallet, // New icon for deposit
+  deposit: IconWallet,
 };
 
 type DashboardData = [
   { totalOrder: number; totalOrderPrev: number },
   { totalUser: number; totalUserPrev: number },
   { totalRevenue: number; totalRevenuePrev: number },
-  { totalDeposit: number; totalDepositPrev: number } // New deposit data
+  { totalDeposit: number; totalDepositPrev: number }
 ];
 
 const calculateDiff = (current: number, previous: number): number => {
@@ -32,25 +32,25 @@ const calculateDiff = (current: number, previous: number): number => {
 
 const DashboardCard = () => {
   const [loading, setLoading] = useState(true);
-  const [dateFilter, setDateFilter] = useState<number | null>(null);
+  const [staticType, setStaticType] = useState<number | null>(null);
   const [data, setData] = useState<DashboardData | null>(null);
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const config = { params: { dateFilter } };
-      console.log("dateFilter", dateFilter);
+      const config = { params: { staticType } };
+      console.log("staticType", staticType);
       const [order, user, revenue, deposit] = await Promise.all([
         AxiosAPI.get("/api/Dashboard/statictis-order", config),
         AxiosAPI.get("/api/Dashboard/statictis-user", config),
         AxiosAPI.get("/api/Dashboard/statictis-revenue", config),
-        AxiosAPI.get("/api/Dashboard/statictis-deposit", config), // New API for deposit
+        AxiosAPI.get("/api/Dashboard/statictis-deposit", config),
       ]) as [
-          { data: { totalOrder: number; totalOrderPrev: number } },
-          { data: { totalUser: number; totalUserPrev: number } },
-          { data: { totalRevenue: number; totalRevenuePrev: number } },
-          { data: { totalDeposit: number; totalDepositPrev: number } } // Deposit response
-        ];
+        { data: { totalOrder: number; totalOrderPrev: number } },
+        { data: { totalUser: number; totalUserPrev: number } },
+        { data: { totalRevenue: number; totalRevenuePrev: number } },
+        { data: { totalDeposit: number; totalDepositPrev: number } }
+      ];
       console.log(order.data, user.data, revenue.data, deposit.data);
       setData([order.data, user.data, revenue.data, deposit.data]);
     } catch (error) {
@@ -62,7 +62,7 @@ const DashboardCard = () => {
 
   useEffect(() => {
     fetchData();
-  }, [dateFilter]);
+  }, [staticType]);
 
   if (loading || !data) return <Skeleton height={130} radius="md" />;
 
@@ -86,7 +86,7 @@ const DashboardCard = () => {
       diff: calculateDiff(data[2].totalRevenue, data[2].totalRevenuePrev),
     },
     {
-      title: "Total Deposit", // New deposit stat
+      title: "Total Deposit",
       icon: "deposit",
       value: data[3].totalDeposit,
       diff: calculateDiff(data[3].totalDeposit, data[3].totalDepositPrev),
@@ -96,10 +96,10 @@ const DashboardCard = () => {
   return (
     <div className="pb-4">
       <Select
-        value={dateFilter !== null ? dateFilter.toString() : null}
+        value={staticType !== null ? staticType.toString() : null}
         onChange={(value) => {
           if (value !== null && !isNaN(Number(value))) {
-            setDateFilter(Number(value));
+            setStaticType(Number(value));
           }
         }}
         data={[
@@ -111,7 +111,6 @@ const DashboardCard = () => {
         className="mb-4 max-w-xs"
         placeholder="Chọn thời gian"
       />
-
 
       <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="lg">
         {stats.map((stat, index) => {
@@ -137,9 +136,9 @@ const DashboardCard = () => {
                 <Text className="text-3xl font-bold">
                   {stat.icon === "revenue" || stat.icon === "deposit"
                     ? stat.value.toLocaleString("vi-VN", {
-                      style: "currency",
-                      currency: "VND",
-                    })
+                        style: "currency",
+                        currency: "VND",
+                      })
                     : stat.value}
                 </Text>
                 <Badge
@@ -148,17 +147,13 @@ const DashboardCard = () => {
                   size="sm"
                   className="h-[26px] flex items-center justify-center"
                 >
-
                   <Group gap={4}>
                     {stat.diff >= 0 ? "+" : ""}
                     {stat.diff.toFixed(2)}%
                     <DiffIcon size={14} />
                   </Group>
-
                 </Badge>
               </Group>
-
-
             </Paper>
           );
         })}

@@ -116,7 +116,7 @@ const ViewDetailCustomer = () => {
           </p>
           <p className="flex justify-between">
             <span className="font-medium text-gray-600">{t('isBanned')}:</span>
-            <span>{customer.isBanned ? t('yes') : t('no')}</span>
+            <span>{customer.isBanned ? "Active" : "InActive"}</span>
           </p>
         </div>
       )}

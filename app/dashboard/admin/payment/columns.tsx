@@ -4,6 +4,7 @@ import ViewDetail from "@/components/component/IDPayment";
 import { Button } from "@/components/ui/button";
 
 import { PaymentMethod } from "@/types/type";
+import { Group } from "@mantine/core";
 import { ColumnDef } from "@tanstack/react-table";
 
 
@@ -14,7 +15,10 @@ const DateCell = ({ value }: { value: string }) => {
 
 
 
-export const columns: ColumnDef<PaymentMethod>[] = [
+export const columns = (
+     onDelete: (id: number) => Promise<void>,
+     refetchData: () => void
+   ): ColumnDef<PaymentMethod>[] => [
      {
           accessorKey: "id",
           header: () => <div className="text-center">ID</div>,
@@ -76,9 +80,10 @@ export const columns: ColumnDef<PaymentMethod>[] = [
           cell: ({ row }) => {
                const id = row.original.id;
                return (
-                    <>
-                         {/* <ViewDetail id={id} /> */}
-                    </>
+                    <Group>
+                         <ViewDetail id={id} />
+                         <EditPaymentMethod id={id} onUpdated={refetchData} />
+                    </Group>
                );
           },
      },

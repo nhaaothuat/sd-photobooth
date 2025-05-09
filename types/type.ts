@@ -185,7 +185,7 @@ export type PhotoStyle = {
   numInferenceSteps: number;
   guidanceScale: number;
   strength: number;
-  faceImage: boolean;
+  ipAdapterScale: number;
   backgroundRemover: boolean;
   createdAt: string;
   lastModified: string;

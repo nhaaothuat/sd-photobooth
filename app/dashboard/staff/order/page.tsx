@@ -161,7 +161,7 @@ export default function OrderPage() {
                   className: "top-0 right-0 fixed md:max-w-[420px] md:top-4 md:right-4",
                   variant: "destructive",
                   title: "Error",
-                  description: "Invalid response from server.",
+                  // description: error.response?.data?.message || "Something went wrong",
                 });
                 throw new Error("Unhandled server response");
 

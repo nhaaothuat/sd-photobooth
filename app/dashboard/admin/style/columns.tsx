@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { PhotoStyle } from "@/types/type";
+import { Group } from "@mantine/core";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 
@@ -20,81 +21,55 @@ export const columns = (
   onDelete: (id: number) => Promise<void>,
   refetchData: () => void
 ): ColumnDef<PhotoStyle>[] => [
-  {
-    accessorKey: "id",
-    header: () => <div className="text-center">ID</div>,
-    cell: ({ row }) => <div className="text-center">{row.getValue("id")}</div>,
-  },
-  {
-    accessorKey: "name",
-    header: () => <div className="text-center">Name</div>,
-    cell: ({ row }) => (
-      <div className="text-center">{row.getValue("name")}</div>
-    ),
-  },
-  {
-    accessorKey: "description",
-    header: () => <div className="text-center">Description</div>,
-    cell: ({ row }) => (
-      <div className="text-center">{row.getValue("description")}</div>
-    ),
-  },
-  {
-    accessorKey: "faceImage",
-    header: () => <div className="text-center">Face Image</div>,
-    cell: ({ row }) => (
-      <div className="text-center">
-        {row.getValue("faceImage") ? "Yes" : "No"}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "backgroundRemover",
-    header: () => <div className="text-center">Background Remover</div>,
-    cell: ({ row }) => (
-      <div className="text-center">
-        {row.getValue("backgroundRemover") ? "Yes" : "No"}
-      </div>
-    ),
-  },
-  
-  {
-    id: "edit",
-    header: () => <div className="text-center">Edit</div>,
-    cell: ({ row }) => {
-      const id = row.original.id;
-      return <EditPhotoStyle id={id} onUpdateSuccess={refetchData} />;
+    {
+      accessorKey: "id",
+      header: () => <div className="text-center">ID</div>,
+      cell: ({ row }) => <div className="text-center">{row.getValue("id")}</div>,
     },
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const id = row.original.id;
-      const sticker = row.original;
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="center">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            {/* <DropdownMenuItem onClick={() => navigator.clipboard.writeText(sticker.id.toString())}>
-                                   Copy Sticker ID
-                              </DropdownMenuItem> */}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <DeletePayment id={id} onDelete={onDelete} />
-            </DropdownMenuItem>
+    {
+      accessorKey: "name",
+      header: () => <div className="text-center">Name</div>,
+      cell: ({ row }) => (
+        <div className="text-center">{row.getValue("name")}</div>
+      ),
+    },
+    {
+      accessorKey: "description",
+      header: () => <div className="text-center">Description</div>,
+      cell: ({ row }) => (
+        <div className="text-center">{row.getValue("description")}</div>
+      ),
+    },
+    {
+      accessorKey: "ipAdapterScale",
+      header: () => <div className="text-center">ipAdapterScale</div>,
+      cell: ({ row }) => (
+        <div className="text-center">
+          {row.getValue("ipAdapterScale")}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "backgroundRemover",
+      header: () => <div className="text-center">Background Remover</div>,
+      cell: ({ row }) => (
+        <div className="text-center">
+          {row.getValue("backgroundRemover") ? "Yes" : "No"}
+        </div>
+      ),
+    },
 
-            <DropdownMenuItem asChild>
-              <ViewDetailPhotoStyle id={id} />
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+    {
+      id: "actions",
+      header: () => <div className="text-center min-w-[200px]">Action</div>,
+      cell: ({ row }) => {
+        const id = row.original.id;
+        return <Group>
+          <EditPhotoStyle id={id} onUpdateSuccess={refetchData} />
+          <DeletePayment id={id} onDelete={onDelete} />
+          <ViewDetailPhotoStyle id={id} />
+        </Group>;
+      },
     },
-  },
-];
+
+  ];

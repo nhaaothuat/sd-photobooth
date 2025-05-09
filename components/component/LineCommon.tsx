@@ -30,8 +30,8 @@ interface PersonalRevenueResponse {
   data: PersonalRevenueData[];
 }
 
-const formatLabel = (item: PersonalRevenueData, groupingType: number) => {
-  switch (groupingType) {
+const formatLabel = (item: PersonalRevenueData, staticType: number) => {
+  switch (staticType) {
     case 0:
       return item.day ? new Date(item.day).toLocaleDateString("vi-VN") : "";
     case 1:
@@ -50,10 +50,11 @@ const formatLabel = (item: PersonalRevenueData, groupingType: number) => {
 };
 
 const PersonalRevenueChart = () => {
-  const [groupingType, setGroupingType] = useState(0);
+  const [staticType, setStaticType] = useState(0);
   const [data, setData] = useState<PersonalRevenueData[]>([]);
   const [loading, setLoading] = useState(false);
   const t = useTranslations("staff");
+
   useEffect(() => {
     const controller = new AbortController();
     const fetchData = async () => {
@@ -62,7 +63,7 @@ const PersonalRevenueChart = () => {
         const response = await AxiosAPI.get<PersonalRevenueResponse>(
           "/api/Dashboard/statictis-revenue-own",
           {
-            params: { groupingType },
+            params: { staticType },
             signal: controller.signal,
           }
         );
@@ -78,18 +79,18 @@ const PersonalRevenueChart = () => {
 
     fetchData();
     return () => controller.abort();
-  }, [groupingType]);
+  }, [staticType]);
 
   const groupedData = useMemo(() => {
     return Object.values(
       data.reduce<Record<string, Record<string, any>>>((acc, item) => {
-        const label = formatLabel(item, groupingType);
+        const label = formatLabel(item, staticType);
         if (!acc[label]) acc[label] = { label };
         acc[label][item.name] = item.totalRevenue;
         return acc;
       }, {})
     );
-  }, [data, groupingType]);
+  }, [data, staticType]);
 
   const allNames = useMemo(
     () => Array.from(new Set(data.map((d) => d.name))),
@@ -102,12 +103,12 @@ const PersonalRevenueChart = () => {
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <h2 className="text-2xl font-bold text-gray-800">{t("title")}</h2>
           <Select
-            value={groupingType.toString()}
-            onChange={(value) => setGroupingType(Number(value))}
+            value={staticType.toString()}
+            onChange={(value) => setStaticType(Number(value))}
             data={[
-              { value: "0", label:t("day") },
+              { value: "0", label: t("day") },
               { value: "1", label: t("month") },
-              { value: "2", label: t("month") },
+              { value: "2", label: t("quarter") },
               { value: "3", label: t("year") },
             ]}
             placeholder={t("placeholder")}
@@ -133,12 +134,10 @@ const PersonalRevenueChart = () => {
               <XAxis dataKey="label" tickLine={false} axisLine={false} />
               <YAxis tickLine={false} axisLine={false} />
               <Tooltip
-              
                 contentStyle={{
                   borderRadius: "10px",
                   backgroundColor: "#ffffff",
                   border: "1px solid #e2e8f0",
-                  
                   boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
                 }}
                 labelStyle={{ fontWeight: "bold", color: "#333" }}
@@ -151,8 +150,6 @@ const PersonalRevenueChart = () => {
                   name={name}
                   radius={[10, 10, 0, 0]}
                   maxBarSize={50}
-                  
-                 
                 />
               ))}
             </BarChart>
@@ -160,7 +157,6 @@ const PersonalRevenueChart = () => {
         )}
       </CardContent>
     </Card>
-
   );
 };
 

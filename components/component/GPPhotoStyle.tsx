@@ -89,7 +89,7 @@ const EditPhotoStyle = ({
       formDataToSend.append("NumInferenceSteps", String(formData.numInferenceSteps ?? 0));
       formDataToSend.append("GuidanceScale", String(formData.guidanceScale ?? 0));
       formDataToSend.append("Strength", String(formData.strength ?? 0));
-      formDataToSend.append("FaceImage", String(formData.faceImage ?? false));
+      formDataToSend.append("IPAdapterScale", String(formData.ipAdapterScale ?? 0));
       formDataToSend.append("BackgroundRemover", String(formData.backgroundRemover ?? false));
 
       await AxiosAPI.put(`/api/PhotoStyle/${id}`, formDataToSend, {
@@ -209,10 +209,13 @@ const EditPhotoStyle = ({
             max={1}
             step={0.1}
           />
-          <Checkbox
-            label="Ảnh khuôn mặt"
-            checked={formData.faceImage || false}
-            onChange={(e) => handleChange("faceImage", e.currentTarget.checked)}
+          <NumberInput
+            label="IP Adapter Scale"
+            value={formData.ipAdapterScale || 0}
+            onChange={(v) => handleChange("ipAdapterScale", Number(v))}
+            min={0}
+
+            step={0.1}
           />
           <Checkbox
             label="Xóa nền"

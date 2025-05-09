@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import AxiosAPI from "@/configs/axios"
 import { Loader2 } from "lucide-react"
 import Image from "next/image"
+import { FaEye } from "react-icons/fa"
+import { Paper, Text, Group, Stack, Divider, Skeleton } from "@mantine/core"
 
 const ViewDetailPhotoStyle = ({ id }: { id: number }) => {
   const [photoStyle, setPhotoStyle] = useState<PhotoStyle | null>(null)
@@ -17,7 +19,7 @@ const ViewDetailPhotoStyle = ({ id }: { id: number }) => {
       const response = await AxiosAPI.get<PhotoStyle>(`/api/PhotoStyle/${id}`)
       setPhotoStyle(response.data)
     } catch (error) {
-      console.error("Lỗi khi lấy dữ liệu chi tiết", error)
+      console.error("Error fetching photo style detail", error)
       setPhotoStyle(null)
     } finally {
       setLoading(false)
@@ -31,39 +33,48 @@ const ViewDetailPhotoStyle = ({ id }: { id: number }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Xem</Button>
+        <Button variant="outline" className="border-green-500">
+          <FaEye />
+        </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] max-h-[80vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[500px] max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Chi tiết </DialogTitle>
+          <DialogTitle>Photo Style Detail</DialogTitle>
         </DialogHeader>
 
         {loading ? (
-          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <Loader2 className="animate-spin h-4 w-4" /> <span>Đang tải...</span>
-          </div>
+          <Group gap="sm">
+            <Loader2 className="animate-spin h-4 w-4" />
+            <Text size="sm" color="dimmed">Loading...</Text>
+          </Group>
         ) : photoStyle ? (
-          <div className="space-y-2 text-sm">
-            <p><strong>ID:</strong> {photoStyle.id}</p>
-            <p><strong>Method Name:</strong> {photoStyle.name}</p>
-            <Image src={photoStyle.imageUrl} alt={photoStyle.name} width={200} height={200} />
-            <p><strong>Description:</strong> {photoStyle.description}</p>
-            
-            <p><strong>prompt:</strong> {photoStyle.prompt}</p>
-            <p><strong>negativePrompt:</strong> {photoStyle.negativePrompt}</p>
-            <p><strong>numImagesPerGen:</strong> {photoStyle.numImagesPerGen}</p>
-            <p><strong>width:</strong> {photoStyle.width}</p>
-            <p><strong>height:</strong> {photoStyle.height}</p>
-         
-            
-            <p><strong>Controlnets:</strong> {photoStyle.controlnets}</p>
-            <p><strong>Is Active:</strong> {photoStyle.faceImage ? "Yes" : "No"}</p>
-            <p><strong>Is Online:</strong> {photoStyle.backgroundRemover ? "Yes" : "No"}</p>
-           
-            <p><strong>Created At:</strong> {new Date(photoStyle.createdAt).toLocaleString()}</p>
-          </div>
+          <Paper p="md" radius="md" shadow="xs" withBorder>
+            <Stack gap="xs">
+              <Text size="sm"><strong>ID:</strong> {photoStyle.id}</Text>
+              <Text size="sm"><strong>Name:</strong> {photoStyle.name}</Text>
+
+              <Image
+                src={photoStyle.imageUrl}
+                alt={photoStyle.name}
+                width={200}
+                height={200}
+              />
+
+              <Divider my="sm" />
+              <Text size="sm"><strong>Description:</strong> {photoStyle.description}</Text>
+              <Text size="sm"><strong>Prompt:</strong> {photoStyle.prompt}</Text>
+              <Text size="sm"><strong>Negative Prompt:</strong> {photoStyle.negativePrompt}</Text>
+              <Text size="sm"><strong>Images per Generation:</strong> {photoStyle.numImagesPerGen}</Text>
+              <Text size="sm"><strong>Width:</strong> {photoStyle.width}px</Text>
+              <Text size="sm"><strong>Height:</strong> {photoStyle.height}px</Text>
+              <Text size="sm"><strong>Controlnets:</strong> {photoStyle.controlnets}</Text>
+              <Text size="sm"><strong>IP Adapter Scale:</strong> {photoStyle.ipAdapterScale}</Text>
+              <Text size="sm"><strong>Background Remover:</strong> {photoStyle.backgroundRemover ? "Yes" : "No"}</Text>
+              <Text size="sm"><strong>Created At:</strong> {new Date(photoStyle.createdAt).toLocaleString()}</Text>
+            </Stack>
+          </Paper>
         ) : (
-          <div className="text-sm text-red-500">Không thể tải dữ liệu chi tiết</div>
+          <Text size="sm" color="red">Failed to load photo style details.</Text>
         )}
       </DialogContent>
     </Dialog>

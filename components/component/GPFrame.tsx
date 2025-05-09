@@ -20,6 +20,7 @@ import AxiosAPI from "@/configs/axios";
 import { toast } from "react-toastify";
 import { Pencil, Smartphone } from "lucide-react";
 import { Coordinate, Frame, FrameStyle } from "@/types/type";
+import { FaPencilAlt } from "react-icons/fa";
 
 const frameSchema = z.object({
      name: z.string().min(1, "Name is required"),
@@ -92,13 +93,13 @@ const UpdateFrame = ({ id, onUpdated }: { id: number; onUpdated?: () => void }) 
                     slotCount: frameData?.slotCount || 0,
                     forMobile: frameData?.forMobile ?? false,
                     coordinateDTOs: frameData?.coordinates?.length
-                    ? frameData.coordinates.map(coord => ({
-                         x: coord.x ?? 0,
-                         y: coord.y ?? 0,
-                         width: coord.width ?? 0,
-                         height: coord.height ?? 0,
-                    }))
-                    : [{ x: 0, y: 0, width: 0, height: 0 }],
+                         ? frameData.coordinates.map(coord => ({
+                              x: coord.x ?? 0,
+                              y: coord.y ?? 0,
+                              width: coord.width ?? 0,
+                              height: coord.height ?? 0,
+                         }))
+                         : [{ x: 0, y: 0, width: 0, height: 0 }],
                });
 
                setIsInitialized(true);
@@ -159,9 +160,9 @@ const UpdateFrame = ({ id, onUpdated }: { id: number; onUpdated?: () => void }) 
      return (
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
                <DialogTrigger asChild>
-                    <Button variant="ghost" size="sm">
-                         <Pencil className="w-4 h-4 mr-1" />
-                         Edit
+                    <Button className="border-blue-500"  variant={"outline"} >
+                         <FaPencilAlt />
+
                     </Button>
                </DialogTrigger>
                <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
@@ -300,7 +301,7 @@ const UpdateFrame = ({ id, onUpdated }: { id: number; onUpdated?: () => void }) 
                                         <Button
                                              type="button"
                                              variant="outline"
-                                             onClick={() => append({ x: 0, y: 0, width:0 , height: 0 })}
+                                             onClick={() => append({ x: 0, y: 0, width: 0, height: 0 })}
                                              disabled={loading}
                                         >
                                              Add Coordinate
@@ -311,7 +312,7 @@ const UpdateFrame = ({ id, onUpdated }: { id: number; onUpdated?: () => void }) 
                                    </div>
                               </div>
                               <DialogFooter>
-                                   <Button type="submit" disabled={loading }>
+                                   <Button type="submit" disabled={loading}>
                                         {loading ? "Saving..." : "Update Frame"}
                                    </Button>
                               </DialogFooter>

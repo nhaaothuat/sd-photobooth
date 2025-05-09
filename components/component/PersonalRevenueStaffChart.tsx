@@ -31,7 +31,7 @@ interface PersonalRevenueResponse {
 
 const PersonalRevenueStaffChart = () => {
      const [groupingType, setGroupingType] = useState(0);
-     const [staffId, setStaffId] = useState(""); // ⬅️ Thêm state cho staffId
+     const [staffId, setStaffId] = useState("");
      const [data, setData] = useState<PersonalRevenueData[]>([]);
 
      useEffect(() => {
@@ -62,20 +62,25 @@ const PersonalRevenueStaffChart = () => {
      }, [groupingType, staffId]);
 
      const formatLabel = (item: PersonalRevenueData) => {
+          let label = "";
           switch (groupingType) {
                case 0:
-                    return item.day ? new Date(item.day).toLocaleDateString("vi-VN") : "";
+                    label = item.day ? new Date(item.day).toLocaleDateString("vi-VN") : "";
+                    break;
                case 1:
-                    return item.month !== null && item.year !== null ? `${item.month}/${item.year}` : "";
+                    label = item.month !== null && item.year !== null ? `${item.month}/${item.year}` : "";
+                    break;
                case 2:
-                    return item.quarter !== null && item.year !== null ? `Q${item.quarter}/${item.year}` : "";
+                    label = item.quarter !== null && item.year !== null ? `Q${item.quarter}/${item.year}` : "";
+                    break;
                case 3:
-                    return item.year !== null ? `${item.year}` : "";
-               default:
-                    return "";
+                    label = item.year !== null ? `${item.year}` : "";
+                    break;
           }
+          console.log("label:", label);
+          return label;
      };
-
+     
      const groupedData = Object.values(
           data.reduce<Record<string, Record<string, any>>>((acc, item) => {
                const label = formatLabel(item);

@@ -37,7 +37,7 @@ interface StaffRevenueResponse {
 }
 
 const StaffRevenueChart = () => {
-  const [groupingType, setGroupingType] = useState(0);
+  const [staticType, setStaticType] = useState(0);
   const [data, setData] = useState<StaffRevenueData[]>([]);
 
   useEffect(() => {
@@ -46,7 +46,7 @@ const StaffRevenueChart = () => {
         const response = await AxiosAPI.get<StaffRevenueResponse>(
           "/api/Dashboard/statictis-revenue-staffs",
           {
-            params: { groupingType },
+            params: { staticType },
           }
         );
         console.log("API Response:", response.data);
@@ -59,11 +59,11 @@ const StaffRevenueChart = () => {
     };
 
     fetchData();
-  }, [groupingType]);
+  }, [staticType]);
 
   const formatLabel = (item: StaffRevenueData) => {
     try {
-      switch (groupingType) {
+      switch (staticType) {
         case 0:
           return item.day ? new Date(item.day).toLocaleDateString("vi-VN") : "";
         case 1:
@@ -85,10 +85,8 @@ const StaffRevenueChart = () => {
     }
   };
 
-  // 1. Danh sách tất cả nhân viên
   const allNames = Array.from(new Set(data.map((d) => d.name)));
 
-  // 2. Gom nhóm dữ liệu và đảm bảo mỗi nhãn có đầy đủ các nhân viên
   const groupedMap = data.reduce<Record<string, Record<string, any>>>((acc, item) => {
     const label = formatLabel(item);
     if (!label) return acc;
@@ -96,7 +94,7 @@ const StaffRevenueChart = () => {
     if (!acc[label]) {
       acc[label] = { label };
       allNames.forEach((name) => {
-        acc[label][name] = 0; // mặc định 0 nếu không có dữ liệu
+        acc[label][name] = 0;
       });
     }
 
@@ -104,20 +102,15 @@ const StaffRevenueChart = () => {
     return acc;
   }, {});
 
-  // 3. Dữ liệu mảng cho biểu đồ
   const groupedData = Object.values(groupedMap);
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Doanh thu của nhân viên theo thời gian</CardTitle>
-        <CardDescription>Hiển thị doanh thu theo các mốc thời gian</CardDescription>
-      </CardHeader>
       <CardContent>
         <div className="flex justify-between items-center mb-4">
           <Select
-            value={groupingType.toString()}
-            onChange={(value) => setGroupingType(Number(value))}
+            value={staticType.toString()}
+            onChange={(value) => setStaticType(Number(value))}
             data={[
               { value: "0", label: "Ngày" },
               { value: "1", label: "Tháng" },
@@ -163,18 +156,6 @@ const StaffRevenueChart = () => {
           </div>
         )}
       </CardContent>
-      <CardFooter>
-        <div className="flex w-full items-start gap-2 text-sm">
-          <div className="grid gap-2">
-            <div className="flex items-center gap-2 font-medium leading-none">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-            </div>
-            <div className="flex items-center gap-2 leading-none text-muted-foreground">
-              Showing total revenue for each staff by selected time range
-            </div>
-          </div>
-        </div>
-      </CardFooter>
     </Card>
   );
 };

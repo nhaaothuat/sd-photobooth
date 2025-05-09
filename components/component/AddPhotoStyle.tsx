@@ -18,6 +18,7 @@ import { Switch } from "@/components/ui/switch";
 import AxiosAPI from "@/configs/axios";
 import { toast } from "react-toastify";
 import { CirclePlus } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const photoStyleSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -33,7 +34,7 @@ const photoStyleSchema = z.object({
   numInferenceSteps: z.coerce.number().min(0),
   guidanceScale: z.coerce.number().min(0),
   strength: z.coerce.number().min(0).max(1),
-  faceImage: z.boolean().optional(),
+  ipAdapterScale: z.coerce.number().min(0),
   backgroundRemover: z.boolean().optional(),
   imageFile: z
     .instanceof(File)
@@ -50,6 +51,7 @@ const AddPhotoStyle: React.FC<AddPhotoStyleProps> = ({ onAddSuccess }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const { toast } = useToast();
 
   const {
     register,
@@ -75,12 +77,10 @@ const AddPhotoStyle: React.FC<AddPhotoStyleProps> = ({ onAddSuccess }) => {
       numInferenceSteps: 20,
       guidanceScale: 7.5,
       strength: 0.5,
-      faceImage: false,
+      ipAdapterScale: 0.5,
       backgroundRemover: false,
     },
   });
-
-  const imageFile = watch("imageFile");
 
   const onSubmit = async (data: PhotoStyleFormData) => {
     if (loading) return;
@@ -97,14 +97,24 @@ const AddPhotoStyle: React.FC<AddPhotoStyleProps> = ({ onAddSuccess }) => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      toast.success("Thêm thành công!");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 ",
+        title: "Nice",
+        description: "KKKKK",
+      });
+
       reset();
       setPreviewImage(null);
       setIsOpen(false);
       onAddSuccess();
     } catch (error: any) {
       console.error("Create error:", error);
-      toast.error(error.response?.data?.message || "Something went wrong");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 ",
+        variant:"destructive",
+        title: "Nice",
+        description: "KKKKK",
+      });
     } finally {
       setLoading(false);
     }
@@ -122,7 +132,7 @@ const AddPhotoStyle: React.FC<AddPhotoStyleProps> = ({ onAddSuccess }) => {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline">
-          <CirclePlus className="mr-2" /> Add Style
+          <CirclePlus />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
@@ -199,13 +209,19 @@ const AddPhotoStyle: React.FC<AddPhotoStyleProps> = ({ onAddSuccess }) => {
               <Label>Strength</Label>
               <Input type="number" step="0.1" {...register("strength")} />
             </div>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Switch
-              checked={watch("faceImage")}
-              onCheckedChange={(checked) => setValue("faceImage", checked)}
-            />
-            <Label>Face Image</Label>
+            <div>
+              <Label>IP Adapter Scale</Label>
+              <Input
+                type="number"
+                step="0.01"
+                min="0"
+               
+                {...register("ipAdapterScale")}
+              />
+              {errors.ipAdapterScale && (
+                <p className="text-sm text-red-500">{errors.ipAdapterScale.message}</p>
+              )}
+            </div>
           </div>
           <div className="flex items-center space-x-4">
             <Switch

@@ -77,7 +77,7 @@ const EditLevelMembership = ({
 
   return (
     <>
-      <Button variant="subtle" onClick={open}>
+      <Button variant="default" className="border-blue-500" onClick={open}>
         <BookUser size={18} />
       </Button>
 
