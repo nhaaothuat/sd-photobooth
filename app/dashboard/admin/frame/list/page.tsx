@@ -19,9 +19,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { debounce } from "lodash";
-import { toast } from "react-toastify";
+import { useToast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
 import AddFrame from "@/components/component/AddFrame";
+import { Skeleton } from "@mantine/core";
 
 const useFrameData = () => {
   const [data, setData] = useState<Frame[]>([]);
@@ -110,7 +111,7 @@ const FramePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [pageSize, setPageSize] = useState(5);
   const [pageIndex, setPageIndex] = useState(0);
-
+  const {toast} = useToast();
   const { data, loading, error, totalItems, fetchCount, handleSearch } =
     useFrameData();
   const refetchData = useCallback(() => {
@@ -123,7 +124,11 @@ const FramePage = () => {
 
         if (res.status !== 200) throw new Error("Xóa thất bại");
 
-        toast.success("Đã xóa  thành công");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+          title: "Success", // Thay thế t("successTitle")
+          description: "Operation completed successfully", // Thay thế t("successDesc")
+        })
         fetchCount();
         if (data.length <= 1 && pageIndex > 0) {
           setPageIndex((prev) => prev - 1);
@@ -131,7 +136,12 @@ const FramePage = () => {
           handleSearch(searchTerm, pageIndex + 1, pageSize);
         }
       } catch (error) {
-        toast.error("Xóa thất bại");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          variant: "destructive",
+          title: "Error", 
+          description: "An error occurred", 
+        })
         console.error(error);
       }
     },
@@ -189,7 +199,7 @@ const FramePage = () => {
     <div className="w-full space-y-4">
       <div className="flex items-center justify-between py-4">
         <Input
-          placeholder="Tìm kiếm Payment Method"
+          placeholder="Search"
           value={searchTerm}
           onChange={handleSearchChange}
           className="max-w-sm"
@@ -206,7 +216,7 @@ const FramePage = () => {
             />
           </div>
           <Label htmlFor="pageSize" className="text-sm">
-            Số hàng/trang:
+          Number of rows/page:
           </Label>
           <select
             id="pageSize"
@@ -224,7 +234,8 @@ const FramePage = () => {
       </div>
 
       {loading ? (
-        <div className="text-sm text-muted-foreground">Đang tải dữ liệu...</div>
+       <Skeleton height={8} mt={6} width="70%" radius="xl" />
+
       ) : error ? (
         <div className="text-red-500 p-4">Error: {error}</div>
       ) : (

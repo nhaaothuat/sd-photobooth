@@ -19,7 +19,7 @@ import { memo, ReactNode, useState } from "react";
 import { ZodType } from "zod";
 
 import { useToast } from "@/hooks/use-toast";
-import { FaAccusoft } from "react-icons/fa";
+
 import { useTranslations } from "next-intl";
 
 type Field =
@@ -115,40 +115,20 @@ const CreateDialogForm = <T extends FieldValues>({
       setIsOpen(false);
       onSuccess?.();
     } catch (error: any) {
-      if (error?.response?.status === 400) {
-        const errorData = error.response.data;
-        
-        // Handle field-specific errors
-        if (errorData.field) {
-          setError(errorData.field as Path<T>, {
-            type: "server",
-            message: errorData.message || "Invalid input",
-          });
-        } 
-        // Handle multiple validation errors
-        else if (typeof errorData === 'object') {
-          Object.entries(errorData).forEach(([field, message]) => {
-            setError(field as Path<T>, {
-              type: "server",
-              message: message as string,
-            });
-          });
-        }
-        // Handle general validation error
-        else {
-          toast({
-            className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
-            variant: "destructive",
-            title: t("errorTitle"),
-            description: errorData?.message || t("errorDesc"),
-          });
-        }
+     
+
+      if (error?.field) {
+        setError(error.field as Path<T>, {
+          type: "server",
+          message: error.message || "Invalid input",
+        });
       } else {
         toast({
-          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          className: "top-0 right-0 flex fixed md:max-w-[300px] md:top-4 md:right-4 z-[1000]]",
           variant: "destructive",
-          title: t("errorTitle"),
-          description: t("errorDesc"),
+          title: "Something went wrong",
+         
+          description: error.message || t("errorDesc"),
         });
       }
     } finally {
@@ -166,7 +146,7 @@ const CreateDialogForm = <T extends FieldValues>({
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[500px] rounded-2xl p-8 bg-white/80 dark:bg-[#1c1c1e]/80 border border-gray-200 dark:border-gray-600 shadow-xl backdrop-blur-md">
+      <DialogContent className="sm:max-w-[500px] rounded-2xl p-8 bg-white/80 dark:bg-[#1c1c1e]/80 border border-gray-200 dark:border-gray-600 shadow-xl backdrop-blur-md z-[100]">
         <DialogHeader className="mb-6">
           <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
             {title}

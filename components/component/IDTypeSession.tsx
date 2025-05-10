@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button"
 import AxiosAPI from "@/configs/axios"
 import { Loader2 } from "lucide-react"
+import { FaEye } from "react-icons/fa"
 
 
 const ViewDetailTypeSession = ({ id }: { id: number }) => {
@@ -32,7 +33,7 @@ const ViewDetailTypeSession = ({ id }: { id: number }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Xem</Button>
+        <Button variant="outline" className="border-green-500"><FaEye /></Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

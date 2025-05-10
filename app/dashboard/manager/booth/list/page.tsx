@@ -2,7 +2,7 @@
 
 import { deleteBooth, getBoothList } from "@/services/booth";
 import { columns } from "./columns";
-import { toast } from "react-toastify";
+import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { z } from "zod";
@@ -47,7 +47,7 @@ const boothSchema = z.object({
 export default function BoothPage() {
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
-
+  const {toast} = useToast();
   const [pageSize, setPageSize] = useState(5);
   const [pageIndex, setPageIndex] = useState(0);
   const [locations, setLocations] = useState<Location[]>([]);
@@ -62,7 +62,12 @@ export default function BoothPage() {
         setLocations(validLocations);
       } catch (error) {
         console.error("Failed to fetch locations", error);
-        toast.error("Failed to load locations");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          variant: "destructive",
+          title: "Error", // Thay thế t("errorTitle")
+          description: "An error occurred", // Thay thế t("errorDesc")
+        })
       }
     };
 
@@ -82,11 +87,20 @@ export default function BoothPage() {
   const handleDelete = async (id: number) => {
     try {
       await deleteBooth(id);
-      toast.success("Xóa thành công");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: "Success", // Thay thế t("successTitle")
+        description: "Operation completed successfully", // Thay thế t("successDesc")
+      })
       if (data?.length === 1 && pageIndex > 0) setPageIndex((prev) => prev - 1);
       else refetch();
     } catch {
-      toast.error("Failed to delete booth");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
     }
   };
 

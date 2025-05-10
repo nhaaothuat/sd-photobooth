@@ -75,7 +75,7 @@ const ByCoupon = () => {
           className="px-6 py-2 rounded-xl bg-black text-white font-medium hover:bg-gray-900 transition duration-200 shadow-sm"
           onClick={handleFetch}
         >
-          Tìm kiếm
+          Search
         </button>
       </div>
 

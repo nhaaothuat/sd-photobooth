@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Modal, TextInput, Button, ActionIcon } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
-import { toast } from "react-toastify";
+
 import AxiosAPI from "@/configs/axios";
+import { useToast } from "@/hooks/use-toast";
 
 interface AddCouponProps {
   onAddSuccess: () => void;
@@ -12,21 +13,35 @@ const DeleteCoupon: React.FC<AddCouponProps> = ({ onAddSuccess }) => {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [opened, setOpened] = useState(false); // Trạng thái mở Modal
-
+  const { toast } = useToast();
   const deleteCoupon = async () => {
     if (!code) {
-      toast.error("Vui lòng nhập mã giảm giá cần xóa");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
       return;
     }
     setLoading(true);
     try {
       await AxiosAPI.delete(`api/Coupon/${code}`);
-      toast.success("Xóa mã giảm giá thành công");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: "Success", // Thay thế t("successTitle")
+        description: "Operation completed successfully", // Thay thế t("successDesc")
+      })
       setCode("");
       setOpened(false); // Đóng modal sau khi xóa thành công
       onAddSuccess();
     } catch (err) {
-      toast.error("Không thể xóa mã giảm giá");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
     } finally {
       setLoading(false);
     }

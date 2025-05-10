@@ -15,15 +15,22 @@ import {
 } from '@mantine/core';
 
 import AxiosAPI from '@/configs/axios';
-import { toast } from 'react-toastify';
+import { useToast } from '@/hooks/use-toast';
+
 const ForgotPassword = () => {
      const [email, setEmail] = useState("");
      const [loading, setLoading] = useState(false);
      const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
+     const {toast} = useToast();
      const handleResetPassword = async () => {
           if (!email) {
-               toast.error("Please enter your email");
+             
+               toast({
+                    className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+                    variant: "destructive",
+                    title: "Error", // Thay thế t("errorTitle")
+                    description: "Please enter your email", // Thay thế t("errorDesc")
+                  })
                return;
           }
 
@@ -43,7 +50,13 @@ const ForgotPassword = () => {
                }
           } catch (error: any) {
                console.error("Error:", error);
-               toast.error(error.response?.data?.message || "Something went wrong");
+             
+               toast({
+                    className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+                    variant: "destructive",
+                    title: "Error", // Thay thế t("errorTitle")
+                    description: error.response?.data?.message || "Something went wrong", // Thay thế t("errorDesc")
+                  })
           }
 
           setLoading(false);

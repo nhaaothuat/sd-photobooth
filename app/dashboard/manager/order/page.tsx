@@ -1,7 +1,7 @@
 "use client";
 
 import { columns } from "./columns";
-import { toast } from "react-toastify";
+
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import AxiosAPI from "@/configs/axios";
@@ -11,10 +11,11 @@ import { deleteOrder, getOrderList } from "@/services/order";
 import PaymentDialog from "@/components/layouts/PaymentDialog";
 import dynamic from "next/dynamic";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { PlusCircleIcon, Terminal } from "lucide-react";
+
+import { PlusCircleIcon } from "lucide-react";
 import CashOrderDialog from "@/components/component/CashOrderDialog";
+import { useToast } from "@/hooks/use-toast";
+import axios from "axios";
 
 const CreateDialogForm = dynamic(
   () =>
@@ -39,8 +40,8 @@ const CrudPageWrapper = dynamic(
 );
 
 const orderSchema = z.object({
-  email: z.string().email("Invalid email address").min(1, "Email is required"),
-  phone: z.string().min(1, "Phone number is required"),
+  email: z.string().email("Invalid email address").optional().or(z.literal("")),
+  phone: z.string().optional(),
   typeSessionId: z.coerce.number().min(0, "Session type is required"),
   paymentMethodId: z.coerce.number().min(1, "Payment method is required"),
   couponCode: z.string().optional(),
@@ -55,6 +56,7 @@ export default function OrderPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [cashOrderInfo, setCashOrderInfo] = useState<any | null>(null);
   const [isCashDialogOpen, setIsCashDialogOpen] = useState(false);
+  const { toast } = useToast();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -83,11 +85,22 @@ export default function OrderPage() {
   const handleDelete = async (id: number) => {
     try {
       await deleteOrder(id);
-      toast.success("Xóa thành công");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: "Success",
+        // title: t("successTitle"),
+        // description: t("successDesc"),
+      })
       if (data?.length === 1 && pageIndex > 0) setPageIndex((prev) => prev - 1);
       else refetch();
     } catch {
-      toast.error("Failed to delete order");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 ",
+        variant: "destructive",
+        // title: t("errorTitle"),
+        // description: t("errorDesc"),
+
+      })
     }
   };
 
@@ -108,58 +121,66 @@ export default function OrderPage() {
             schema={orderSchema}
             onSubmit={async (values) => {
               try {
-                const response = await AxiosAPI.post("api/Order/dashboard", {
-                  ...values,
-                });
-
+                const response = await AxiosAPI.post("api/Order/dashboard", values);
                 const data = response.data as OrderResponse;
 
-                const selectedPaymentMethod = paymentMethods.find(
-                  (method) => method.id === values.paymentMethodId
+                if (!data?.paymentLink && !data?.code) {
+                  toast({
+                    className: "top-0 right-0 fixed md:max-w-[420px] md:top-4 md:right-4",
+                    variant: "destructive",
+                    title: "Invalid coupon response",
+                    description: "Coupon code is invalid or no response data is available.",
+                  });
+                  throw new Error("Invalid coupon response");
+                }
+
+                const selectedMethod = paymentMethods.find(
+                  (m) => m.id === values.paymentMethodId
                 );
+                const methodName = selectedMethod?.methodName.toLowerCase();
 
-                const isBanking = selectedPaymentMethod?.methodName.toLowerCase() === "banking";
-                const isCash = selectedPaymentMethod?.methodName.toLowerCase() === "cash";
-
-                if (isBanking && data.paymentLink) {
+                if (methodName === "banking" && data.paymentLink) {
                   setPaymentLink(data.paymentLink);
                   setIsDialogOpen(true);
-                 
                   refetch();
-                } else if (isCash && data.code) {
-                  const sessionResponse = await AxiosAPI.post(
-                    `/api/Session/${data.code}`, {}
-                  );
-                  const sessionData = sessionResponse.data;
+                  return;
+                }
 
-
+                if (methodName === "cash" && data.code) {
+                  const sessionRes = await AxiosAPI.post(`/api/Session/${data.code}`, {});
                   setCashOrderInfo({
                     orderCode: data.code,
-                    sessionInfo: sessionData,
+                    sessionInfo: sessionRes.data,
                   });
                   setIsCashDialogOpen(true);
-                
                   refetch();
-                }else if (response.status === 400 ) {
-                  // Nếu lỗi do couponCode không hợp lệ, dùng setError để hiển thị lỗi
-                  // setError("couponCode", {
-                  //   type: "manual",
-                  //   message: "Không tìm thấy couponCode.",
-                  // });
-                }  else {
-                  console.error("Unexpected response:", data);
-                  toast.error("Failed to create order: No payment link or order code.");
+                  return;
                 }
-               
-              } catch (error) {
-                toast.error(
-                  error instanceof Error
-                    ? `Error creating order: ${error.message}`
-                    : "Unknown error"
-                );
+
+                toast({
+                  className: "top-0 right-0 fixed md:max-w-[420px] md:top-4 md:right-4",
+                  variant: "destructive",
+                  title: "Error",
+                  // description: error.response?.data?.message || "Something went wrong",
+                });
+                throw new Error("Unhandled server response");
+
+              } catch (error: any) {
+              
+                toast({
+                  className: "top-0 right-0 fixed md:max-w-[420px] md:top-4 md:right-4",
+                  variant: "destructive",
+                  title: "Error",
+                  description:
+                    error?.response?.data?.message ||
+                    (error instanceof Error ? error.message : "Unknown error"),
+                });
+
+                throw error;
+
+
               }
             }}
-
             fields={[
               {
                 type: "text",
@@ -187,7 +208,7 @@ export default function OrderPage() {
                 name: "couponCode",
                 label: "Coupon Code",
                 placeholder: "Enter coupon code (optional)",
-                
+
               },
               {
                 type: "select",
@@ -210,6 +231,7 @@ export default function OrderPage() {
         pageSize={pageSize}
         onPageChange={setPageIndex}
         onPageSizeChange={setPageSize}
+
       />
 
       <PaymentDialog

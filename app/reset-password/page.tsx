@@ -14,13 +14,14 @@ import { GalleryVerticalEnd } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { toast } from "react-toastify";
+
 import AxiosAPI from "@/configs/axios";
+import { useToast } from "@/hooks/use-toast";
 
 const ResetPasswordPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-
+  const {toast} = useToast();
   const rawToken = searchParams.get("token") || "";
   const finalToken = decodeURIComponent(rawToken);
   const email = decodeURIComponent(searchParams.get("email") || "");
@@ -33,7 +34,13 @@ const ResetPasswordPage = () => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match!");
+     
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "Passwords do not match!", // Thay thế t("errorDesc")
+      })
       return;
     }
 
@@ -47,14 +54,29 @@ const ResetPasswordPage = () => {
       });
 
       if (res.status === 200) {
-        toast.success("Password updated successfully!");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+          title: "Success", // Thay thế t("successTitle")
+          description: "Operation completed successfully", // Thay thế t("successDesc")
+        })
         router.replace("/");
       } else {
-        toast.error("Failed to update password.");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          variant: "destructive",
+          title: "Error", // Thay thế t("errorTitle")
+          description: "An error occurred", // Thay thế t("errorDesc")
+        })
       }
     } catch (error: any) {
       console.error("Error resetting password:", error);
-      toast.error(error.response?.data?.message || "Something went wrong!");
+     
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: error.response?.data?.message || "Something went wrong!", // Thay thế t("errorDesc")
+      })
     } finally {
       setLoading(false);
     }

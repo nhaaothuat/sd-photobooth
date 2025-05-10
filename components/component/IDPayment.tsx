@@ -3,7 +3,9 @@ import { PaymentMethod } from "@/types/type"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import AxiosAPI from "@/configs/axios"
+import { Skeleton, Paper, Stack, Text } from "@mantine/core"
 import { Loader2 } from "lucide-react"
+import { FaEye } from "react-icons/fa"
 
 const ViewDetail = ({ id }: { id: number }) => {
   const [payment, setPayment] = useState<PaymentMethod | null>(null)
@@ -16,7 +18,7 @@ const ViewDetail = ({ id }: { id: number }) => {
       const response = await AxiosAPI.get<PaymentMethod>(`/api/PaymentMethod/${id}`)
       setPayment(response.data)
     } catch (error) {
-      console.error("Lỗi khi lấy dữ liệu chi tiết", error)
+      console.error("Error fetching payment method detail", error)
       setPayment(null)
     } finally {
       setLoading(false)
@@ -30,29 +32,33 @@ const ViewDetail = ({ id }: { id: number }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Xem</Button>
+        <Button variant="outline" className="border-green-500"><FaEye/></Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[500px] max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Chi tiết phương thức thanh toán</DialogTitle>
+          <DialogTitle>Payment Method Detail</DialogTitle>
         </DialogHeader>
 
         {loading ? (
-          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <Loader2 className="animate-spin h-4 w-4" /> <span>Đang tải...</span>
-          </div>
+          <Stack gap="xs">
+            <Skeleton height={12} width="80%" radius="xl" />
+            <Skeleton height={12} width="60%" radius="xl" />
+            <Skeleton height={12} width="70%" radius="xl" />
+          </Stack>
         ) : payment ? (
-          <div className="space-y-2 text-sm">
-            <p><strong>ID:</strong> {payment.id}</p>
-            <p><strong>Method Name:</strong> {payment.methodName}</p>
-            <p><strong>Description:</strong> {payment.description}</p>
-            <p><strong>Is Active:</strong> {payment.isActive ? "Yes" : "No"}</p>
-            <p><strong>Is Online:</strong> {payment.isOnline ? "Yes" : "No"}</p>
-            <p><strong>For Mobile:</strong> {payment.forMobile ? "Yes" : "No"}</p>
-            <p><strong>Created At:</strong> {new Date(payment.createdAt).toLocaleString()}</p>
-          </div>
+          <Paper p="md" radius="md" shadow="xs" withBorder>
+            <Stack gap="xs">
+              <Text size="sm"><strong>ID:</strong> {payment.id}</Text>
+              <Text size="sm"><strong>Method Name:</strong> {payment.methodName}</Text>
+              <Text size="sm"><strong>Description:</strong> {payment.description}</Text>
+              <Text size="sm"><strong>Is Active:</strong> {payment.isActive ? "Yes" : "No"}</Text>
+              <Text size="sm"><strong>Is Online:</strong> {payment.isOnline ? "Yes" : "No"}</Text>
+              <Text size="sm"><strong>For Mobile:</strong> {payment.forMobile ? "Yes" : "No"}</Text>
+              <Text size="sm"><strong>Created At:</strong> {new Date(payment.createdAt).toLocaleString()}</Text>
+            </Stack>
+          </Paper>
         ) : (
-          <div className="text-sm text-red-500">Không thể tải dữ liệu chi tiết</div>
+          <Text size="sm" color="red">Failed to load payment method details.</Text>
         )}
       </DialogContent>
     </Dialog>

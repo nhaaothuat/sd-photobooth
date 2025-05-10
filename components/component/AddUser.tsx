@@ -12,9 +12,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "react-toastify";
+
 import AxiosAPI from "@/configs/axios";
 import { LocationResponseDTO } from "@/types/user";
+import { useToast } from "@/hooks/use-toast";
 
 const AddUser = () => {
   const [formData, setFormData] = useState({
@@ -31,7 +32,7 @@ const AddUser = () => {
 
   const [loading, setLoading] = useState(false);
   const [locations, setLocations] = useState<LocationResponseDTO[]>([]);
-
+  const {toast} = useToast();
   useEffect(() => {
     const fetchLocations = async () => {
       try {
@@ -40,7 +41,12 @@ const AddUser = () => {
           setLocations(response.data as unknown as LocationResponseDTO[]);
         }
       } catch (error) {
-        toast.error("Failed to fetch locations");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          variant: "destructive",
+          title: "Error", // Thay thế t("errorTitle")
+          description: "An error occurred", // Thay thế t("errorDesc")
+        })
       }
     };
 
@@ -63,7 +69,11 @@ const AddUser = () => {
       const response = await AxiosAPI.post("/api/User/create", formData);
 
       if (response.status === 201 || response.status === 200) {
-        toast.success("User created successfully!");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+          title: "Success", // Thay thế t("successTitle")
+          description: "Operation completed successfully", // Thay thế t("successDesc")
+        })
         setFormData({
           role: 1,
           userName: "",
@@ -79,7 +89,12 @@ const AddUser = () => {
         throw new Error("Failed to create user");
       }
     } catch (error) {
-      toast.error("Error creating user");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
     } finally {
       setLoading(false);
     }

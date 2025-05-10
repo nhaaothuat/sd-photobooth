@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import AxiosAPI from "@/configs/axios";
-import { toast } from "react-toastify";
+
 import { CirclePlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -52,7 +52,7 @@ const AddPhotoStyle: React.FC<AddPhotoStyleProps> = ({ onAddSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const { toast } = useToast();
-
+  
   const {
     register,
     handleSubmit,
@@ -76,8 +76,8 @@ const AddPhotoStyle: React.FC<AddPhotoStyleProps> = ({ onAddSuccess }) => {
       mode: 0,
       numInferenceSteps: 20,
       guidanceScale: 7.5,
-      strength: 0.5,
-      ipAdapterScale: 0.5,
+      strength: 0,
+      ipAdapterScale: 0,
       backgroundRemover: false,
     },
   });
@@ -98,10 +98,11 @@ const AddPhotoStyle: React.FC<AddPhotoStyleProps> = ({ onAddSuccess }) => {
       });
 
       toast({
-        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 ",
-        title: "Nice",
-        description: "KKKKK",
-      });
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: "Success", // Thay thế t("successTitle")
+        description: "Operation completed successfully", // Thay thế t("successDesc")
+      })
+      
 
       reset();
       setPreviewImage(null);
@@ -110,11 +111,11 @@ const AddPhotoStyle: React.FC<AddPhotoStyleProps> = ({ onAddSuccess }) => {
     } catch (error: any) {
       console.error("Create error:", error);
       toast({
-        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 ",
-        variant:"destructive",
-        title: "Nice",
-        description: "KKKKK",
-      });
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
     } finally {
       setLoading(false);
     }

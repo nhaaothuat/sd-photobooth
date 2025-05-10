@@ -18,9 +18,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import AxiosAPI from "@/configs/axios";
-import { toast } from "react-toastify";
+
 import { Coupon } from "@/types/type";
 import { FaPen } from "react-icons/fa";
+import { useToast } from "@/hooks/use-toast";
 
 const couponSchema = z
   .object({
@@ -88,7 +89,7 @@ const UpdateCoupon = ({ couponId, onUpdateSuccess }: UpdateCouponProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
-
+  const {toast} = useToast();
   const {
     register,
     handleSubmit,
@@ -129,11 +130,21 @@ const UpdateCoupon = ({ couponId, onUpdateSuccess }: UpdateCouponProps) => {
 
         });
       } else {
-        toast.error("Không lấy được thông tin coupon");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          variant: "destructive",
+          title: "Error", // Thay thế t("errorTitle")
+          description: "An error occurred", // Thay thế t("errorDesc")
+        })
         setIsOpen(false);
       }
     } catch (error) {
-      toast.error("Lỗi khi lấy thông tin coupon");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
       setIsOpen(false);
     } finally {
       setFetching(false);
@@ -190,7 +201,11 @@ const UpdateCoupon = ({ couponId, onUpdateSuccess }: UpdateCouponProps) => {
       };
 
       await AxiosAPI.put(`/api/Coupon/${couponId}`, payload);
-      toast.success("Cập nhật coupon thành công!");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: "Success", // Thay thế t("successTitle")
+        description: "Operation completed successfully", // Thay thế t("successDesc")
+      })
       setIsOpen(false);
       onUpdateSuccess();
     } catch (err: any) {
@@ -198,7 +213,13 @@ const UpdateCoupon = ({ couponId, onUpdateSuccess }: UpdateCouponProps) => {
         err.response?.data?.message ||
         err.message ||
         "Đã xảy ra lỗi khi cập nhật";
-      toast.error(errorMessage);
+     
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: errorMessage, // Thay thế t("errorDesc")
+      })
     } finally {
       setLoading(false);
     }

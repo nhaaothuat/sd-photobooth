@@ -62,25 +62,39 @@ const RevenueChart = () => {
     }
   };
 
-  const chartData = data.map((item) => ({
-    label: formatLabel(item),
-    mobile: item.totalRevenueMobile,
-    store: item.totalRevenueStore,
-  }));
+  const parseToTimestamp = (item: RevenueData): number => {
+    if (staticType === 0 && item.day) {
+      return new Date(item.day).getTime();
+    } else if (staticType === 1 && item.month !== null && item.year !== null) {
+      return new Date(item.year, item.month - 1).getTime();
+    } else if (staticType === 2 && item.quarter !== null && item.year !== null) {
+      return new Date(item.year, (item.quarter - 1) * 3).getTime();
+    } else if (staticType === 3 && item.year !== null) {
+      return new Date(item.year, 0).getTime();
+    }
+    return 0;
+  };
 
+  const chartData = [...data]
+    .sort((a, b) => parseToTimestamp(a) - parseToTimestamp(b))
+    .map((item) => ({
+      label: formatLabel(item),
+      mobile: item.totalRevenueMobile,
+      store: item.totalRevenueStore,
+    }));
   return (
     <Card className="p-6 shadow-md rounded-2xl bg-white">
-      <CardTitle>Hello</CardTitle>
+      
       <CardHeader className="mb-4">
         <div className="flex justify-between items-center">
           <Select
             value={staticType.toString()}
             onChange={(value) => setStaticType(Number(value))}
             data={[
-              { value: "0", label: "Ngày" },
-              { value: "1", label: "Tháng" },
-              { value: "2", label: "Quý" },
-              { value: "3", label: "Năm" },
+              { value: "0", label: "Day" },
+              { value: "1", label: "Month" },
+              { value: "2", label: "Quarter" },
+              { value: "3", label: "Year" },
             ]}
             placeholder="Chọn thời gian"
             className="w-40"

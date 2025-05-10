@@ -8,8 +8,9 @@ import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-tabl
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 // import AddFrame from './AddFrame'
-import { toast } from 'react-toastify'
+import { useToast } from "@/hooks/use-toast";
 import AddLevelMembership from '@/components/component/AddLevelMembership'
+import { Skeleton } from '@mantine/core'
 
 const useLevelMemberShipData = () => {
   const [data, setData] = useState<LevelMembership[]>([])
@@ -55,7 +56,7 @@ const useLevelMemberShipData = () => {
 const LevelMemberShipPage = () => {
   const [pageSize, setPageSize] = useState(5)
   const [pageIndex, setPageIndex] = useState(0)
-
+  const {toast} = useToast();
   const {
     data,
     loading,
@@ -71,7 +72,12 @@ const LevelMemberShipPage = () => {
 
       if (res.status !== 200) throw new Error("Xóa thất bại")
 
-      toast.success("Đã xóa thành công")
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+          title: "Success", 
+          description: "Operation completed successfully", 
+        })
+        
       fetchCount()
       if (data.length <= 1 && pageIndex > 0) {
         setPageIndex(prev => prev - 1)
@@ -79,7 +85,12 @@ const LevelMemberShipPage = () => {
         fetchData(pageIndex + 1, pageSize)
       }
     } catch (error) {
-      toast.error("Xóa thất bại")
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", 
+        description: "An error occurred", 
+      })
       console.error(error)
     }
   }, [data.length, fetchCount, fetchData, pageIndex, pageSize])
@@ -127,7 +138,7 @@ const LevelMemberShipPage = () => {
 
             setPageIndex(0)
           }} />
-          <Label htmlFor="pageSize" className="text-sm">Số hàng/trang:</Label>
+          <Label htmlFor="pageSize" className="text-sm">Number of rows/page:</Label>
           <select
             id="pageSize"
             value={pageSize}
@@ -142,7 +153,8 @@ const LevelMemberShipPage = () => {
       </div>
 
       {loading ? (
-        <div className="text-sm text-muted-foreground">Đang tải dữ liệu...</div>
+        <Skeleton height={8} mt={6} width="70%" radius="xl" />
+
       ) : error ? (
         <div className="text-red-500 p-4">Error: {error}</div>
       ) : (

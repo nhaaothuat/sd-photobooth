@@ -19,23 +19,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "react-toastify";
+
 import AxiosAPI from "@/configs/axios";
 import { Location } from "@/types/type";
 import { getAllLocations } from "@/services/location";
+import { useToast } from "@/hooks/use-toast";
+import { IoIosAddCircleOutline } from "react-icons/io";
 
 const AddStaff = ({ onSuccess }: { onSuccess: () => void }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [locations, setLocations] = useState<Location[]>([]);
-
+  const {toast} = useToast();
   useEffect(() => {
     const fetchLocations = async () => {
       try {
         const response = await getAllLocations();
         setLocations(response);
       } catch (err) {
-        toast.error("Failed to fetch locations");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          variant: "destructive",
+          title: "Error", // Thay thế t("errorTitle")
+          description: "An error occurred", // Thay thế t("errorDesc")
+        })
       }
     };
     fetchLocations();
@@ -85,7 +92,11 @@ const AddStaff = ({ onSuccess }: { onSuccess: () => void }) => {
     try {
       const response = await AxiosAPI.post("/api/User/create", formData);
       if (response.status === 200 || response.status === 201) {
-        toast.success("User created successfully!");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+          title: "Success", // Thay thế t("successTitle")
+          description: "Operation completed successfully", // Thay thế t("successDesc")
+        })
         onSuccess();
         setOpen(false);
         resetForm();
@@ -93,7 +104,12 @@ const AddStaff = ({ onSuccess }: { onSuccess: () => void }) => {
         throw new Error("Failed to create user");
       }
     } catch (err) {
-      toast.error("Failed to create user");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
     } finally {
       setLoading(false);
     }
@@ -102,12 +118,10 @@ const AddStaff = ({ onSuccess }: { onSuccess: () => void }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>+ Add Staff</Button>
+        <Button variant={"outline"}><IoIosAddCircleOutline /></Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Thêm Nhân viên</DialogTitle>
-        </DialogHeader>
+       
         <form onSubmit={handleSubmit} className="grid gap-4 py-2">
           <div className="grid gap-2">
             <Label htmlFor="userName">Username</Label>

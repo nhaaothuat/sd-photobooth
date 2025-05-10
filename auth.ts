@@ -23,6 +23,8 @@ async function sendTokenToBackend(idToken: string) {
       }
     );
 
+   
+
     if (response.status >= 200 && response.status < 300 && response.data) {
       const dataReceive = response.data as unknown as TokenResponse;
       return dataReceive.token;

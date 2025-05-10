@@ -11,9 +11,10 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import AxiosAPI from "@/configs/axios";
-import { toast } from "react-toastify";
+
 import { CiEdit } from "react-icons/ci";
 import { TypeSession } from "@/types/type";
+import { useToast } from "@/hooks/use-toast";
 
 const EditTypeSession = ({
   id,
@@ -33,7 +34,7 @@ const EditTypeSession = ({
     forMobile:true,
     ableTakenNumber: 0,
   });
-
+  const {toast} = useToast();
   useEffect(() => {
     if (!opened) return;
 
@@ -52,7 +53,13 @@ const EditTypeSession = ({
           ableTakenNumber: data?.ableTakenNumber || 0,
         });
       } catch (err) {
-        toast.error("Không thể tải thông tin loại phiên");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          variant: "destructive",
+          title: "Error", // Thay thế t("errorTitle")
+          description: "An error occurred", // Thay thế t("errorDesc")
+        })
+        
         console.error(err);
       } finally {
         setLoading(false);
@@ -80,12 +87,22 @@ const EditTypeSession = ({
     try {
       setLoading(true);
       await AxiosAPI.put(`/api/TypeSession/${id}`, formData);
-      toast.success("Cập nhật loại phiên thành công!");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: "Success", // Thay thế t("successTitle")
+        description: "Operation completed successfully", // Thay thế t("successDesc")
+      })
       close();
       onUpdateSuccess();
     } catch (error) {
       console.error("Update error:", error);
-      toast.error("Cập nhật thất bại.");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
+      
     } finally {
       setLoading(false);
     }

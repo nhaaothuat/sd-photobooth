@@ -10,10 +10,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { toast } from "react-toastify";
+
 import AxiosAPI from "@/configs/axios";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Upload } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface GPOrderProps {
   orderId: number;
@@ -33,7 +34,7 @@ const GPOrder: React.FC<GPOrderProps> = ({ orderId, initialStatus = 0, onUpdateS
   const [status, setStatus] = useState<number>(initialStatus ?? 0); // Đặt giá trị mặc định
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-
+  const {toast} = useToast();
   useEffect(() => {
     if (isOpen) {
       setStatus(initialStatus ?? 0);
@@ -47,12 +48,21 @@ const GPOrder: React.FC<GPOrderProps> = ({ orderId, initialStatus = 0, onUpdateS
 
     try {
       await AxiosAPI.put(`/api/Order/${orderId}`, { orderId, status });
-      toast.success("Cập nhật đơn hàng thành công!");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: "Success", // Thay thế t("successTitle")
+        description: "Operation completed successfully", // Thay thế t("successDesc")
+      })
       setIsOpen(false);
       onUpdateSuccess();
     } catch (error) {
       console.error("Update Error:", error);
-      toast.error("Cập nhật thất bại.");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
     } finally {
       setLoading(false);
     }

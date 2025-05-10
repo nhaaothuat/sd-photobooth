@@ -9,10 +9,11 @@ import dynamic from "next/dynamic";
 import { LoadingSkeleton } from "@/components/layouts/LoadingSkeleton";
 import { getStaffList } from "@/services/user";
 import { staffSchema } from "@/types/schema/user";
-import { toast } from "react-toastify";
+
 import { getAllLocations } from "@/services/location";
 import { IconPlus } from "@tabler/icons-react";
 import { PlusCircleIcon } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const CreateDialogForm = dynamic(
   () =>
@@ -40,7 +41,7 @@ export default function AccountStaffPage() {
   const [pageSize, setPageSize] = useState(5);
   const [pageIndex, setPageIndex] = useState(0);
   const [locations, setLocations] = useState<Location[]>([]);
-
+  const {toast} = useToast();
   const { data, totalItems, isLoading, refetch } = usePaginatedQuery<User>({
     queryKey: "booths",
     pageIndex,
@@ -60,7 +61,12 @@ export default function AccountStaffPage() {
         setLocations(validLocations);
       } catch (error) {
         console.error("Failed to fetch locations", error);
-        toast.error("Failed to load locations");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          variant: "destructive",
+          title: "Error", // Thay thế t("errorTitle")
+          description: "An error occurred", // Thay thế t("errorDesc")
+        })
       }
     };
 

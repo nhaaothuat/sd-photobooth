@@ -49,6 +49,19 @@ const formatLabel = (item: PersonalRevenueData, staticType: number) => {
   }
 };
 
+const parseToTimestamp = (item: PersonalRevenueData, staticType: number): number => {
+  if (staticType === 0 && item.day) {
+    return new Date(item.day).getTime();
+  } else if (staticType === 1 && item.month !== null && item.year !== null) {
+    return new Date(item.year, item.month - 1).getTime();
+  } else if (staticType === 2 && item.quarter !== null && item.year !== null) {
+    return new Date(item.year, (item.quarter - 1) * 3).getTime();
+  } else if (staticType === 3 && item.year !== null) {
+    return new Date(item.year, 0).getTime();
+  }
+  return 0;
+};
+
 const PersonalRevenueChart = () => {
   const [staticType, setStaticType] = useState(0);
   const [data, setData] = useState<PersonalRevenueData[]>([]);
@@ -82,14 +95,16 @@ const PersonalRevenueChart = () => {
   }, [staticType]);
 
   const groupedData = useMemo(() => {
-    return Object.values(
-      data.reduce<Record<string, Record<string, any>>>((acc, item) => {
-        const label = formatLabel(item, staticType);
-        if (!acc[label]) acc[label] = { label };
-        acc[label][item.name] = item.totalRevenue;
-        return acc;
-      }, {})
-    );
+    const grouped = data.reduce<Record<string, Record<string, any>>>((acc, item) => {
+      const label = formatLabel(item, staticType);
+      if (!acc[label]) {
+        acc[label] = { label, _timestamp: parseToTimestamp(item, staticType) };
+      }
+      acc[label][item.name] = item.totalRevenue;
+      return acc;
+    }, {});
+
+    return Object.values(grouped).sort((a, b) => a._timestamp - b._timestamp);
   }, [data, staticType]);
 
   const allNames = useMemo(
@@ -101,7 +116,7 @@ const PersonalRevenueChart = () => {
     <Card className="p-6 rounded-2xl bg-gray-50 shadow-sm border">
       <CardHeader className="mb-6 p-0">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-          <h2 className="text-2xl font-bold text-gray-800">{t("title")}</h2>
+       
           <Select
             value={staticType.toString()}
             onChange={(value) => setStaticType(Number(value))}

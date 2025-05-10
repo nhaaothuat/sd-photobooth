@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { TypeSession } from "@/types/type";
+import { Group } from "@mantine/core";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 
@@ -89,36 +90,14 @@ export const columns = (
       header: () => <div className="text-center">Edit</div>,
       cell: ({ row }) => {
         const id = row.original.id;
-        return <EditTypeSession id={id} onUpdateSuccess={refetchData} />;
-      },
-    },
-    {
-      id: "actions",
-      enableHiding: false,
-      cell: ({ row }) => {
-        const id = row.original.id;
-
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <MoreHorizontal />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="center">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <DeletePayment id={id} onDelete={onDelete} />
-              </DropdownMenuItem>
-
-              <DropdownMenuItem asChild>
-                <ViewDetailTypeSession id={id} />
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        );
+          <Group justify="center">
+            <EditTypeSession id={id} onUpdateSuccess={refetchData} />
+            <DeletePayment id={id} onDelete={onDelete} />
+            <ViewDetailTypeSession id={id} />
+          </Group>
+        )
       },
     },
+
   ];

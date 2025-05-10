@@ -16,8 +16,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PlusCircle } from "lucide-react";
-import { toast } from "react-toastify";
+
 import AxiosAPI from "@/configs/axios";
+import { useToast } from "@/hooks/use-toast";
 
 const DepositProductSchema = z.object({
   name: z.string().min(1, "Tên là bắt buộc"),
@@ -32,7 +33,7 @@ type DepositProductFormData = z.infer<typeof DepositProductSchema>;
 const AddDepositProduct = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const {toast} = useToast();
   const {
     register,
     handleSubmit,
@@ -47,7 +48,11 @@ const AddDepositProduct = ({ onSuccess }: { onSuccess?: () => void }) => {
       setLoading(true);
       const response = await AxiosAPI.post("/api/DepositProduct", data);
       if (response.status >= 200 && response.status < 300) {
-        toast.success("Thêm Deposit Product thành công");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+          title: "Success", // Thay thế t("successTitle")
+          description: "Operation completed successfully", // Thay thế t("successDesc")
+        })
         reset();
         setIsOpen(false);
         if (onSuccess) onSuccess();
@@ -56,7 +61,12 @@ const AddDepositProduct = ({ onSuccess }: { onSuccess?: () => void }) => {
       }
     } catch (error) {
       console.error("Error adding deposit product:", error);
-      toast.error("Thêm thất bại");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
     } finally {
       setLoading(false);
     }

@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react"
-import { Modal, Button, TextInput, Checkbox, Stack, Group, Text, LoadingOverlay } from "@mantine/core"
+import { Modal, Button, TextInput, Checkbox, Stack, Group, LoadingOverlay } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import { PaymentMethod } from "@/types/type"
 import AxiosAPI from "@/configs/axios"
-import { toast } from "react-toastify"
+import { useToast } from "@/hooks/use-toast";
 import { BookUser } from "lucide-react"
 
 const EditPaymentMethod = ({ id, onUpdated }: { id: number; onUpdated?: () => void }) => {
   const [opened, { open, close }] = useDisclosure(false)
   const [loading, setLoading] = useState(false)
-
+const {toast} = useToast();
   const [form, setForm] = useState({
     methodName: "",
     description: "",
@@ -34,7 +34,12 @@ const EditPaymentMethod = ({ id, onUpdated }: { id: number; onUpdated?: () => vo
           forMobile: data?.forMobile ?? false,
         })
       } catch (err) {
-        toast.error("Lỗi khi lấy thông tin phương thức")
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          variant: "destructive",
+          title: "Error", // Thay thế t("errorTitle")
+          description: "An error occurred", // Thay thế t("errorDesc")
+        })
         console.error(err)
       } finally {
         setLoading(false)
@@ -47,54 +52,63 @@ const EditPaymentMethod = ({ id, onUpdated }: { id: number; onUpdated?: () => vo
   const handleUpdate = async () => {
     try {
       await AxiosAPI.put(`/api/PaymentMethod/${id}`, form)
-      toast.success("Updated Successfully!")
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: "Success", // Thay thế t("successTitle")
+        description: "Operation completed successfully", // Thay thế t("successDesc")
+      })
       close()
       onUpdated?.()
     } catch (error) {
-      toast.error("Cập nhật thất bại")
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
       console.error(error)
     }
   }
 
   return (
     <>
-      <Button variant="subtle" onClick={open}>
-        <BookUser size={18} />
+      <Button variant="outline"  onClick={open}>
+        <BookUser  />
       </Button>
 
-      <Modal opened={opened} onClose={close} title="Sửa phương thức thanh toán" centered>
-        <LoadingOverlay visible={loading} overlayProps={{  blur: 2 }} />
+      <Modal opened={opened} onClose={close} title="Edit Payment Method" centered>
+        <LoadingOverlay visible={loading} overlayProps={{ blur: 2 }} />
         {!loading && (
           <Stack gap="sm">
             <TextInput
-              label="Tên phương thức"
-              placeholder="Nhập tên phương thức"
+              label="Method Name"
+              placeholder="Enter method name"
               value={form.methodName}
               onChange={(e) => setForm({ ...form, methodName: e.currentTarget.value })}
             />
             <TextInput
-              label="Mô tả"
-              placeholder="Nhập mô tả"
+              label="Description"
+              placeholder="Enter description"
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.currentTarget.value })}
             />
             <Checkbox
-              label="Kích hoạt"
+              label="Active"
               checked={form.isActive}
               onChange={(e) => setForm({ ...form, isActive: e.currentTarget.checked })}
             />
             <Checkbox
-              label="Trực tuyến"
+              label="Online"
               checked={form.isOnline}
               onChange={(e) => setForm({ ...form, isOnline: e.currentTarget.checked })}
             />
             <Checkbox
-              label="Dành cho di động"
+              label="For Mobile"
               checked={form.forMobile}
               onChange={(e) => setForm({ ...form, forMobile: e.currentTarget.checked })}
             />
-            <Group  mt="md">
-              <Button onClick={handleUpdate}>Cập nhật</Button>
+            <Group mt="md">
+              <Button onClick={handleUpdate}>Update</Button>
             </Group>
           </Stack>
         )}

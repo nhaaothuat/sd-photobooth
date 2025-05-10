@@ -4,14 +4,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "react-toastify";
+
 import AxiosAPI from "@/configs/axios";
+import { useToast } from "@/hooks/use-toast";
 
 const GPRoleUser: React.FC = () => {
   const [email, setEmail] = useState("");
   const [selectedRole, setSelectedRole] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
-
+  const {toast} = useToast();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || selectedRole === null || loading) return;
@@ -20,10 +21,19 @@ const GPRoleUser: React.FC = () => {
     try {
       
       await AxiosAPI.post(`api/User/change-role?email=${encodeURIComponent(email)}&role=${selectedRole}`, {});
-      toast.success("Cập nhật vai trò thành công!");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: "Success", // Thay thế t("successTitle")
+        description: "Operation completed successfully", // Thay thế t("successDesc")
+      })
     } catch (error) {
       console.error("Update Error:", error);
-      toast.error("Cập nhật vai trò thất bại.");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
     } finally {
       setLoading(false);
     }

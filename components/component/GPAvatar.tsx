@@ -18,7 +18,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Pencil } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
-import { toast } from "react-toastify"
+
 
 interface GPAvatarProps {
      onUpdateSuccess: () => void

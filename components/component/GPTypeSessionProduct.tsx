@@ -9,10 +9,11 @@ import {
   LoadingOverlay,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { toast } from "react-toastify";
+
 import { CiEdit } from "react-icons/ci";
 import AxiosAPI from "@/configs/axios";
 import { TypeSessionProduct } from "@/types/type";
+import { useToast } from "@/hooks/use-toast";
 
 const UpdateTypeSessionProduct = ({
   id,
@@ -28,7 +29,7 @@ const UpdateTypeSessionProduct = ({
     productId: "",
    
   });
-
+  const {toast} = useToast();
   useEffect(() => {
     if (!opened) return;
 
@@ -44,7 +45,12 @@ const UpdateTypeSessionProduct = ({
         });
       } catch (error) {
         console.error("Fetch error:", error);
-        toast.error("Không thể tải thông tin Type Session Product");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          variant: "destructive",
+          title: "Error", // Thay thế t("errorTitle")
+          description: "An error occurred", // Thay thế t("errorDesc")
+        })
       } finally {
         setLoading(false);
       }
@@ -64,12 +70,21 @@ const UpdateTypeSessionProduct = ({
     try {
       setLoading(true);
       await AxiosAPI.put(`/api/TypeSessionProduct/${id}`, formData);
-      toast.success("Cập nhật Type Session Product thành công!");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: "Success", // Thay thế t("successTitle")
+        description: "Operation completed successfully", // Thay thế t("successDesc")
+      })
       close();
       onUpdateSuccess();
     } catch (error) {
       console.error("Update error:", error);
-      toast.error("Cập nhật thất bại.");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
     } finally {
       setLoading(false);
     }

@@ -9,9 +9,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import AxiosAPI from "@/configs/axios";
-import { toast } from "react-toastify";
+
 import { FilePenLine } from "lucide-react";
 import { FrameStyle } from "@/types/type";
+import { useToast } from "@/hooks/use-toast";
 
 const UpdateFrameStyle = ({ id, onUpdated }: { id: number; onUpdated?: () => void }) => {
   const [open, setOpen] = useState(false);
@@ -21,6 +22,7 @@ const UpdateFrameStyle = ({ id, onUpdated }: { id: number; onUpdated?: () => voi
     description: "",
   });
   const [image, setImage] = useState<File | null>(null);
+  const {toast} = useToast();
 
   // Fetch existing FrameStyle data
   useEffect(() => {
@@ -36,7 +38,12 @@ const UpdateFrameStyle = ({ id, onUpdated }: { id: number; onUpdated?: () => voi
           description: data?.description || "",
         });
       } catch (err) {
-        toast.error("Lỗi khi lấy thông tin FrameStyle");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          variant: "destructive",
+          title: "Error", // Thay thế t("errorTitle")
+          description: "An error occurred", // Thay thế t("errorDesc")
+        })
         console.error(err);
       } finally {
         setLoading(false);
@@ -59,11 +66,20 @@ const UpdateFrameStyle = ({ id, onUpdated }: { id: number; onUpdated?: () => voi
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      toast.success("Cập nhật FrameStyle thành công!");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: "Success", // Thay thế t("successTitle")
+        description: "Operation completed successfully", // Thay thế t("successDesc")
+      })
       setOpen(false);
       onUpdated?.();
     } catch (error) {
-      toast.error("Cập nhật FrameStyle thất bại");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
       console.error(error);
     }
   };

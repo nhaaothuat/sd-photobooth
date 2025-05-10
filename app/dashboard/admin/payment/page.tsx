@@ -8,18 +8,19 @@ import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-tabl
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { debounce } from 'lodash'
-import { toast } from 'react-toastify'
 
+import { useToast } from "@/hooks/use-toast";
 import { Label } from '@/components/ui/label'
-import AddPayment from '@/components/component/AddPayment'
+
 import { Skeleton } from '@mantine/core'
+import { GrFormNext, GrFormPrevious } from 'react-icons/gr'
 
 const usePaymentMethodData = () => {
   const [data, setData] = useState<PaymentMethod[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [totalItems, setTotalItems] = useState(0)
-
+  
   const fetchCount = useCallback(async () => {
     try {
       const response = await AxiosAPI.get<number>("/api/PaymentMethod/count")
@@ -87,7 +88,7 @@ const PaymentMethodPage = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [pageSize, setPageSize] = useState(5)
   const [pageIndex, setPageIndex] = useState(0)
-
+  const { toast } = useToast();
   const {
     data,
     loading,
@@ -112,7 +113,11 @@ const PaymentMethodPage = () => {
 
       if (res.status !== 200) throw new Error("Xóa thất bại")
 
-      toast.success("Đã xóa phương thức thanh toán thành công")
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: "Success", // Thay thế t("successTitle")
+        description: "Operation completed successfully", // Thay thế t("successDesc")
+      })
       fetchCount()
       if (data.length <= 1 && pageIndex > 0) {
         setPageIndex(pageIndex - 1)
@@ -120,14 +125,19 @@ const PaymentMethodPage = () => {
         handleSearch(searchTerm, pageIndex + 1, pageSize)
       }
     } catch (error) {
-      toast.error("Xóa thất bại")
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
       console.error(error)
     }
   }
 
   const table = useReactTable({
     data,
-    columns: columns(deletePayment,() => handleSearch(searchTerm, pageIndex + 1, pageSize)),
+    columns: columns(deletePayment, () => handleSearch(searchTerm, pageIndex + 1, pageSize)),
     pageCount: Math.ceil(totalItems / pageSize),
     state: {
       pagination: {
@@ -148,7 +158,7 @@ const PaymentMethodPage = () => {
     <div className="w-full space-y-4">
       <div className="flex items-center justify-between py-4">
         <Input
-          placeholder="Tìm kiếm TypeSession (full-text)..."
+          placeholder="Search"
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value)
@@ -156,9 +166,9 @@ const PaymentMethodPage = () => {
           }}
           className="max-w-sm"
         />
-       
+
         <div className="flex items-center space-x-2">
-          <Label htmlFor="pageSize" className="text-sm">Số hàng/trang:</Label>
+          <Label htmlFor="pageSize" className="text-sm">Number of rows/page:</Label>
           <select
             id="pageSize"
             value={pageSize}
@@ -176,7 +186,7 @@ const PaymentMethodPage = () => {
       </div>
 
       {loading ? (
-         <Skeleton height={8} mt={6} width="70%" radius="xl" />
+        <Skeleton height={8} mt={6} width="70%" radius="xl" />
       ) : error ? (
         <div className="text-red-500 p-4">Error: {error}</div>
       ) : (
@@ -221,7 +231,7 @@ const PaymentMethodPage = () => {
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
-              Previous
+              <GrFormPrevious />
             </Button>
             <span className="text-sm text-muted-foreground">
               Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
@@ -232,7 +242,7 @@ const PaymentMethodPage = () => {
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
-              Next
+              <GrFormNext />
             </Button>
           </div>
         </>

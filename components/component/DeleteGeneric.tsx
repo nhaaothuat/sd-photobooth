@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Trash2 } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-toastify";
+import { useToast } from "@/hooks/use-toast";
+
 
 interface DeleteItemProps {
   id: number;
@@ -22,16 +23,26 @@ interface DeleteItemProps {
 
 export const DeleteItem = ({ id, deleteFn, queryKey }: DeleteItemProps) => {
   const queryClient = useQueryClient();
-
+  const {toast} = useToast();
   const { mutate, isPending } = useMutation({
     mutationFn: () => deleteFn(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [queryKey] });
       queryClient.invalidateQueries({ queryKey: [queryKey, "count"] });
-      toast.success("Deleted successfully!");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: "Success", // Thay thế t("successTitle")
+        description: "Operation completed successfully", // Thay thế t("successDesc")
+      })
+      
     },
     onError: () => {
-      toast.error("Delete failed.");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
     },
   });
 

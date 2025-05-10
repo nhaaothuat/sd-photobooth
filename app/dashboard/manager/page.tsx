@@ -10,92 +10,79 @@ import { Badge, Box, Container, Grid, Group, Paper, Title } from "@mantine/core"
 
 const ManagerPage = () => {
   return (
-    // <>
-    //   <DashboardCard />
-    //   <StaffRevenueChart />  
-    //   <ChartCard />
-    //   <Component />
-    //   <PersonalRevenueStaffChart />
-    //   <PersonalRevenueChart />
-    // </>
 
-    <Container size="xl" py="xl" px={{ base: 'sm', md: 'xl' }}>
-  
-    <Box mb="xl">
-      <DashboardCard />
-    </Box>
-  
-    
-    <Grid gutter={{ base: 'md', md: 'xl' }} mb="xl">
-      <Grid.Col span={{ base: 12, md: 10 }}>
-        <Paper 
-          withBorder 
-          shadow="sm" 
+    <Container fluid size="xl" py="xl" px={{ base: "sm", md: "xl" }}>
+      {/* Tổng quan Dashboard */}
+      <Box mb="xl">
+        <DashboardCard />
+      </Box>
+
+      {/* Mỗi hàng là 1 biểu đồ */}
+      <Box mb="xl">
+        <Paper
+          withBorder
+          shadow="sm"
           p="lg"
           radius="md"
-          style={{ height: '100%' }}
+          className="min-w-full md:min-w-[700px]"
         >
-          
+          <Title order={3} mb="md">Employee revenue</Title>
           <StaffRevenueChart />
         </Paper>
-      </Grid.Col>
-      <Grid.Col span={{ base: 12, md: 6 }}>
-        <Paper 
-          withBorder 
-          shadow="sm" 
+      </Box>
+
+      <Box mb="xl">
+        <Paper
+          withBorder
+          shadow="sm"
           p="lg"
           radius="md"
-          style={{ height: '100%' }}
+          className="min-w-full md:min-w-[600px]"
         >
-         
+          <Title order={3} mb="md">Revenue by Business Location </Title>
           <Component />
         </Paper>
-      </Grid.Col>
-    </Grid>
-  
-    {/* Detailed Metrics - Middle Row */}
-    <Grid gutter={{ base: 'md', md: 'xl' }} mb="xl">
-      <Grid.Col span={{ base: 12, md: 6 }}>
-        <Paper 
-          withBorder 
-          shadow="sm" 
+      </Box>
+
+      <Box mb="xl">
+        <Paper
+          withBorder
+          shadow="sm"
           p="lg"
           radius="md"
-          style={{ height: '100%' }}
+          className="min-w-full md:min-w-[600px]"
         >
-        
+          <Title order={3} mb="md">Revenue by Sales Channel</Title>
           <ChartCard />
         </Paper>
-      </Grid.Col>
-      <Grid.Col span={{ base: 12, md: 6 }}>
-        <Paper 
-          withBorder 
-          shadow="sm" 
+      </Box>
+
+      <Box mb="xl">
+        <Paper
+          withBorder
+          shadow="sm"
           p="lg"
           radius="md"
-          style={{ height: '100%' }}
+          className="min-w-full md:min-w-[600px]"
         >
-          
+          <Title order={3} mb="md">Employee Revenue Performance</Title>
           <PersonalRevenueStaffChart />
         </Paper>
-      </Grid.Col>
-    </Grid>
-  
-    {/* Full-width Bottom Section */}
-    <Grid>
-      <Grid.Col span={12}>
-        <Paper 
-          withBorder 
-          shadow="sm" 
+      </Box>
+
+      <Box>
+        <Paper
+          withBorder
+          shadow="sm"
           p="lg"
           radius="md"
+          className="min-w-full md:min-w-[800px]"
         >
-          
+          <Title order={3} mb="md">Account-generated Revenue</Title>
           <PersonalRevenueChart />
         </Paper>
-      </Grid.Col>
-    </Grid>
-  </Container>
+      </Box>
+    </Container>
   );
 };
 

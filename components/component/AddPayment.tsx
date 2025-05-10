@@ -17,8 +17,9 @@ import { Label } from "@/components/ui/label";
 import { BellRing, Smartphone, Wifi } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import AxiosAPI from "@/configs/axios";
-import { toast } from "react-toastify";
+
 import { CirclePlus } from 'lucide-react';
+import { useToast } from "@/hooks/use-toast";
 
 const paymentSchema = z.object({
     methodName: z.string().min(1, "Method Name is required").max(100, "Max length is 100 characters"),
@@ -37,7 +38,7 @@ interface AddPaymentProps {
 const AddPayment: React.FC<AddPaymentProps> = ({ onAddSuccess }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
-
+    const {toast} = useToast();
     const {
         register,
         handleSubmit,
@@ -67,13 +68,23 @@ const AddPayment: React.FC<AddPaymentProps> = ({ onAddSuccess }) => {
 
         try {
             await AxiosAPI.post("api/PaymentMethod", data);
-            toast.success("Payment method added successfully!");
+            toast({
+                className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+                title: "Success", // Thay thế t("successTitle")
+                description: "Operation completed successfully", // Thay thế t("successDesc")
+              })
             reset();
             setIsOpen(false);
             onAddSuccess();
         } catch (err: any) {
             console.error("Save Error:", err);
-            toast.error(err.response?.data?.message || "Something went wrong");
+            
+            toast({
+                className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+                variant: "destructive",
+                title: "Error", // Thay thế t("errorTitle")
+                description: "An error occurred", // Thay thế t("errorDesc")
+              })
         } finally {
             setLoading(false);
         }

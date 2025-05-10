@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "react-toastify";
+
 import AxiosAPI from "@/configs/axios";
+import { useToast } from "@/hooks/use-toast";
 
 interface User {
   fullName: string | null;
@@ -21,7 +22,7 @@ const GPUser: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const [notFound, setNotFound] = useState(false);
-
+  const { toast } = useToast();
   const fetchUserDetails = async () => {
     if (!email) return;
     setLoading(true);
@@ -31,19 +32,43 @@ const GPUser: React.FC = () => {
     try {
       const response = await AxiosAPI.get<User>(`api/User/detail?email=${encodeURIComponent(email)}`);
       setUser(response.data);
-      toast.success("Tải thông tin thành công!");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: "Success", // Thay thế t("successTitle")
+        description: "Operation completed successfully", // Thay thế t("successDesc")
+      })
     } catch (error: any) {
       if (error.response) {
         if (error.response.status === 404) {
           setNotFound(true);
-          toast.error("Không tìm thấy người dùng.");
+          toast({
+            className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+            variant: "destructive",
+            title: "Error", // Thay thế t("errorTitle")
+            description: "An error occurred", // Thay thế t("errorDesc")
+          })
         } else if (error.response.status === 500) {
-          toast.error("Lỗi máy chủ nội bộ.");
+          toast({
+            className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+            variant: "destructive",
+            title: "Error", // Thay thế t("errorTitle")
+            description: "An error occurred", // Thay thế t("errorDesc")
+          })
         } else {
-          toast.error("Đã xảy ra lỗi. Vui lòng thử lại sau.");
+          toast({
+            className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+            variant: "destructive",
+            title: "Error", // Thay thế t("errorTitle")
+            description: "An error occurred", // Thay thế t("errorDesc")
+          })
         }
       } else {
-        toast.error("Lỗi kết nối. Vui lòng kiểm tra mạng.");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          variant: "destructive",
+          title: "Error", // Thay thế t("errorTitle")
+          description: "An error occurred", // Thay thế t("errorDesc")
+        })
       }
     } finally {
       setLoading(false);
@@ -53,7 +78,7 @@ const GPUser: React.FC = () => {
   return (
     <Card className="max-w-md mx-auto p-4">
       <CardHeader>
-        <CardTitle>Thông tin người dùng</CardTitle>
+        <CardTitle>User Information</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -62,28 +87,29 @@ const GPUser: React.FC = () => {
             <Input
               id="email"
               type="email"
-              placeholder="Nhập email"
+              placeholder="Enter email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
           <Button onClick={fetchUserDetails} disabled={loading} className="w-full">
-            {loading ? "Đang tải..." : "Tìm kiếm"}
+            {loading ? "Loading..." : "Search"}
           </Button>
-          {notFound && <p className="text-red-500 text-center">Không có kết quả.</p>}
+          {notFound && <p className="text-red-500 text-center">No results found.</p>}
           {user && !notFound && (
             <div className="mt-4 border p-4 rounded-lg">
-              <p><strong>Họ và tên:</strong> {user.fullName || "Chưa có thông tin"}</p>
-              <p><strong>Tên đăng nhập:</strong> {user.userName}</p>
-              <p><strong>Số điện thoại:</strong> {user.phoneNumber}</p>
-              <p><strong>Vai trò:</strong> {user.role}</p>
-              <p><strong>Địa điểm:</strong> {user.location?.locationName || "Không có thông tin"}</p>
+              <p><strong>Full Name:</strong> {user.fullName || "No information available"}</p>
+              <p><strong>Username:</strong> {user.userName}</p>
+              <p><strong>Phone Number:</strong> {user.phoneNumber}</p>
+              <p><strong>Role:</strong> {user.role}</p>
+              <p><strong>Location:</strong> {user.location?.locationName || "No information available"}</p>
             </div>
           )}
         </div>
       </CardContent>
     </Card>
+
   );
 };
 

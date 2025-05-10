@@ -13,10 +13,11 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "react-toastify";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { IoAddCircleOutline } from "react-icons/io5";
+import { useToast } from "@/hooks/use-toast";
 
 type Field = {
      name: string;
@@ -43,7 +44,7 @@ export const SimpleAddItem = ({
 }: SimpleAddItemProps) => {
      const [open, setOpen] = useState(false);
      const queryClient = useQueryClient();
-
+     const {toast} = useToast();
      const {
           register,
           handleSubmit,
@@ -56,11 +57,20 @@ export const SimpleAddItem = ({
           onSuccess: () => {
                queryClient.invalidateQueries({ queryKey: [queryKey], exact: false });
                queryClient.invalidateQueries({ queryKey: [queryKey, "count"] });
-               toast.success("Thêm thành công!");
+               toast({
+                    className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+                    title: "Success", // Thay thế t("successTitle")
+                    description: "Operation completed successfully", // Thay thế t("successDesc")
+                  })
                setOpen(false);
                reset();
           },
-          onError: () => toast.error("Thêm thất bại."),
+          onError: () => toast({
+               className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+               variant: "destructive",
+               title: "Error", // Thay thế t("errorTitle")
+               description: "An error occurred", // Thay thế t("errorDesc")
+             }),
      });
 
      const onSubmit = async (data: any) => {

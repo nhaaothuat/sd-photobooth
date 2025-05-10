@@ -39,12 +39,12 @@ export function Component() {
   const [chartData, setChartData] = useState<any[]>([])
   const [chartConfig, setChartConfig] = useState<ChartConfig>({})
 
- 
+
   useEffect(() => {
     AxiosAPI.get<Location[]>("/api/Location")
       .then((res) => {
         const data = res.data || []
-        
+
         setLocations(data)
       })
       .catch((err) => {
@@ -52,7 +52,7 @@ export function Component() {
       })
   }, [])
 
-  
+
   useEffect(() => {
     if (groupingType === 1 && (!locationId || Number.isNaN(locationId))) return
 
@@ -119,11 +119,25 @@ export function Component() {
         })
       })
 
+      // 🧠 Thêm hàm parse thời gian
+      const parseLabelToDate = (label: string): number => {
+        if (staticType === 0) {
+          return new Date(label).getTime() // yyyy-mm-dd
+        } else if (staticType === 1) {
+          return new Date(label + "-01").getTime() // yyyy-mm
+        } else if (staticType === 2) {
+          const [q, y] = label.split(" ")
+          const quarter = parseInt(q.replace("Q", ""))
+          const year = parseInt(y)
+          return new Date(year, (quarter - 1) * 3).getTime() // quý
+        } else if (staticType === 3) {
+          return new Date(label + "-01-01").getTime() // yyyy
+        }
+        return 0
+      }
+
       const sortedData = allLabels
-        .sort((a, b) => {
-          if (staticType === 2) return 0
-          return new Date(a).getTime() - new Date(b).getTime()
-        })
+        .sort((a, b) => parseLabelToDate(a) - parseLabelToDate(b))
         .map((label) => grouped[label])
 
       setChartData(sortedData)
@@ -131,57 +145,58 @@ export function Component() {
     })
   }, [staticType, groupingType, locationId])
 
+
   return (
-    <Card>
-      
+    <Card className="rounded-2xl shadow-sm border border-gray-200 bg-white">
+      <div className="flex justify-between items-center p-4 rounded-md border border-gray-200 bg-gray-50 mb-6">
+        <Select value={String(staticType)} onValueChange={(v) => setStaticType(Number(v))}>
+          <SelectTrigger className="min-w-[160px] w-44">
+            <SelectValue placeholder="Chọn loại thống kê" />
+          </SelectTrigger>
+          <SelectContent>
+            {staticTypeOptions.map((opt) => (
+              <SelectItem key={opt.value} value={String(opt.value)}>
+                {opt.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
+        <Select value={String(groupingType)} onValueChange={(v) => setGroupingType(Number(v))}>
+          <SelectTrigger className="min-w-[160px] w-44">
+            <SelectValue placeholder="Chọn nhóm" />
+          </SelectTrigger>
+          <SelectContent>
+            {groupingTypeOptions.map((opt) => (
+              <SelectItem key={opt.value} value={String(opt.value)}>
+                {opt.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {groupingType === 1 && (
+          <Select
+            value={locationId?.toString() ?? ""}
+            onValueChange={(value) => setLocationId(Number(value))}
+          >
+            <SelectTrigger className="min-w-[180px] w-48">
+              <SelectValue placeholder="Chọn chi nhánh" />
+            </SelectTrigger>
+            <SelectContent>
+              {locations.map((loc) => (
+                <SelectItem key={loc.id} value={String(loc.id)}>
+                  {loc.locationName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+      </div>
       <CardContent>
-        <div className="flex flex-wrap gap-4 mb-6 items-center">
-          <Select value={String(staticType)} onValueChange={(v) => setStaticType(Number(v))}>
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="Select Static Type" />
-            </SelectTrigger>
-            <SelectContent>
-              {staticTypeOptions.map((opt) => (
-                <SelectItem key={opt.value} value={String(opt.value)}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
 
-          <Select value={String(groupingType)} onValueChange={(v) => setGroupingType(Number(v))}>
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="Select Grouping Type" />
-            </SelectTrigger>
-            <SelectContent>
-              {groupingTypeOptions.map((opt) => (
-                <SelectItem key={opt.value} value={String(opt.value)}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
 
-          {groupingType === 1 && (
-            <Select
-              value={locationId?.toString() ?? ""}
-              onValueChange={(value) => setLocationId(Number(value))}
-            >
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Select Location" />
-              </SelectTrigger>
-              <SelectContent>
-                {locations.map((loc) => (
-                  <SelectItem key={loc.id} value={String(loc.id)}>
-                    {loc.locationName}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        </div>
-
+        {/* Biểu đồ */}
         <ChartContainer config={chartConfig}>
           <LineChart height={300} data={chartData} margin={{ left: 12, right: 12 }}>
             <CartesianGrid vertical={false} />
@@ -190,7 +205,9 @@ export function Component() {
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => value.length > 6 ? value.slice(0, 7) : value}
+              tickFormatter={(value) =>
+                value.length > 6 ? value.slice(0, 7) : value
+              }
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             {Object.keys(chartConfig).map((key) => (
@@ -207,5 +224,6 @@ export function Component() {
         </ChartContainer>
       </CardContent>
     </Card>
+
   )
 }

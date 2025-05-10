@@ -94,71 +94,74 @@ const DashboardCard = () => {
   ];
 
   return (
-    <div className="pb-4">
-      <Select
-        value={staticType !== null ? staticType.toString() : null}
-        onChange={(value) => {
-          if (value !== null && !isNaN(Number(value))) {
-            setStaticType(Number(value));
-          }
-        }}
-        data={[
-          { value: "0", label: "Ngày" },
-          { value: "1", label: "Tháng" },
-          { value: "2", label: "Quý" },
-          { value: "3", label: "Năm" },
-        ]}
-        className="mb-4 max-w-xs"
-        placeholder="Chọn thời gian"
-      />
+   <div className="pb-4 space-y-6">
+  <Select
+    value={staticType !== null ? staticType.toString() : null}
+    onChange={(value) => {
+      if (value !== null && !isNaN(Number(value))) {
+        setStaticType(Number(value));
+      }
+    }}
+    data={[
+      { value: "0", label: "Ngày" },
+      { value: "1", label: "Tháng" },
+      { value: "2", label: "Quý" },
+      { value: "3", label: "Năm" },
+    ]}
+    className="max-w-xs"
+    placeholder="Chọn thời gian"
+    radius="md"
+    size="md"
+    styles={{
+      input: {
+        borderColor: "#e5e5ea",
+        backgroundColor: "#f9f9fa",
+        fontSize: 14,
+      },
+    }}
+  />
 
-      <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="lg">
-        {stats.map((stat, index) => {
-          const Icon = icons[stat.icon as keyof typeof icons];
-          const DiffIcon = stat.diff >= 0 ? IconArrowUpRight : IconArrowDownRight;
+  <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="xl">
+    {stats.map((stat, index) => {
+      const Icon = icons[stat.icon as keyof typeof icons];
+      const DiffIcon = stat.diff >= 0 ? IconArrowUpRight : IconArrowDownRight;
 
-          return (
-            <Paper
-              withBorder
-              radius="lg"
-              p="md"
-              key={index}
-              className="shadow-sm bg-white dark:bg-dark-800 transition hover:shadow-md"
+      return (
+        <Paper
+          withBorder
+          radius="xl"
+          p="lg"
+          key={index}
+          className="bg-white dark:bg-neutral-900 shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_6px_16px_rgba(0,0,0,0.08)] transition duration-300"
+        >
+          <Group justify="space-between" mb="sm">
+            <Text
+              size="xs"
+              className="text-neutral-500 font-medium tracking-wide uppercase"
             >
-              <Group justify="space-between" mb="xs">
-                <Text size="xs" className="text-gray-500 font-semibold uppercase tracking-wide">
-                  {stat.title}
-                </Text>
-                <Icon size={22} stroke={1.5} className="text-gray-400" />
-              </Group>
+              {stat.title}
+            </Text>
+            <Icon size={20} className="text-neutral-400" />
+          </Group>
 
-              <Group align="flex-end" gap="xs" mt="md">
-                <Text className="text-3xl font-bold">
-                  {stat.icon === "revenue" || stat.icon === "deposit"
-                    ? stat.value.toLocaleString("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      })
-                    : stat.value}
-                </Text>
-                <Badge
-                  color={stat.diff >= 0 ? "teal" : "red"}
-                  variant="light"
-                  size="sm"
-                  className="h-[26px] flex items-center justify-center"
-                >
-                  <Group gap={4}>
-                    {stat.diff >= 0 ? "+" : ""}
-                    {stat.diff.toFixed(2)}%
-                    <DiffIcon size={14} />
-                  </Group>
-                </Badge>
-              </Group>
-            </Paper>
-          );
-        })}
-      </SimpleGrid>
-    </div>
+          <Group align="flex-end" gap="xs" mt="md">
+            <Text className="text-2xl font-semibold text-neutral-800 dark:text-white">
+              {stat.icon === "revenue" || stat.icon === "deposit"
+                ? stat.value.toLocaleString("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                    currencyDisplay: "code",
+                  })
+                : stat.value}
+            </Text>
+            
+          </Group>
+        </Paper>
+      );
+    })}
+  </SimpleGrid>
+</div>
+
   );
 };
 

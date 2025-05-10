@@ -11,9 +11,10 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import AxiosAPI from "@/configs/axios";
-import { toast } from "react-toastify";
+
 import { BookUser } from "lucide-react";
 import { LevelMembership } from "@/types/type"; // Đảm bảo đã định nghĩa type này
+import { useToast } from "@/hooks/use-toast";
 
 const EditLevelMembership = ({
   id,
@@ -24,7 +25,7 @@ const EditLevelMembership = ({
 }) => {
   const [opened, { open, close }] = useDisclosure(false);
   const [loading, setLoading] = useState(false);
-
+  const {toast} = useToast();
   const [form, setForm] = useState({
     name: "",
     description: "",
@@ -53,7 +54,12 @@ const EditLevelMembership = ({
           minOrder: data?.minOrder || 0,
         });
       } catch (err) {
-        toast.error("Lỗi khi tải thông tin hạng thành viên");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          variant: "destructive",
+          title: "Error", // Thay thế t("errorTitle")
+          description: "An error occurred", // Thay thế t("errorDesc")
+        })
         console.error(err);
       } finally {
         setLoading(false);
@@ -66,18 +72,27 @@ const EditLevelMembership = ({
   const handleUpdate = async () => {
     try {
       await AxiosAPI.put(`/api/LevelMembership/${id}`, form);
-      toast.success("Cập nhật hạng thành viên thành công!");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: "Success", // Thay thế t("successTitle")
+        description: "Operation completed successfully", // Thay thế t("successDesc")
+      })
       close();
       onUpdated?.();
     } catch (error) {
-      toast.error("Cập nhật thất bại");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
       console.error(error);
     }
   };
 
   return (
     <>
-      <Button variant="default" className="border-blue-500" onClick={open}>
+      <Button variant="default"  onClick={open}>
         <BookUser size={18} />
       </Button>
 

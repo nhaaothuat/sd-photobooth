@@ -19,8 +19,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import AxiosAPI from "@/configs/axios";
-import { toast } from "react-toastify";
+
 import { FaPlus } from "react-icons/fa";
+import { useToast } from "@/hooks/use-toast";
+import handleAxiosError from "@/utils/handle-axios-error";
 
 const levelMembershipSchema = z.object({
   name: z.string().min(1, "Tên là bắt buộc"),
@@ -33,6 +35,7 @@ const levelMembershipSchema = z.object({
     .max(100, "Phần trăm giảm giá từ 0 đến 100"),
   maxDiscount: z.coerce.number().min(0),
   minOrder: z.coerce.number().min(0),
+  nextLevelId: z.coerce.number().min(0),
 });
 
 type LevelMembershipForm = z.infer<typeof levelMembershipSchema>;
@@ -40,7 +43,7 @@ type LevelMembershipForm = z.infer<typeof levelMembershipSchema>;
 const AddLevelMembership = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const { toast } = useToast();
   const {
     control,
     register,
@@ -57,6 +60,7 @@ const AddLevelMembership = ({ onSuccess }: { onSuccess?: () => void }) => {
       discountPercent: 0,
       maxDiscount: 0,
       minOrder: 0,
+      nextLevelId: 0,
     },
   });
 
@@ -65,13 +69,27 @@ const AddLevelMembership = ({ onSuccess }: { onSuccess?: () => void }) => {
     setLoading(true);
     try {
       await AxiosAPI.post("/api/LevelMembership", data);
-      toast.success("Thêm cấp độ thành viên thành công!");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: "Success", // Thay thế t("successTitle")
+        description: "Operation completed successfully", // Thay thế t("successDesc")
+      })
       reset();
       setIsOpen(false);
       onSuccess?.();
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Đã có lỗi xảy ra");
-      console.error(error);
+
+      const { status, statusText, data } = handleAxiosError(error);
+      const message = (data as { message?: string })?.message || statusText || "Đã có lỗi xảy ra";
+
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Lỗi",
+        description: message,
+      });
+
+
     } finally {
       setLoading(false);
     }
@@ -165,6 +183,18 @@ const AddLevelMembership = ({ onSuccess }: { onSuccess?: () => void }) => {
             />
             {errors.minOrder && (
               <p className="text-red-500 text-sm">{errors.minOrder.message}</p>
+            )}
+          </div>
+          <div>
+            <Label htmlFor="nextLevelId">ID cấp độ tiếp theo</Label>
+            <Input
+              type="number"
+              min="0"
+              id="nextLevelId"
+              {...register("nextLevelId", { valueAsNumber: true })}
+            />
+            {errors.nextLevelId && (
+              <p className="text-red-500 text-sm">{errors.nextLevelId.message}</p>
             )}
           </div>
 

@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import AddStaff from "@/components/component/AddStaff";
+import { Skeleton } from "@mantine/core";
 
 interface ApiResponse {
   data: User[];
@@ -130,7 +131,7 @@ const CustomerPage = () => {
             }}
           />
           <Label htmlFor="pageSize" className="text-sm">
-            Số hàng/trang:
+            Number of rows/page:
           </Label>
           <select
             id="pageSize"
@@ -148,7 +149,8 @@ const CustomerPage = () => {
       </div>
 
       {loading ? (
-        <div className="text-sm text-muted-foreground">Đang tải dữ liệu...</div>
+        <Skeleton height={8} mt={6} width="70%" radius="xl" />
+
       ) : error ? (
         <div className="text-red-500 p-4">Error: {error}</div>
       ) : (

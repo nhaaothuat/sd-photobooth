@@ -17,9 +17,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import AxiosAPI from "@/configs/axios";
-import { toast } from "react-toastify";
+
 import { Smartphone, PlusCircle } from "lucide-react";
 import { FrameStyle } from "@/types/type";
+import { useToast } from "@/hooks/use-toast";
 
 const frameSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -48,7 +49,7 @@ const AddFrame = ({ onSuccess }: { onSuccess: () => void }) => {
   const [loading, setLoading] = useState(false);
   const [frameStyles, setFrameStyles] = useState<FrameStyle[]>([]);
   const [loadingStyles, setLoadingStyles] = useState(true);
-
+  const {toast} = useToast();
   useEffect(() => {
     const fetchFrameStyles = async () => {
       try {
@@ -113,13 +114,23 @@ const AddFrame = ({ onSuccess }: { onSuccess: () => void }) => {
           "Content-Type": "multipart/form-data",
         },
       });
-      toast.success("Thêm thành công!");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: "Success", // Thay thế t("successTitle")
+        description: "Operation completed successfully", // Thay thế t("successDesc")
+      })
       reset();
       setIsOpen(false);
       onSuccess();
     } catch (err: any) {
       console.error(err);
-      toast.error(err?.response?.data?.message || "Error while adding frame");
+      
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: err?.response?.data?.message || "Error while adding frame", // Thay thế t("errorDesc")
+      })
     } finally {
       setLoading(false);
     }

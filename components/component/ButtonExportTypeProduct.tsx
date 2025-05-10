@@ -1,9 +1,11 @@
 import React from 'react';
 import { Button } from '@mantine/core';
 import AxiosAPI from '@/configs/axios';
-import { toast } from 'react-toastify';
+import { useToast } from '@/hooks/use-toast';
+
 
 const ExportButton: React.FC = () => {
+    const {toast} = useToast();
     const handleExport = async () => {
         try {
             const response = await AxiosAPI.get('/api/TypeSessionProduct/export', {
@@ -20,10 +22,15 @@ const ExportButton: React.FC = () => {
             link.click();
             document.body.removeChild(link);
 
-            toast.success('Export thành công!');
+           
         } catch (error) {
             console.error('Export failed:', error);
-            toast.error('Xuất file thất bại!');
+            toast({
+                className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+                variant: "destructive",
+                title: "Error", // Thay thế t("errorTitle")
+                description: "An error occurred", // Thay thế t("errorDesc")
+              })
         }
     };
 

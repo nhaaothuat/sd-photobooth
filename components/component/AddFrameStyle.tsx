@@ -15,9 +15,10 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { PlusCircle } from "lucide-react";
-import { toast } from "react-toastify";
+import { IoIosAddCircleOutline } from "react-icons/io";
+
 import AxiosAPI from "@/configs/axios";
+import { useToast } from "@/hooks/use-toast";
 
 const frameStyleSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -32,7 +33,7 @@ type FrameStyleFormData = z.infer<typeof frameStyleSchema>;
 const AddFrameStyle = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const {toast} = useToast();
   const {
     register,
     handleSubmit,
@@ -56,15 +57,23 @@ const AddFrameStyle = ({ onSuccess }: { onSuccess?: () => void }) => {
           "Content-Type": "multipart/form-data",
         },
       });
-      toast.success("Thêm thành công!");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: "Success", // Thay thế t("successTitle")
+        description: "Operation completed successfully", // Thay thế t("successDesc")
+      })
       reset();
       setIsOpen(false);
       onSuccess?.();
     } catch (err: any) {
       console.error(err);
-      toast.error(
-        err?.response?.data?.message || "Error while adding frame style"
-      );
+     
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: err?.response?.data?.message || "Error while adding frame style", // Thay thế t("errorDesc")
+      })
     } finally {
       setLoading(false);
     }
@@ -74,7 +83,7 @@ const AddFrameStyle = ({ onSuccess }: { onSuccess?: () => void }) => {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline">
-          <PlusCircle className="mr-2 h-4 w-4" /> Add Frame Style
+          <IoIosAddCircleOutline />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">

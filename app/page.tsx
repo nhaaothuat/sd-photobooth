@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -31,7 +31,7 @@ const formSchema = z.object({
 const Home = () => {
   const { data: session, update } = useSession();
   const router = useRouter();
-
+  const {toast} = useToast();
   useEffect(() => {
     if (session?.user?.role) {
       router.replace(`/dashboard/${session.user.role.toLowerCase()}`);
@@ -52,13 +52,23 @@ const Home = () => {
       });
 
       if (result?.error)
-        return toast.error("Đăng nhập thất bại! Vui lòng thử lại.");
+        return toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          variant: "destructive",
+          title: "Error", 
+          description: "Please try again", 
+        });
 
       const updatedSession = await update();
       router.replace(`/dashboard/${updatedSession?.user?.role.toLowerCase()}`);
     } catch (error) {
       console.error("🔴 Lỗi khi đăng nhập:", error);
-      toast.error("Đăng nhập thất bại! Vui lòng thử lại.");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
     }
   };
 

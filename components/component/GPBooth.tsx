@@ -10,10 +10,11 @@ import {
   Select,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { toast } from "react-toastify";
+
 import { CiEdit } from "react-icons/ci";
 import AxiosAPI from "@/configs/axios";
 import { Booth, Location } from "@/types/type";
+import { useToast } from "@/hooks/use-toast";
 
 const UpdateBooth = ({
   id,
@@ -31,7 +32,7 @@ const UpdateBooth = ({
     locationName: "",
   });
   const [locations, setLocations] = useState<Location[]>([]);
-
+  const {toast} = useToast();
   useEffect(() => {
     if (!opened) return;
 
@@ -59,7 +60,12 @@ const UpdateBooth = ({
           locationName: matchedLocation?.locationName || "",
         });
       } catch (error) {
-        toast.error("Không thể tải thông tin Booth hoặc Location");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          variant: "destructive",
+          title: "Error", // Thay thế t("errorTitle")
+          description: "An error occurred", // Thay thế t("errorDesc")
+        })
         console.error(error);
       } finally {
         setLoading(false);
@@ -86,7 +92,12 @@ const UpdateBooth = ({
         (loc) => loc.locationName === formData.locationName
       );
       if (!selectedLocation) {
-        toast.error("Vui lòng chọn địa điểm hợp lệ");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          variant: "destructive",
+          title: "Error", // Thay thế t("errorTitle")
+          description: "An error occurred", // Thay thế t("errorDesc")
+        })
         return;
       }
 
@@ -98,12 +109,21 @@ const UpdateBooth = ({
       };
 
       await AxiosAPI.put(`/api/Booth/${id}`, payload);
-      toast.success("Cập nhật Booth thành công!");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: "Success", // Thay thế t("successTitle")
+        description: "Operation completed successfully", // Thay thế t("successDesc")
+      })
       close();
       onUpdateSuccess();
     } catch (error) {
       console.error("Update error:", error);
-      toast.error("Cập nhật Booth thất bại.");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
     } finally {
       setLoading(false);
     }

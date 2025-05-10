@@ -1,7 +1,7 @@
 "use client";
 
 import { columns } from "./columns";
-import { toast } from "react-toastify";
+
 import { useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { usePaginatedQuery } from "@/hooks/usePaginatedQuery";
@@ -13,6 +13,7 @@ import {
   getTypeSessionProductList,
 } from "@/services/type-session-product";
 import ExportButton from "@/components/component/ButtonExport";
+import { useToast } from "@/hooks/use-toast";
 
 const CrudPageWrapper = dynamic(
   () =>
@@ -28,7 +29,7 @@ const CrudPageWrapper = dynamic(
 export default function TypeSessionProductPage() {
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
-
+  const {toast} = useToast();
   const [pageSize, setPageSize] = useState(5);
   const [pageIndex, setPageIndex] = useState(0);
 
@@ -47,11 +48,20 @@ export default function TypeSessionProductPage() {
     try {
       await deleteTypeSessionProduct(id);
       
-      toast.success("Xóa thành công!");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: "Success", // Thay thế t("successTitle")
+        description: "Operation completed successfully", // Thay thế t("successDesc")
+      })
       if (data?.length === 1 && pageIndex > 0) setPageIndex((prev) => prev - 1);
       else  await refetch();
     } catch {
-      toast.error("Failed to delete Type Session Product");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
     }
   };
 

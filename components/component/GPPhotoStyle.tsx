@@ -14,9 +14,10 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import AxiosAPI from "@/configs/axios";
-import { toast } from "react-toastify";
+
 import { CiEdit } from "react-icons/ci";
 import { PhotoStyle } from "@/types/type";
+import { useToast } from "@/hooks/use-toast";
 
 const EditPhotoStyle = ({
   id,
@@ -29,7 +30,7 @@ const EditPhotoStyle = ({
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<Partial<PhotoStyle & { imageFile?: File | null }>>({});
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-
+  const {toast} = useToast();
   useEffect(() => {
     if (!opened) return;
 
@@ -39,7 +40,12 @@ const EditPhotoStyle = ({
         const res = await AxiosAPI.get<PhotoStyle>(`/api/PhotoStyle/${id}`);
         setFormData(res.data as any);
       } catch (err) {
-        toast.error("Không thể tải thông tin Photo Style");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          variant: "destructive",
+          title: "Error", // Thay thế t("errorTitle")
+          description: "An error occurred", // Thay thế t("errorDesc")
+        })
         console.error(err);
       } finally {
         setLoading(false);
@@ -98,12 +104,21 @@ const EditPhotoStyle = ({
         },
       });
 
-      toast.success("Cập nhật Photo Style thành công!");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: "Success", // Thay thế t("successTitle")
+        description: "Operation completed successfully", // Thay thế t("successDesc")
+      })
       close();
       onUpdateSuccess();
     } catch (error) {
       console.error("Update error:", error);
-      toast.error("Cập nhật thất bại.");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
     } finally {
       setLoading(false);
     }

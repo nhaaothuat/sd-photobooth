@@ -9,10 +9,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import AxiosAPI from "@/configs/axios";
-import { toast } from "react-toastify";
+
 import { FilePenLine } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Sticker, StickerStyle } from "@/types/type";
+import { useToast } from "@/hooks/use-toast";
 const UpdateSticker = ({
      id,
      onUpdated,
@@ -28,7 +29,7 @@ const UpdateSticker = ({
      });
      const [image, setImage] = useState<File | null>(null);
      const [styles, setStyles] = useState<StickerStyle[]>([]);
-
+     const {toast} = useToast();
      // Fetch sticker styles
      useEffect(() => {
           if (!open) return;
@@ -38,7 +39,12 @@ const UpdateSticker = ({
                     const res = await AxiosAPI.get("/api/StickerStyle/all");
                     setStyles(res.data as any);
                } catch (err) {
-                    toast.error("Lỗi khi tải danh sách style");
+                    toast({
+                         className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+                         variant: "destructive",
+                         title: "Error", // Thay thế t("errorTitle")
+                         description: "An error occurred", // Thay thế t("errorDesc")
+                       })
                     console.error(err);
                }
           };
@@ -64,7 +70,12 @@ const UpdateSticker = ({
                          stickerStyleId: matchedStyle?.id.toString() || "", // Đảm bảo là string của number
                     });
                } catch (err) {
-                    toast.error("Lỗi khi lấy thông tin Sticker");
+                    toast({
+                         className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+                         variant: "destructive",
+                         title: "Error", // Thay thế t("errorTitle")
+                         description: "An error occurred", // Thay thế t("errorDesc")
+                       })
                     console.error(err);
                } finally {
                     setLoading(false);
@@ -87,11 +98,20 @@ const UpdateSticker = ({
                     headers: { "Content-Type": "multipart/form-data" },
                });
 
-               toast.success("Cập nhật Sticker thành công!");
+               toast({
+                    className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+                    title: "Success", // Thay thế t("successTitle")
+                    description: "Operation completed successfully", // Thay thế t("successDesc")
+                  })
                setOpen(false);
                onUpdated?.();
           } catch (error) {
-               toast.error("Cập nhật Sticker thất bại");
+               toast({
+                    className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+                    variant: "destructive",
+                    title: "Error", // Thay thế t("errorTitle")
+                    description: "An error occurred", // Thay thế t("errorDesc")
+                  })
                console.error(error);
           }
      };

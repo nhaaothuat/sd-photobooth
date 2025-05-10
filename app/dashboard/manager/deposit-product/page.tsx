@@ -11,11 +11,12 @@ import {
   deleteDepositProduct,
   getDepositProduct,
 } from "@/services/deposit-product";
-import { toast } from "react-toastify";
+
 import { couponSchema } from "@/types/schema/coupon";
 import AxiosAPI from "@/configs/axios";
 import { DepositProductSchema } from "@/types/schema/deposit-product";
 import { PlusCircleIcon } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const CreateDialogForm = dynamic(
   () =>
@@ -42,7 +43,7 @@ const CrudPageWrapper = dynamic(
 export default function DepositProductPage() {
   const [pageSize, setPageSize] = useState(5);
   const [pageIndex, setPageIndex] = useState(0);
-
+  const {toast} = useToast();
   const { data, totalItems, isLoading, refetch } =
     usePaginatedQuery<DepositProduct>({
       queryKey: "deposit-products",
@@ -56,11 +57,20 @@ export default function DepositProductPage() {
   const handleDelete = async (id: number) => {
     try {
       await deleteDepositProduct(id);
-      toast.success("Xóa thành công");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: "Success", // Thay thế t("successTitle")
+        description: "Operation completed successfully", // Thay thế t("successDesc")
+      })
       if (data?.length === 1 && pageIndex > 0) setPageIndex((prev) => prev - 1);
       else refetch();
     } catch (error) {
-      toast.error("Failed to delete deposit product");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
       console.error("Error deleting product:", error);
     }
   };

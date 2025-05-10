@@ -17,10 +17,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import AxiosAPI from "@/configs/axios";
-import { toast } from "react-toastify";
+
 import { Pencil, Smartphone } from "lucide-react";
 import { Coordinate, Frame, FrameStyle } from "@/types/type";
 import { FaPencilAlt } from "react-icons/fa";
+import { useToast } from "@/hooks/use-toast";
 
 const frameSchema = z.object({
      name: z.string().min(1, "Name is required"),
@@ -47,7 +48,7 @@ const UpdateFrame = ({ id, onUpdated }: { id: number; onUpdated?: () => void }) 
      const [loading, setLoading] = useState(false);
      const [frameStyles, setFrameStyles] = useState<FrameStyle[]>([]);
      const [isInitialized, setIsInitialized] = useState(false);
-
+     const {toast} = useToast();
      const {
           register,
           handleSubmit,
@@ -105,7 +106,12 @@ const UpdateFrame = ({ id, onUpdated }: { id: number; onUpdated?: () => void }) 
                setIsInitialized(true);
           } catch (error) {
                console.error("Failed to fetch data", error);
-               toast.error("Failed to load frame data");
+               toast({
+                    className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+                    variant: "destructive",
+                    title: "Error", // Thay thế t("errorTitle")
+                    description: "An error occurred", // Thay thế t("errorDesc")
+                  })
           } finally {
                setLoading(false);
           }
@@ -146,12 +152,22 @@ const UpdateFrame = ({ id, onUpdated }: { id: number; onUpdated?: () => void }) 
                     headers: { "Content-Type": "multipart/form-data" },
                });
 
-               toast.success("Cập nhật thành công!");
+               toast({
+                    className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+                    title: "Success", // Thay thế t("successTitle")
+                    description: "Operation completed successfully", // Thay thế t("successDesc")
+                  })
                setIsOpen(false);
                onUpdated?.();
           } catch (err: any) {
                console.error(err);
-               toast.error(err?.response?.data?.message || "Update failed");
+             
+               toast({
+                    className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+                    variant: "destructive",
+                    title: "Error", // Thay thế t("errorTitle")
+                    description: err?.response?.data?.message || "Update failed", // Thay thế t("errorDesc")
+                  })
           } finally {
                setLoading(false);
           }

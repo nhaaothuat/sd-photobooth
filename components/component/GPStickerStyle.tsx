@@ -8,10 +8,11 @@ import {
   LoadingOverlay,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { toast } from "react-toastify";
+
 import { CiEdit } from "react-icons/ci";
 import AxiosAPI from "@/configs/axios";
 import { StickerStyle } from "@/types/type";
+import { useToast } from "@/hooks/use-toast";
 
 const UpdateStickerStyle = ({
   id,
@@ -26,7 +27,7 @@ const UpdateStickerStyle = ({
     stickerStyleName: "",
     description: "",
   });
-
+  const {toast} = useToast();
   useEffect(() => {
     if (!opened) return;
 
@@ -41,7 +42,12 @@ const UpdateStickerStyle = ({
         });
       } catch (error) {
         console.error("Fetch error:", error);
-        toast.error("Không thể tải thông tin Sticker Style");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          variant: "destructive",
+          title: "Error", // Thay thế t("errorTitle")
+          description: "An error occurred", // Thay thế t("errorDesc")
+        })
       } finally {
         setLoading(false);
       }
@@ -61,12 +67,21 @@ const UpdateStickerStyle = ({
     try {
       setLoading(true);
       await AxiosAPI.put(`/api/StickerStyle/${id}`, formData);
-      toast.success("Cập nhật Sticker Style thành công!");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: "Success", // Thay thế t("successTitle")
+        description: "Operation completed successfully", // Thay thế t("successDesc")
+      })
       close();
       onUpdateSuccess();
     } catch (error) {
       console.error("Update error:", error);
-      toast.error("Cập nhật thất bại.");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
     } finally {
       setLoading(false);
     }

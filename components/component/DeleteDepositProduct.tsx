@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Button, Modal, Group, Text, LoadingOverlay } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import AxiosAPI from "@/configs/axios";
-import { toast } from "react-toastify";
+
 import { IconTrash } from "@tabler/icons-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface DeleteDepositProductProps {
   id: number;
@@ -16,21 +17,35 @@ const DeleteDepositProduct = ({
 }: DeleteDepositProductProps) => {
   const [opened, { open, close }] = useDisclosure(false);
   const [isDeleting, setIsDeleting] = useState(false);
-
+  const {toast} = useToast();
   const handleDelete = async () => {
     try {
       setIsDeleting(true);
       const response = await AxiosAPI.delete(`/api/DepositProduct/${id}`);
 
       if (response.status === 204) {
-        toast.success("Xóa sản phẩm thành công");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+          title: "Success", // Thay thế t("successTitle")
+          description: "Operation completed successfully", // Thay thế t("successDesc")
+        })
         onDeleteSuccess();
         close();
       } else {
-        toast.error("Không thể xóa sản phẩm");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+          variant: "destructive",
+          title: "Error", // Thay thế t("errorTitle")
+          description: "An error occurred", // Thay thế t("errorDesc")
+        })
       }
     } catch (error) {
-      toast.error("Xóa sản phẩm thất bại");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
       console.error("Error deleting product:", error);
     } finally {
       setIsDeleting(false);

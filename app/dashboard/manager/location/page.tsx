@@ -72,18 +72,17 @@ export default function LocationPage() {
       await deleteLocation(id);
       toast({
         className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
-        title: t("successTitle"),
-        description: t("successDesc"),
+        title: "Success", 
+        description: "Operation completed successfully", 
       })
       if (data?.length === 1 && pageIndex > 0) setPageIndex((prev) => prev - 1);
       else refetch();
     } catch {
       toast({
-        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 ",
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
         variant: "destructive",
-        title: t("errorTitle"),
-        description: t("errorDesc"),
-
+        title: "Error", 
+        description: "An error occurred",
       })
     }
   };

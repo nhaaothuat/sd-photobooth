@@ -10,8 +10,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "react-toastify";
+
 import AxiosAPI from "@/configs/axios";
+import { useToast } from "@/hooks/use-toast";
 
 interface Location {
   id: number;
@@ -23,7 +24,7 @@ const GPUserLocation: React.FC = () => {
   const [locations, setLocations] = useState<Location[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
-
+  const {toast} = useToast();
   useEffect(() => {
     fetchLocations();
   }, []);
@@ -34,26 +35,16 @@ const GPUserLocation: React.FC = () => {
       setLocations(response.data as Location[]);
     } catch (error) {
       console.error("Fetch locations error:", error);
-      toast.error("Không thể tải danh sách địa điểm.");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
     }
   };
 
-  //   const handleSubmit = async (e: React.FormEvent) => {
-  //     e.preventDefault();
-  // //     if (!email || !selectedLocation || loading) return;
-  // if (loading) return;
-  //     setLoading(true);
-
-  //     try {
-  //       await AxiosAPI.post("api/User/staff/move-location", { email, locationId: selectedLocation });
-  //       toast.success("Chuyển địa điểm thành công!");
-  //     } catch (error) {
-  //       console.error("Update Error:", error);
-  //       toast.error("Chuyển địa điểm thất bại.");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,10 +59,19 @@ const GPUserLocation: React.FC = () => {
         )}&locationId=${selectedLocation}`,
         {}
       );
-      toast.success("Chuyển địa điểm thành công!");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+        title: "Success", // Thay thế t("successTitle")
+        description: "Operation completed successfully", // Thay thế t("successDesc")
+      })
     } catch (error) {
       console.error("Update Error:", error);
-      toast.error("Chuyển địa điểm thất bại.");
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: "An error occurred", // Thay thế t("errorDesc")
+      })
     } finally {
       setLoading(false);
     }

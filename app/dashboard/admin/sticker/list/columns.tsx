@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sticker } from "@/types/type";
+import { Group } from "@mantine/core";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import Image from "next/image";
@@ -24,92 +25,68 @@ export const columns = (
   onDelete: (id: number) => Promise<void>,
   refetchData: () => void
 ): ColumnDef<Sticker>[] => [
-  {
-    accessorKey: "id",
-    header: () => <div className="text-center">ID</div>,
-    cell: ({ row }) => <div className="text-center">{row.getValue("id")}</div>,
-  },
-  {
-    accessorKey: "name",
-    header: () => <div className="text-center">Name</div>,
-    cell: ({ row }) => <div className="text-center">{row.getValue("name")}</div>,
-  },
-  {
-    accessorKey: "stickerStyleName",
-    header: () => <div className="text-center">Style</div>,
-    cell: ({ row }) => <div className="text-center">{row.getValue("stickerStyleName")}</div>,
-  },
-  {
-    accessorKey: "stickerUrl",
-    header: () => <div className="text-center">Image</div>,
-    cell: ({ row }) => (
-      <div className="text-center">
-        <Image
-          src={row.getValue("stickerUrl")}
-          alt="Sticker"
-          width={50}
-          height={50}
-          className="rounded-md inline-block"
-        />
-      </div>
-    ),
-  },
-  {
-    accessorKey: "createdAt",
-    header: () => <div className="text-center">Created At</div>,
-    cell: ({ row }) => (
-      <div className="text-center">
-        <DateCell value={row.getValue("createdAt")} />
-      </div>
-    ),
-  },
-  {
-    accessorKey: "lastModified",
-    header: () => <div className="text-center">Last Modified</div>,
-    cell: ({ row }) => (
-      <div className="text-center">
-        <DateCell value={row.getValue("lastModified")} />
-      </div>
-    ),
-  },
-  
-  {
-    id: "edit",
-    header: () => <div className="text-center">Edit</div>,
-    cell: ({ row }) => {
-      const id = row.original.id;
-      return <UpdateSticker id={id} onUpdated={refetchData} />;
+    {
+      accessorKey: "id",
+      header: () => <div className="text-center">ID</div>,
+      cell: ({ row }) => <div className="text-center">{row.getValue("id")}</div>,
     },
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const id = row.original.id;
-      const sticker = row.original;
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="center">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            {/* <DropdownMenuItem onClick={() => navigator.clipboard.writeText(sticker.id.toString())}>
-                                   Copy Sticker ID
-                              </DropdownMenuItem> */}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <DeletePayment id={id} onDelete={onDelete} />
-            </DropdownMenuItem>
+    {
+      accessorKey: "name",
+      header: () => <div className="text-center">Name</div>,
+      cell: ({ row }) => <div className="text-center">{row.getValue("name")}</div>,
+    },
+    {
+      accessorKey: "stickerStyleName",
+      header: () => <div className="text-center">Style</div>,
+      cell: ({ row }) => <div className="text-center">{row.getValue("stickerStyleName")}</div>,
+    },
+    {
+      accessorKey: "stickerUrl",
+      header: () => <div className="text-center">Image</div>,
+      cell: ({ row }) => (
+        <div className="text-center">
+          <Image
+            src={row.getValue("stickerUrl")}
+            alt="Sticker"
+            width={50}
+            height={50}
+            className="rounded-md inline-block"
+          />
+        </div>
+      ),
+    },
+    {
+      accessorKey: "createdAt",
+      header: () => <div className="text-center">Created At</div>,
+      cell: ({ row }) => (
+        <div className="text-center">
+          <DateCell value={row.getValue("createdAt")} />
+        </div>
+      ),
+    },
+    {
+      accessorKey: "lastModified",
+      header: () => <div className="text-center">Last Modified</div>,
+      cell: ({ row }) => (
+        <div className="text-center">
+          <DateCell value={row.getValue("lastModified")} />
+        </div>
+      ),
+    },
 
-            <DropdownMenuItem asChild>
-              <ViewDetailSticker id={id} />
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+    {
+      id: "actions",
+      header: () => <div className="text-center">Action</div>,
+      cell: ({ row }) => {
+        const id = row.original.id;
+        return (
+          <Group justify="center" >
+            <UpdateSticker id={id} onUpdated={refetchData} />
+            <DeletePayment id={id} onDelete={onDelete} />
+            <ViewDetailSticker id={id} />
+          </Group>
+        )
+      },
     },
-  },
-];
+
+  ];

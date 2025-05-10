@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import AxiosAPI from "@/configs/axios"
 import { Loader2 } from "lucide-react"
 import Image from "next/image"
+import { FaEye } from "react-icons/fa"
 
 
 const ViewDetailFrameStyle = ({ id }: { id: number }) => {
@@ -33,7 +34,7 @@ const ViewDetailFrameStyle = ({ id }: { id: number }) => {
      return (
           <Dialog open={open} onOpenChange={setOpen}>
                <DialogTrigger asChild>
-                    <Button variant="outline">Xem</Button>
+                    <Button variant="outline" className="border-green-500"><FaEye /></Button>
                </DialogTrigger>
                <DialogContent>
                     <DialogHeader>

@@ -16,8 +16,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AxiosAPI from "@/configs/axios";
-import { toast } from "react-toastify";
+
 import { FaPlus } from "react-icons/fa";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   name: z.string().min(1, "Sticker name is required"),
@@ -33,7 +34,7 @@ const AddSticker: React.FC<AddStickerProps> = ({ onAddSuccess }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [styles, setStyles] = useState<{ id: number; stickerStyleName: string }[]>([]);
-
+  const {toast} = useToast();
   const {
     register,
     handleSubmit,
@@ -77,7 +78,11 @@ const AddSticker: React.FC<AddStickerProps> = ({ onAddSuccess }) => {
       });
 
       if (response.status === 200) {
-        toast.success("Thêm thành công! ");
+        toast({
+          className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 bg-green-600 text-white",
+          title: "Success", // Thay thế t("successTitle")
+          description: "Operation completed successfully", // Thay thế t("successDesc")
+        })
         // console.log(response.data);
         reset();
         setIsOpen(false);
@@ -85,7 +90,13 @@ const AddSticker: React.FC<AddStickerProps> = ({ onAddSuccess }) => {
       }
     } catch (err: any) {
       console.error("Save Error:", err);
-      toast.error(err.response?.data?.message || "Something went wrong");
+      
+      toast({
+        className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
+        variant: "destructive",
+        title: "Error", // Thay thế t("errorTitle")
+        description: err.response?.data?.message || "Something went wrong", // Thay thế t("errorDesc")
+      })
     } finally {
       setLoading(false);
     }

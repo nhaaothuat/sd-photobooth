@@ -40,8 +40,8 @@ const CrudPageWrapper = dynamic(
 );
 
 const orderSchema = z.object({
-  email: z.string().email("Invalid email address").min(1, "Email is required"),
-  phone: z.string().min(1, "Phone number is required"),
+  email: z.string().email("Invalid email address").optional().or(z.literal("")),
+  phone: z.string().optional(),
   typeSessionId: z.coerce.number().min(0, "Session type is required"),
   paymentMethodId: z.coerce.number().min(1, "Payment method is required"),
   couponCode: z.string().optional(),
@@ -166,10 +166,7 @@ export default function OrderPage() {
                 throw new Error("Unhandled server response");
 
               } catch (error: any) {
-                console.error("Submit error:", error);
-
-
-
+              
                 toast({
                   className: "top-0 right-0 fixed md:max-w-[420px] md:top-4 md:right-4",
                   variant: "destructive",
@@ -178,16 +175,12 @@ export default function OrderPage() {
                     error?.response?.data?.message ||
                     (error instanceof Error ? error.message : "Unknown error"),
                 });
+
+                throw error;
+
+
               }
             }}
-
-
-
-
-
-
-
-
             fields={[
               {
                 type: "text",
