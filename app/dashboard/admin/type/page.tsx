@@ -23,6 +23,7 @@ import { Label } from "@/components/ui/label";
 
 import AddTypeSession from "@/components/component/AddTypeSession";
 import { useToast } from "@/hooks/use-toast";
+import { Skeleton } from "@mantine/core";
 
 const useTypeSessionData = () => {
   const [data, setData] = useState<TypeSession[]>([]);
@@ -234,7 +235,7 @@ const TypeSessionPage = () => {
       </div>
 
       {loading ? (
-        <div className="text-sm text-muted-foreground">Đang tải dữ liệu...</div>
+         <Skeleton height={8} mt={6} width="70%" radius="xl" />
       ) : error ? (
         <div className="text-red-500 p-4">Error: {error}</div>
       ) : (

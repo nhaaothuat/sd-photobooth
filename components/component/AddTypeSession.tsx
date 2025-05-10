@@ -21,6 +21,7 @@ import { FileText } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import AxiosAPI from "@/configs/axios";
 import { useToast } from "@/hooks/use-toast";
+import { IoIosAddCircleOutline } from "react-icons/io";
 
 
 const formSchema = z.object({
@@ -91,7 +92,7 @@ const AddTypeSession: React.FC<AddTypeSessionProps> = ({ onAddSuccess }) => {
      return (
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
                <DialogTrigger asChild>
-                    <Button variant="outline">Add Type Session</Button>
+                    <Button variant="outline"><IoIosAddCircleOutline /></Button>
                </DialogTrigger>
                <DialogContent className="sm:max-w-[425px] max-h-[80vh] overflow-y-auto">
                     <DialogHeader>

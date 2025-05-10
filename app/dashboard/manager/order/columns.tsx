@@ -67,7 +67,7 @@ export const columns = (
     },
     {
       accessorKey: "boothName",
-      header: () => <div className="text-center">Booth</div>,
+      header: () => <div className="text-center min-w-[100px]">Booth</div>,
       cell: ({ row }) => <div className="text-center">{row.getValue("boothName")}</div>,
     },
     {
@@ -79,7 +79,7 @@ export const columns = (
     {
       id: "actions",
      
-      header: () => <div className="text-center">Actions</div>,
+      header: () => <div className="text-center min-w-[200px]">Actions</div>,
       cell: ({ row }) => {
         const id = row.original.id;
        

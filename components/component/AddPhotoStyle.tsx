@@ -28,13 +28,14 @@ const photoStyleSchema = z.object({
   controlnets: z.string().optional(),
   numImagesPerGen: z.coerce.number().min(1),
   backgroundColor: z.string().optional(),
-  height: z.coerce.number().min(1),
-  width: z.coerce.number().min(1),
-  mode: z.coerce.number().min(0),
+  height: z.coerce.number().min(0).optional(),
+  width: z.coerce.number().min(0).optional(),
+  mode: z.coerce.number().min(0).max(1).default(0),
+
   numInferenceSteps: z.coerce.number().min(0),
   guidanceScale: z.coerce.number().min(0),
   strength: z.coerce.number().min(0).max(1),
-  ipAdapterScale: z.coerce.number().min(0),
+  ipAdapterScale: z.coerce.number().min(0).optional(),
   backgroundRemover: z.boolean().optional(),
   imageFile: z
     .instanceof(File)
@@ -52,7 +53,7 @@ const AddPhotoStyle: React.FC<AddPhotoStyleProps> = ({ onAddSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const { toast } = useToast();
-  
+
   const {
     register,
     handleSubmit,
@@ -102,7 +103,7 @@ const AddPhotoStyle: React.FC<AddPhotoStyleProps> = ({ onAddSuccess }) => {
         title: "Success", // Thay thế t("successTitle")
         description: "Operation completed successfully", // Thay thế t("successDesc")
       })
-      
+
 
       reset();
       setPreviewImage(null);
@@ -196,8 +197,18 @@ const AddPhotoStyle: React.FC<AddPhotoStyleProps> = ({ onAddSuccess }) => {
             </div>
             <div>
               <Label>Mode</Label>
-              <Input type="number" {...register("mode")} />
+              <select
+                {...register("mode")}
+                className="w-full border rounded px-3 py-2 text-sm"
+              >
+                <option value={0}>Not keep face</option>
+                <option value={1}>Keep face</option>
+              </select>
+              {errors.mode && (
+                <p className="text-sm text-red-500">{errors.mode.message}</p>
+              )}
             </div>
+
             <div>
               <Label>Inference Steps</Label>
               <Input type="number" {...register("numInferenceSteps")} />
@@ -216,7 +227,7 @@ const AddPhotoStyle: React.FC<AddPhotoStyleProps> = ({ onAddSuccess }) => {
                 type="number"
                 step="0.01"
                 min="0"
-               
+
                 {...register("ipAdapterScale")}
               />
               {errors.ipAdapterScale && (

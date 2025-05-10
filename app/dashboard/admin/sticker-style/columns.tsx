@@ -62,13 +62,13 @@ export const columns = (
 
     {
       id: "action",
-      header: () => <div className="text-center">Action</div>,
+      header: () => <div className="text-center min-w-[100px]">Action</div>,
       cell: ({ row }) => {
         const id = row.original.id;
 
         return (
 
-          <Group>
+          <Group justify="center">
             <DeletePayment id={id} onDelete={onDelete} />
             <UpdateStickerStyle id={id} onUpdateSuccess={refetchData} />
             <ViewDetailStickerStyle id={id} />
