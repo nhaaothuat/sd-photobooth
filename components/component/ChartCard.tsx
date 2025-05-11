@@ -96,7 +96,7 @@ const RevenueChart = () => {
               { value: "2", label: "Quarter" },
               { value: "3", label: "Year" },
             ]}
-            placeholder="Chọn thời gian"
+            placeholder="Choose the time"
             className="w-40"
           />
         </div>

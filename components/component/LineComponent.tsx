@@ -181,7 +181,7 @@ export function Component() {
             onValueChange={(value) => setLocationId(Number(value))}
           >
             <SelectTrigger className="min-w-[180px] w-48">
-              <SelectValue placeholder="Chọn chi nhánh" />
+              <SelectValue placeholder="Choose location" />
             </SelectTrigger>
             <SelectContent>
               {locations.map((loc) => (
