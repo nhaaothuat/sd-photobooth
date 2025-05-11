@@ -30,7 +30,7 @@ const photoStyleSchema = z.object({
   backgroundColor: z.string().optional(),
   height: z.coerce.number().min(0).optional(),
   width: z.coerce.number().min(0).optional(),
-  mode: z.coerce.number().min(0).max(1).default(0),
+  mode: z.coerce.number().min(1).max(2).default(1),
 
   numInferenceSteps: z.coerce.number().min(0),
   guidanceScale: z.coerce.number().min(0),
@@ -74,7 +74,7 @@ const AddPhotoStyle: React.FC<AddPhotoStyleProps> = ({ onAddSuccess }) => {
       backgroundColor: "#ffffff",
       height: 0,
       width: 0,
-      mode: 0,
+      mode: 1,
       numInferenceSteps: 20,
       guidanceScale: 7.5,
       strength: 0,
@@ -201,8 +201,8 @@ const AddPhotoStyle: React.FC<AddPhotoStyleProps> = ({ onAddSuccess }) => {
                 {...register("mode")}
                 className="w-full border rounded px-3 py-2 text-sm"
               >
-                <option value={0}>Not keep face</option>
-                <option value={1}>Keep face</option>
+                <option value={1}>keep face</option>
+                <option value={2}>Keep structure</option>
               </select>
               {errors.mode && (
                 <p className="text-sm text-red-500">{errors.mode.message}</p>

@@ -146,10 +146,11 @@ const DashboardCard = () => {
 
           <Group align="flex-end" gap="xs" mt="md">
             <Text className="text-2xl font-semibold text-neutral-800 dark:text-white">
-              {stat.icon === "revenue" || stat.icon === "deposit"
+              {stat.icon === "revenue"
                 ? stat.value.toLocaleString("vi-VN", {
                     style: "currency",
                     currency: "VND",
+
                     currencyDisplay: "code",
                   })
                 : stat.value}

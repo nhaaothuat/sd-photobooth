@@ -43,10 +43,7 @@ const ViewDetailPhotoStyle = ({ id }: { id: number }) => {
         </DialogHeader>
 
         {loading ? (
-          <Group gap="sm">
-            <Loader2 className="animate-spin h-4 w-4" />
-            <Text size="sm" color="dimmed">Loading...</Text>
-          </Group>
+          <Skeleton height={8} mt={6} width="70%" radius="xl" />
         ) : photoStyle ? (
           <Paper p="md" radius="md" shadow="xs" withBorder>
             <Stack gap="xs">
@@ -67,6 +64,7 @@ const ViewDetailPhotoStyle = ({ id }: { id: number }) => {
               <Text size="sm"><strong>Images per Generation:</strong> {photoStyle.numImagesPerGen}</Text>
               <Text size="sm"><strong>Width:</strong> {photoStyle.width}px</Text>
               <Text size="sm"><strong>Height:</strong> {photoStyle.height}px</Text>
+              <Text size="sm"><strong>Mode:</strong> {photoStyle.mode === 1 ? "Keep Face" : photoStyle.mode === 2 ? "Keep Structure" : "Unknown"}</Text>
               <Text size="sm"><strong>Controlnets:</strong> {photoStyle.controlnets}</Text>
               <Text size="sm"><strong>IP Adapter Scale:</strong> {photoStyle.ipAdapterScale}</Text>
               <Text size="sm"><strong>Background Remover:</strong> {photoStyle.backgroundRemover ? "Yes" : "No"}</Text>
