@@ -70,9 +70,9 @@ export default function CouponPage() {
       toast({
         className: "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
         variant: "destructive",
-        title: "Error", 
-        description: "An error occurred", 
-        
+        title: "Error",
+        description: "An error occurred",
+
       })
     }
   };
@@ -102,7 +102,7 @@ export default function CouponPage() {
               label: "Discount Percent(%)",
               type: "number",
               step: 0.001,
-            
+
             },
             { name: "maxUse", label: "Max Use", type: "number" },
             { name: "maxDiscount", label: "Max Discount", type: "number" },
@@ -113,7 +113,9 @@ export default function CouponPage() {
           ]}
           onSubmit={async (values) => {
             await AxiosAPI.post("/api/Coupon", values);
+           
             refetch();
+           
           }}
         />
       }
