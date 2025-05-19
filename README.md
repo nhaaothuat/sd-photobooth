@@ -14,6 +14,16 @@ A modern, feature-rich dashboard application built with Next.js 15, TypeScript, 
 - 🔍 Advanced search and filtering capabilities
 - 📈 Real-time data updates
 - 🔄 State management with Zustand
+![image](https://github.com/user-attachments/assets/86ebae2c-3f2c-4c90-95fb-e23ac5fc1d18)
+![image](https://github.com/user-attachments/assets/e2ff661d-4bc6-4e25-8238-e1c7df003331)
+![image](https://github.com/user-attachments/assets/e36bfc67-f4c6-46ac-a185-f6c41a55439e)
+![image](https://github.com/user-attachments/assets/19b8e888-a111-45d2-b0e3-277c290a40f1)
+![image](https://github.com/user-attachments/assets/9fce8b8c-f9cc-4487-b2a9-2b2e68771f53)
+![image](https://github.com/user-attachments/assets/dcfe8e5c-e1b9-4617-9740-7e6901572d6a)
+
+
+
+
 
 ## Tech Stack
 
