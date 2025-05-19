@@ -14,14 +14,14 @@ A modern, feature-rich dashboard application built with Next.js 15, TypeScript, 
 - 🔍 Advanced search and filtering capabilities
 - 📈 Real-time data updates
 - 🔄 State management with Zustand
-![image](https://github.com/user-attachments/assets/86ebae2c-3f2c-4c90-95fb-e23ac5fc1d18)
-![image](https://github.com/user-attachments/assets/e2ff661d-4bc6-4e25-8238-e1c7df003331)
-![image](https://github.com/user-attachments/assets/e36bfc67-f4c6-46ac-a185-f6c41a55439e)
-![image](https://github.com/user-attachments/assets/19b8e888-a111-45d2-b0e3-277c290a40f1)
-![image](https://github.com/user-attachments/assets/9fce8b8c-f9cc-4487-b2a9-2b2e68771f53)
-![image](https://github.com/user-attachments/assets/dcfe8e5c-e1b9-4617-9740-7e6901572d6a)
-
-
+![image](https://github.com/user-attachments/assets/3b386ec2-8a27-4802-b886-73cb579abf9b)
+![image](https://github.com/user-attachments/assets/9576029b-6a04-43ab-b04c-fe2038e91b4e)
+![image](https://github.com/user-attachments/assets/10bdc6d4-d383-446c-a459-700f52c42550)
+![image](https://github.com/user-attachments/assets/df4506d2-bf3f-42da-8b5e-94d51715e3a3)
+![image](https://github.com/user-attachments/assets/f241add5-93ac-4ba5-93d2-b9033993a105)
+![image](https://github.com/user-attachments/assets/3b2a9fa0-c2f4-4f4d-a8f8-f81be566250c)
+![image](https://github.com/user-attachments/assets/f135f5a3-be7d-461e-a42a-d7f4aff7bb0f)
+![image](https://github.com/user-attachments/assets/42d1faa0-b62e-438f-9490-5c137152752f)
 
 
 
